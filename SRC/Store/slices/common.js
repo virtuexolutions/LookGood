@@ -2,8 +2,9 @@ import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   userData: {},
-  categories: [],
-  categoryProperties: [],
+  services: [],
+  cartData: [],
+  
   financeBreakDown: [],
   notification : false
 };
@@ -12,9 +13,19 @@ const CommonSlice = createSlice({
   name: 'commonReducer',
   initialState: initialState,
   reducers: {
-    setCategoryProperties(state, action) {
-      state.categoryProperties = action?.payload;
-      // console.log("reduxxxx", state.categoryProperties);
+    setCartData(state, action) {
+      state.cartData.push(action.payload)
+      console.log("reduxxxx", state.cartData);
+    },
+    setRemoveCardData(state, action) {
+      let data = [...state.cartData];
+      data.splice(action.payload , 1);
+      state.cartData = data ;
+
+
+    },
+    setWholeCart(state , action){
+      state.cartData = action.payload;
     },
     setUserData(state, action) {
       state.userData = action?.payload;
@@ -23,12 +34,10 @@ const CommonSlice = createSlice({
     setUserLogOut(state, action) {
       state.userData = {};
     },
-    setServiceCategories(state, action) {
-      state.categories = action?.payload;
+    setServices(state, action) {
+      state.services = action?.payload;
     },
-    setFinanceBreakDown(state, action) {
-      state.financeBreakDown = action.payload;
-    },
+   
     setNotification(state,action){
       state.notification = action.payload
     }
@@ -38,10 +47,11 @@ const CommonSlice = createSlice({
 export const {
   setUserData,
   setUserLogOut,
-  setServiceCategories,
-  setCategoryProperties,
-  setFinanceBreakDown,
+  setCartData,
   setNotification,
+  setServices,
+  setRemoveCardData,
+  setWholeCart
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;

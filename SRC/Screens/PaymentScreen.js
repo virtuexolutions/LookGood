@@ -22,8 +22,13 @@ import {Icon} from 'native-base';
 import numeral from 'numeral';
 import navigationService from '../navigationService';
 import CustomImage from '../Components/CustomImage';
+import { useDispatch } from 'react-redux';
+import { setWholeCart } from '../Store/slices/common';
 
-const PaymentScreen = () => {
+const PaymentScreen = (props) => {
+  const dispatch = useDispatch();
+  const fromStore = props?.route?.params?.fromStore
+  console.log("🚀 ~ file: PaymentScreen.js:28 ~ PaymentScreen ~ fromStore", fromStore)
   return (
     <ScreenBoiler
       showHeader={true}
@@ -87,6 +92,8 @@ const PaymentScreen = () => {
               </CustomText>
             </View>
           </View>
+          {fromStore &&
+          <>
           <CustomText
             isBold
             style={[styles.subHeading, {width: windowWidth * 0.9}]}>
@@ -116,6 +123,8 @@ const PaymentScreen = () => {
               $2.05
             </CustomText>
           </View>
+          </>
+}
           <CustomText
             isBold
             style={[styles.subHeading, {width: windowWidth * 0.9}]}>
@@ -160,7 +169,7 @@ const PaymentScreen = () => {
               <Icon
                 name="keyboard-arrow-down"
                 as={MaterialIcons}
-                size={moderateScale(20, 0.3)}
+              size={moderateScale(20, 0.3)}
                 color={Color.black}
               />
             </View>
@@ -175,7 +184,8 @@ const PaymentScreen = () => {
               ? ToastAndroid.show('Booked', ToastAndroid.SHORT)
               : alert('Booked');
 
-            navigationService.navigate('Homescreen');
+            navigationService.navigate('TabNavigation');
+            fromStore && dispatch(setWholeCart([]))
           }}
           width={windowWidth * 0.9}
           height={windowHeight * 0.06}

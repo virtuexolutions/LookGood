@@ -97,7 +97,6 @@ export const TabNavigation = (props) => {
           let size = moderateScale(20, 0.3);
           let type = Ionicons ;
 
-          console.log(route.name);
           if (route.name === 'HomeScreen') {
             iconName = focused ? 'home' : 'home-outline';
             color = focused ? Color.themeColor : Color.themeLightGray;

@@ -25,50 +25,62 @@ const BarberServicesScreen = props => {
     {
       name: 'Blow dry',
       price: 15.50,
+      quantity : 1,
     },
     {
       name: 'Blow dry with curling and striaght iron',
       price: 18.50,
+      quantity : 1,
     },
     {
       name: 'Hair cut with Blow dry',
       price: 12.50,
+      quantity : 1,
     },
     {
       name: 'Mens haircut',
       price: 22.50,
+      quantity : 1,
     },
     {
       name: 'Gloss',
       price: 19.50,
+      quantity : 1,
     },
     {
       name: 'Gel Polist',
       price: 32.50,
+      quantity : 1,
     },
     {
       name: 'Meni pedi',
       price: 21.50,
+      quantity : 1,
     },
     {
       name: 'nail cutting',
       price: 52.50,
+      quantity : 1,
     },
     {
       name: 'pink and white fill',
       price: 22.50,
+      quantity : 1,
     },
     {
       name: 'Polish change',
       price: 32.50,
+      quantity : 1,
     },
     {
       name: 'Acrylic fill',
       price: 72.50,
+      quantity : 1,
     },
     {
       name: 'partial highlight',
       price: 72.50,
+      quantity : 1,
     },
   ];
   return (

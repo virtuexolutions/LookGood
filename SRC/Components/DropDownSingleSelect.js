@@ -13,25 +13,25 @@ import {windowWidth} from '../Utillity/utils';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const DropDownSingleSelect = props => {
-  const {
-    array,
-    item,
-    setItem,
-    placeholder,
-    buttonTextAfterSelection,
-    rowTextForSelection,
-    disabled,
-    backgroundColor,
-    width,
-    iconName,
-    iconType,
-    extreme,
-    inRow,
-    myJobs,
-    Colors,
-    dropdownStyle,
-  } = props;
+const DropDownSingleSelect = ({
+  array,
+  item,
+  setItem,
+  placeholder,
+  buttonTextAfterSelection,
+  rowTextForSelection,
+  disabled,
+  backgroundColor,
+  width,
+  iconName,
+  iconType,
+  extreme,
+  inRow,
+  myJobs,
+  Colors,
+  dropdownStyle,
+}) => {
+
   return (
     <View
       style={[
