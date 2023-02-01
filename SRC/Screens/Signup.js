@@ -43,6 +43,7 @@ const Signup = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState({});
   const [userRole, setUserRole] = useState('Barber');
+  console.log('🚀 ~ file: Signup.js:46 ~ Signup ~ userRole', userRole);
   const [showModal, setShowModal] = useState(false);
   const [contact, setContact] = useState('');
   const [email, setEmail] = useState('');
@@ -119,20 +120,18 @@ const Signup = ({navigation}) => {
     //   statusBarContentStyle={'light-content'}>
     <>
       <CustomStatusBar backgroundColor={'black'} barStyle={'light-content'} />
-      <Header
-      
-      />
-        <KeyboardAwareScrollView
-           showsVerticalScrollIndicator={false}
-           contentContainerStyle={{
-             alignItems: 'center',
-            // backgroundColor  : 'red'
-          }}>
-      <LinearGradient
-        start={{x: 0.0, y: 0.25}}
-        end={{x: 0.5, y: 1.0}}
-        colors={Color.themeGradient}
-        style={styles.container}>
+      <Header />
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          alignItems: 'center',
+          // backgroundColor  : 'red'
+        }}>
+        <LinearGradient
+          start={{x: 0.0, y: 0.25}}
+          end={{x: 0.5, y: 1.0}}
+          colors={Color.themeGradient}
+          style={styles.container}>
           <View>
             {Object.keys(image).length > 0 ? (
               <CustomImage source={{uri: image?.uri}} style={styles.image} />
@@ -222,7 +221,7 @@ const Signup = ({navigation}) => {
             placeholderColor={Color.themeLightGray}
             borderRadius={moderateScale(1, 0.3)}
           />
-       
+
           <TextInputWithTitle
             titleText={'Email'}
             placeholder={'Email'}
@@ -231,7 +230,7 @@ const Signup = ({navigation}) => {
             viewHeight={0.06}
             viewWidth={0.75}
             inputWidth={0.74}
-          backgroundColor={'#FFFFFF'}
+            backgroundColor={'#FFFFFF'}
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
@@ -284,7 +283,16 @@ const Signup = ({navigation}) => {
             borderColor={'white'}
             borderWidth={1}
             textColor={Color.black}
-            onPress={() => {console.log('Sign up will happen');}}
+            onPress={() => {
+              dispatch(
+                setUserData(
+                  userRole == 'Customer'
+                    ? {role: 'customer', name: 'Justin Beber'}
+                    : {role: 'barber', name: 'Justin Beber'},
+                ),
+              );
+              dispatch(setUserToken({token : true}))
+            }}
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
             text={'Sign Up'}
@@ -293,43 +301,45 @@ const Signup = ({navigation}) => {
             isGradient={true}
             isBold
             marginTop={moderateScale(30, 0.3)}
-            
           />
-          <CustomText onPress={()=>{
-            navigation.goBack()
-          }} isBold style={{
-          color : 'rgb(227,196,136)',
-          fontSize : moderateScale(15,0.3),
-          textTransform : 'uppercase',
-          marginTop : moderateScale(10,0.3),
-          zIndex : 1,
-        }} >Sign in instead</CustomText>
+          <CustomText
+            onPress={() => {
+              navigation.goBack();
+            }}
+            isBold
+            style={{
+              color: 'rgb(227,196,136)',
+              fontSize: moderateScale(15, 0.3),
+              textTransform: 'uppercase',
+              marginTop: moderateScale(10, 0.3),
+              zIndex: 1,
+            }}>
+            Sign in instead
+          </CustomText>
           <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            // zIndex : -1,
-            backgroundColor : 'transparent'
-          }}>
-          <CustomImage
-            source={require('../Assets/Images/backgroundLogo.png')}
-            // resizeMode={'stretch'}
-            style={{}}
-          />
-        </View>
-
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              // zIndex : -1,
+              backgroundColor: 'transparent',
+            }}>
+            <CustomImage
+              source={require('../Assets/Images/backgroundLogo.png')}
+              // resizeMode={'stretch'}
+              style={{}}
+            />
+          </View>
         </LinearGradient>
-      
-      
+
         <ImagePickerModal
           show={showModal}
           setShow={setShowModal}
           setFileObject={setImage}
         />
-          </KeyboardAwareScrollView>
-    {/* // </ScreenBoiler> */}
-  </>
+      </KeyboardAwareScrollView>
+      {/* // </ScreenBoiler> */}
+    </>
   );
 };
 
@@ -342,7 +352,7 @@ const styles = ScaledSheet.create({
     minHeight: windowHeight * 0.9,
     width: windowWidth,
     alignItems: 'center',
-             paddingBottom : moderateScale(50,0.3),
+    paddingBottom: moderateScale(50, 0.3),
 
     // backgroundColor : Color.green
   },

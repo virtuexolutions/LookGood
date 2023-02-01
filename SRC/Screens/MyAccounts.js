@@ -1,73 +1,67 @@
-import {
-  ActivityIndicator,
-  Alert,
-  ImageBackground,
-  Platform,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  TouchableOpacity,
-  View,
-} from 'react-native';
 import React, {useState} from 'react';
-import CustomStatusBar from '../Components/CustomStatusBar';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import CardContainer from '../Components/CardContainer';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import TextInputWithTitle from '../Components/TextInputWithTitle';
-import CustomButton from '../Components/CustomButton';
-import Color from '../Assets/Utilities/Color';
-import navigationService from '../navigationService';
-import ImagePickerModal from '../Components/ImagePickerModal';
-import CustomImage from '../Components/CustomImage';
-import {Icon} from 'native-base';
+import {
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  Alert,
+  ToastAndroid,
+  ActivityIndicator,
+} from 'react-native';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import CustomText from '../Components/CustomText';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {validateEmail} from '../Config';
-import {Post} from '../Axios/AxiosInterceptorFunction';
 import {useDispatch, useSelector} from 'react-redux';
+import TextInputWithTitle from '../Components/TextInputWithTitle';
+import Color from '../Assets/Utilities/Color';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import ImageView from "react-native-image-viewing";
+import ScreenBoiler from '../Components/ScreenBoiler';
+import {Icon} from 'native-base';
+import CustomImage from '../Components/CustomImage';
 import {setUserData} from '../Store/slices/common';
-import {setUserLogin, setUserToken} from '../Store/slices/auth';
-import Bottomtab from '../Components/Bottomtab';
+import {Patch, Post} from '../Axios/AxiosInterceptorFunction';
+import ImagePickerModal from '../Components/ImagePickerModal';
+import {formRegEx, formRegExReplacer, imageUrl} from '../Config';
+import CustomButton from '../Components/CustomButton';
+import LinearGradient from 'react-native-linear-gradient';
+
 
 const MyAccounts = props => {
   const dispatch = useDispatch();
-
+  
   const user = useSelector(state => state.commonReducer.userData);
+  console.log(user?.photo);
   const token = useSelector(state => state.authReducer.token);
-
+  const [showModal, setShowModal] = useState(false);
+  const [imageObject, setImageObject] = useState({});
   const [firstName, setFirstName] = useState(user?.first_name);
   const [lastName, setLastName] = useState(user?.last_name);
-  const [designation, setDesignation] = useState(user?.designation);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [image, setImage] = useState({});
-  console.log("🚀 ~ file: MyAccounts.js:48 ~ MyAccounts ~ image", image?.uri)
-  const [profileImage , setProfileImage] = useState(user?.image)
-  // console.log("🚀 ~ file: MyAccounts.js:49 ~ MyAccounts ~ profileImage", profileImage)
-  const [contact, setContact] = useState(user?.phone);
+  const [phone, setPhone] = useState(user?.phone);
   const [email, setEmail] = useState(user?.email);
-  const [showModal, setShowModal] = useState(false);
-  const [userRole, setUserRole] = useState(user?.role);
+  const [country, setCountry] = useState(user?.country);
+  // const [description, setDescription] = useState(user?.description);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isVisible , setIsVisible] = useState(false);
+  
+  const imageArray = Object.keys(imageObject).length > 0 ?
+  [{
+    uri : imageObject.uri
+  }]
+  :
+  [{
+    uri : `${user?.photo}`
+  }]
 
-  // const imageArray = Object.keys(imageObject).length > 0 ?
-  // [{
-  //   uri : imageObject.uri
-  // }]
-  // :
-  // [{
-  //   uri : `${user?.photo}`
-  // }]
 
   const EditProfile = async () => {
     const params = {
       first_name: firstName,
       last_name: lastName,
-      designation : designation ,
-      
+      phone : phone ,
+      email: email,
+      country: country,
+     
     };
     const formdata = new FormData();
     for (let key in params) {
@@ -83,12 +77,12 @@ const MyAccounts = props => {
       }
       formdata.append(key, params[key]);
     }
-    if (Object.keys(image).length > 0) {
-      formdata.append('image', image);
+    if (Object.keys(imageObject).length > 0) {
+      formdata.append('photo', imageObject);
     }
     console.log(formdata);
 
-    const url = 'profile-update';
+    const url = 'auth/profile';
     setIsLoading(true);
     const response = await Post(url, formdata, apiHeader(token, true));
     setIsLoading(false);
@@ -100,396 +94,227 @@ const MyAccounts = props => {
       Platform.OS == 'android'
         ? ToastAndroid.show('Profile Updated Succesfully', ToastAndroid.SHORT)
         : Alert.alert('Profile Updated Succesfully');
-    }
-  };
-  const passwordReset = async () => {
-    const params = {
-      current_password: currentPassword,
-      new_password: password,
-      confirm_password: confirmPassword,
-    };
-    for (let key in params) {
-      if (params[key] === '') {
-        return (Platform.OS = 'android'
-          ? ToastAndroid.show('Required field is empty', ToastAndroid.SHORT)
-          : Alert.alert('Required field is empty'));
-      }
-    }
-
-    // Password Length
-    if (password.length < 8) {
-      return Platform.OS == 'android'
-        ? ToastAndroid.show(
-            'Password should atleast 8 character long',
-            ToastAndroid.SHORT,
-          )
-        : Alert.alert('Password should atleast 8 character long');
-    }
-    if (password != confirmPassword) {
-      return (Platform.OS = 'android'
-        ? ToastAndroid.show('passwords MissMatched !', ToastAndroid.SHORT)
-        : Alert.alert('passwords MissMatched !'));
-    }
-
-    const url = 'change-password';
-    setIsLoading(true);
-    const response = await Post(url, params, apiHeader(token));
-    setIsLoading(false);
-    if (response !== undefined) {
-      Platform.OS == 'android'
-        ? ToastAndroid.show('Password changed successfully', ToastAndroid.SHORT)
-        : alert('Password changed successfully');
-    setCurrentPassword('')
-    setPassword('')
-    setConfirmPassword('')
-
-    
+      props.navigation.goBack();
     }
   };
   return (
-    <>
-      <CustomStatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-      <ImageBackground
-        style={{
-          flex: 1,
-          width: windowWidth,
-          height: windowHeight,
-        }}
-        resizeMode={'stretch'}
-        source={require('../Assets/Images/imageBackground.png')}>
-        <KeyboardAwareScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: moderateScale(100, 0.3),
-            alignItems: 'center',
-            width: '100%',
-            paddingTop: moderateScale(50, 0.3),
-            // backgroundColor  : 'red'
-          }}>
-          <View>
-            {Object.keys(image).length > 0 ? (
-              // console.log('fdaf'),
-              <CustomImage source={{uri: image.uri}} style={styles.image} />
-            ) : (
-              <CustomImage
-                style={styles.image}
-                source={profileImage ? {uri : profileImage} :  require('../Assets/Images/user3.jpg')}
-              />
-            )}
-            <TouchableOpacity
-              onPress={() => {
-                setShowModal(true);
-              }}
-              style={styles.edit}>
-              <Icon
-                name="pencil"
-                as={FontAwesome}
-                style={styles.icon2}
-                color={Color.white}
-                size={moderateScale(16, 0.3)}
-              />
-            </TouchableOpacity>
-          </View>
-
-       
-
-          <CardContainer style={styles.container}>
-          <TextInputWithTitle
-              titleText={'Role'}
-              placeholder={'Role'}
-              setText={setUserRole}
-              value={userRole}
-              viewHeight={0.065}
-              viewWidth={0.68}
-              inputWidth={0.55}
-              border={1}
-              borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
-              marginTop={moderateScale(20, 0.3)}
-              color={Color.themeColor}
-              placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(25, 0.3)}
-              elevation
-              disable
+    <ScreenBoiler
+      showHeader={true}
+      showBack={true}
+      statusBarBackgroundColor={Color.black}
+      statusBarContentStyle={'light-content'}>
+      <LinearGradient
+        start={{x: 0.0, y: 0.25}}
+        end={{x: 0.5, y: 1.0}}
+        colors={Color.themeGradient}
+        style={styles.container}>
+      
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: windowHeight * 0.1,
+              // paddingTop : moderateScale(20,0.3),
+              alignItems: 'center',
+            }}
+            style={{
+              width: windowWidth,
+            }}>
+         
+        <View>
+          {Object.keys(imageObject).length > 0 ? (
+            <CustomImage
+            onPress={()=>{setIsVisible(true)}}
+              source={{uri: imageObject?.uri}}
+              style={[styles.image]}
             />
-            <TextInputWithTitle
-              titleText={'First Name'}
-              placeholder={'First Name'}
-              setText={setFirstName}
-              value={firstName}
-              viewHeight={0.065}
-              viewWidth={0.68}
-              inputWidth={0.55}
-              border={1}
-              borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
-              marginTop={moderateScale(20, 0.3)}
-              color={Color.themeColor}
-              placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(25, 0.3)}
-              elevation
-            />
-            <TextInputWithTitle
-              titleText={'Last Name'}
-              placeholder={'Last Name'}
-              setText={setLastName}
-              value={lastName}
-              viewHeight={0.065}
-              viewWidth={0.68}
-              inputWidth={0.55}
-              border={1}
-              borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
-              marginTop={moderateScale(12, 0.3)}
-              color={Color.themeColor}
-              placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(25, 0.3)}
-              elevation
-            />
-            <TextInputWithTitle
-              titleText={'Designation'}
-              placeholder={'Designation'}
-              setText={setDesignation}
-              value={designation}
-              viewHeight={0.065}
-              viewWidth={0.68}
-              inputWidth={0.55}
-              border={1}
-              borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
-              marginTop={moderateScale(12, 0.3)}
-              color={Color.themeColor}
-              placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(25, 0.3)}
-              elevation
-            />
-            <TextInputWithTitle
-              titleText={'Email'}
-              placeholder={'Email'}
-              setText={setEmail}
-              value={email}
-              viewHeight={0.065}
-              viewWidth={0.68}
-              inputWidth={0.55}
-              border={1}
-              borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
-              marginTop={moderateScale(12, 0.3)}
-              color={Color.themeColor}
-              placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(25, 0.3)}
-              elevation
-              disable
-            />
-            <TextInputWithTitle
-              titleText={'Contact'}
-              placeholder={'Contact'}
-              setText={setContact}
-              value={contact}
-              viewHeight={0.065}
-              viewWidth={0.68}
-              inputWidth={0.55}
-              border={1}
-              borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
-              marginTop={moderateScale(12, 0.3)}
-              color={Color.themeColor}
-              placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(25, 0.3)}
-              elevation
-              disable
-            />
-          
-            <CustomButton
-              // textTransform={"capitalize"}
-              text={
-                isLoading ? (
-                  <ActivityIndicator color={'#ffffff'} size={'small'} />
-                ) : (
-                  'Update'
-                )
+          ) : (
+            <CustomImage
+            onPress={()=>{setIsVisible(true)}}
+              style={[styles.image]}
+              source={
+                user?.photo
+                  ? {uri: `${user?.photo}`}
+                  : require('../Assets/Images/user.png')
               }
-              isBold
-              textColor={Color.white}
-              width={windowWidth * 0.75}
-              height={windowHeight * 0.06}
-              marginTop={moderateScale(20, 0.3)}
-              onPress={EditProfile}
-              bgColor={Color.themeColor}
-              borderColor={Color.white}
-              borderWidth={2}
-              borderRadius={moderateScale(30, 0.3)}
-              disabled={isLoading}
+            />
+          )}
 
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={{
+              width: moderateScale(30, 0.3),
+              height: moderateScale(30, 0.3),
+              borderRadius: moderateScale(15, 0.3),
+              backgroundColor: Color.themeColor,
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'absolute',
+              bottom: moderateScale(8, 0.3),
+              right: moderateScale(10, 0.3),
+            }}
+            onPress={() => setShowModal(true)}
+          >
+            <Icon
+              name="pencil"
+              as={FontAwesome}
+              size={moderateScale(18, 0.3)}
+              color={Color.white}
+             
             />
-          </CardContainer>
-          <CardContainer style={styles.container}>
-          <TextInputWithTitle
-              titleText={'Current Password'}
-              placeholder={'Current Password'}
-              setText={setCurrentPassword}
-              value={currentPassword}
-              viewHeight={0.065}
-              viewWidth={0.68}
-              inputWidth={0.55}
-              border={1}
-              borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
-              marginTop={moderateScale(12, 0.3)}
-              color={Color.themeColor}
-              placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(25, 0.3)}
-              elevation
-              secureText
-            />
-            <TextInputWithTitle
-              titleText={'New Password'}
-              placeholder={'New Password'}
-              setText={setPassword}
-              value={password}
-              viewHeight={0.065}
-              viewWidth={0.68}
-              inputWidth={0.55}
-              border={1}
-              borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
-              marginTop={moderateScale(12, 0.3)}
-              color={Color.themeColor}
-              placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(25, 0.3)}
-              elevation
-              secureText
-            />
-            <TextInputWithTitle
-              titleText={'Confirm Password'}
-              placeholder={'Confirm Password'}
-              setText={setConfirmPassword}
-              value={confirmPassword}
-              viewHeight={0.065}
-              viewWidth={0.68}
-              inputWidth={0.55}
-              border={1}
-              borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
-              marginTop={moderateScale(12, 0.3)}
-              color={Color.themeColor}
-              placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(25, 0.3)}
-              elevation
-              secureText
-            />
-               <CustomButton
-              // textTransform={"capitalize"}
-              text={
-                isLoading ? (
-                  <ActivityIndicator color={'#ffffff'} size={'small'} />
-                ) : (
-                  'Change'
-                )
-              }
-              isBold
-              textColor={Color.white}
-              width={windowWidth * 0.75}
-              height={windowHeight * 0.06}
-              marginTop={moderateScale(20, 0.3)}
-              onPress={passwordReset}
-              bgColor={Color.themeColor}
-              borderColor={Color.white}
-              borderWidth={2}
-              borderRadius={moderateScale(30, 0.3)}
-              disabled={isLoading}
-            />
-          </CardContainer>
-        </KeyboardAwareScrollView>
-        <ImagePickerModal
-          show={showModal}
-          setShow={setShowModal}
-          setFileObject={setImage}
+          </TouchableOpacity>
+        </View>
+        <TextInputWithTitle
+          iconName={'user'}
+          iconType={FontAwesome}
+          titleText={'First Name'}
+          secureText={false}
+          placeholder={'First Name'}
+          setText={setFirstName}
+          value={firstName}
+          viewHeight={0.06}
+          viewWidth={0.75}
+          inputWidth={0.74}
+          // border={1}
+          // borderColor={'#1B5CFB45'}
+          backgroundColor={'#FFFFFF'}
+          marginTop={moderateScale(12, 0.3)}
+          color={Color.themeColor}
+          placeholderColor={Color.themeLightGray}
+          borderRadius={moderateScale(1, 0.3)}
         />
-        <Bottomtab/>
-      </ImageBackground>
-    </>
+        <TextInputWithTitle
+          iconName={'user'}
+          iconType={FontAwesome}
+          titleText={'Last Name'}
+          secureText={false}
+          placeholder={'Last Name'}
+          setText={setLastName}
+          value={lastName}
+          viewHeight={0.06}
+          viewWidth={0.75}
+          inputWidth={0.74}
+          // border={1}
+          // borderColor={'#1B5CFB45'}
+          backgroundColor={'#FFFFFF'}
+          marginTop={moderateScale(12, 0.3)}
+          color={Color.themeColor}
+          placeholderColor={Color.themeLightGray}
+          borderRadius={moderateScale(1, 0.3)}
+        />
+        <TextInputWithTitle
+          iconName={'phone'}
+          iconType={FontAwesome}
+          titleText={'Phone'}
+          secureText={false}
+          placeholder={'Phone'}
+          setText={setPhone}
+          value={phone}
+         viewHeight={0.06}
+          viewWidth={0.75}
+          inputWidth={0.74}
+          // border={1}
+          // borderColor={'#1B5CFB45'}
+          backgroundColor={'#FFFFFF'}
+          marginTop={moderateScale(12, 0.3)}
+          color={Color.themeColor}
+          placeholderColor={Color.themeLightGray}
+          borderRadius={moderateScale(1, 0.3)}
+          disable={true}
+        />
+        <TextInputWithTitle
+          iconName={'envelope'}
+          iconType={FontAwesome}
+          // disable
+          titleText={'Email'}
+          secureText={false}
+          placeholder={'Email'}
+          setText={setEmail}
+          value={email}
+         viewHeight={0.06}
+          viewWidth={0.75}
+          inputWidth={0.74}
+          // border={1}
+          // borderColor={'#1B5CFB45'}
+          backgroundColor={'#FFFFFF'}
+          marginTop={moderateScale(12, 0.3)}
+          color={Color.themeColor}
+          placeholderColor={Color.themeLightGray}
+          borderRadius={moderateScale(1, 0.3)}
+          disable
+        />
+        <TextInputWithTitle
+          iconName={'globe'}
+          iconType={FontAwesome}
+          titleText={'Country'}
+          secureText={false}
+          placeholder={'Country'}
+          setText={setCountry}
+          value={country}
+          viewHeight={0.06}
+          viewWidth={0.75}
+          inputWidth={0.74}
+          // border={1}
+          // borderColor={'#1B5CFB45'}
+          backgroundColor={'#FFFFFF'}
+          marginTop={moderateScale(12, 0.3)}
+          color={Color.themeColor}
+          placeholderColor={Color.themeLightGray}
+          borderRadius={moderateScale(1, 0.3)}
+        
+        />
+       
+       <CustomButton
+            bgColor={Color.themeColor}
+            borderColor={'white'}
+            borderWidth={1}
+            textColor={Color.black}
+            onPress={() => {console.log('Will Update profile');}}
+            width={windowWidth * 0.75}
+            height={windowHeight * 0.06}
+            text={'Update'}
+            fontSize={moderateScale(14, 0.3)}
+            textTransform={'uppercase'}
+            isGradient={true}
+            isBold
+            marginTop={moderateScale(30, 0.3)}
+            
+          />
+      </ScrollView>
+      <ImagePickerModal
+        show={showModal}
+        setShow={setShowModal}
+        setFileObject={setImageObject}
+        crop={true}
+      />
+      <ImageView
+  images={imageArray}
+  imageIndex={0}
+  visible={isVisible}
+  onRequestClose={() => setIsVisible(false)}
+/>
+        </LinearGradient>
+    </ScreenBoiler>
   );
 };
 
 const styles = ScaledSheet.create({
-  container: {
-    // width: windowWidth * 0.8,
-    // height: windowHeight * 0.5,
-    marginTop: moderateScale(10, 0.3),
-    // maxHeight: windowHeight * 0.7,
-    overflow: 'hidden',
-    paddingVertical : moderateScale(20,0.3)
-    // backgroundColor : 'themeColor'
-  },
-  userTypeContainer: {
-    width: windowWidth * 0.7,
-    // backgroundColor : Color.red,
-    padding: moderateScale(10, 0.3),
-    marginTop: moderateScale(10, 0.3),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  innerContainer: {
-    width: '48%',
-    // backgroundColor : 'themeColor',
-    // paddingVertical : moderateScale(5,0.3),
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  edit: {
-    backgroundColor: Color.themePink,
-    width: moderateScale(25, 0.3),
-    height: moderateScale(25, 0.3),
-    position: 'absolute',
-    bottom: moderateScale(5, 0.3),
-    right: moderateScale(1, 0.3),
-    borderRadius: moderateScale(12.5, 0.3),
-    elevation: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+ 
+ 
+ 
   image: {
-    width: moderateScale(100, 0.3),
-    height: moderateScale(100, 0.3),
-    borderRadius: moderateScale(49, 0.3),
-    marginLeft: moderateScale(2.5, 0.3),
-    marginTop: moderateScale(2.5, 0.3),
+    height: windowWidth * 0.35,
+    width: windowWidth * 0.35,
+    borderRadius: moderateScale((windowWidth * 0.35) / 2, 0.3),
+    right: moderateScale(5, 0.3),
+    marginTop: moderateScale(20, 0.3),
   },
-  container2: {
-    flexDirection: 'row',
+  container: {
+    paddingTop: windowHeight * 0.03,
+    // justifyContent: "center",
+    height: windowHeight * 0.9,
+    width: windowWidth,
     alignItems: 'center',
-    justifyContent: 'center',
-    width: windowWidth * 0.9,
-    // marginTop: moderateScale(10,0.3),
-  },
-  txt4: {
-    color: Color.themePink,
-    fontSize: moderateScale(14, 0.6),
-    borderBottomWidth: 1,
-    borderColor: Color.themeColor,
-    marginBottom: moderateScale(5, 0.3),
-  },
-  txt5: {
-    color: Color.themeLightGray,
-
-    fontSize: moderateScale(12, 0.6),
-  },
-  circle: {
-    height: moderateScale(13, 0.3),
-    width: moderateScale(13, 0.3),
-    borderRadius: moderateScale(6.5, 0.3),
-    borderWidth: 1,
-    backgroundColor: Color.white,
-    borderColor: Color.themePink,
-    marginLeft: moderateScale(15, 0.3),
-  },
-  txt2: {
-    fontSize: moderateScale(12, 0.3),
-    color: Color.themeColor,
-    fontWeight: 'bold',
-    // backgroundColor : 'red'
+    // backgroundColor : Color.themeColor
   },
 });
 

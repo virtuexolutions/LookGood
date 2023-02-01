@@ -28,6 +28,14 @@ import BarberServicesScreen from './Screens/BarberServicesScreen';
 import ChooseDate from './Screens/ChooseDate';
 import CheckoutScreen from './Screens/CheckoutScreen';
 import PaymentScreen from './Screens/PaymentScreen';
+import UpComingScreen from './Screens/UpComingScreen';
+import OrderDetails from './Screens/OrderDetails';
+import MyBookings from './Screens/MyBookings';
+import MyAccounts from './Screens/MyAccounts';
+import ChangePassword from './Screens/ChangePassword';
+import TermsAndConditions from './Screens/TermsAndConditions';
+import PaymentMethod from './Screens/PaymentMethod';
+import Support from './Screens/Support';
 
 
 const AppNavigator = () => {
@@ -62,13 +70,21 @@ const AppNavigator = () => {
           {/* <RootNav.Screen name="Walkthrough" component={Walkthrough} /> */}
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
           <RootNav.Screen name="Homescreen" component={Homescreen} />
-
+          <RootNav.Screen name="OrderDetails" component={OrderDetails} />
           <RootNav.Screen name="Signup" component={Signup} />
           <RootNav.Screen name="BarberServicesScreen" component={BarberServicesScreen} />
           <RootNav.Screen name="ChooseDate" component={ChooseDate} />
           <RootNav.Screen name="TabNavigation" component={TabNavigation} />
           <RootNav.Screen name="CheckoutScreen" component={CheckoutScreen} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
+          <RootNav.Screen name="MyBookings" component={MyBookings} />
+          <RootNav.Screen name="MyAccounts" component={MyAccounts} />
+          <RootNav.Screen name="ChangePassword" component={ChangePassword} />
+          <RootNav.Screen name="TermsAndConditions" component={TermsAndConditions} />
+          <RootNav.Screen name="PaymentMethod" component={PaymentMethod} />
+          <RootNav.Screen name="Support" component={Support} />
+          <RootNav.Screen name="UpComingScreen" component={UpComingScreen} />
+
 
 
 

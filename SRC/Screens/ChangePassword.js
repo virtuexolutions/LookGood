@@ -2,48 +2,36 @@ import React, {useState} from 'react';
 import {
   View,
   Image,
-  TouchableOpacity,
-  Dimensions,
-  Keyboard,
-  ImageBackground,
   ScrollView,
-  ToastAndroid,
+  TouchableOpacity,
+  Platform,
   Alert,
+  ToastAndroid,
   ActivityIndicator,
 } from 'react-native';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
-
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import Color from '../Assets/Utilities/Color';
-
-import CustomText from '../Components/CustomText';
-
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import ImageView from "react-native-image-viewing";
 import ScreenBoiler from '../Components/ScreenBoiler';
-import CustomButton from '../Components/CustomButton';
-import {setIsVerified, setUserLogin, setUserToken} from '../Store/slices/auth';
-import CustomImage from '../Components/CustomImage';
-import {Platform} from 'react-native';
-import {setUserData} from '../Store/slices/common';
-import {Post} from '../Axios/AxiosInterceptorFunction';
 import {Icon} from 'native-base';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-
-import {useNavigation} from '@react-navigation/native';
-import navigationService from '../navigationService';
-
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+import CustomImage from '../Components/CustomImage';
+import {setUserData} from '../Store/slices/common';
+import {Patch, Post} from '../Axios/AxiosInterceptorFunction';
+import ImagePickerModal from '../Components/ImagePickerModal';
+import {formRegEx, formRegExReplacer, imageUrl} from '../Config';
+import CustomButton from '../Components/CustomButton';
+import LinearGradient from 'react-native-linear-gradient';
+import CustomText from '../Components/CustomText';
 
 const ChangePassword = props => {
   const token = useSelector(state => state.authReducer.token);
   console.log(token);
   const dispatch = useDispatch();
-  const navigation = useNavigation();
 
-  const {fcmToken} = useSelector(state => state.commonReducer);
   const [currentPassword, setCurrentPassword] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -94,187 +82,125 @@ const ChangePassword = props => {
 
   return (
     <ScreenBoiler
-      showHeader={false}
-      showBack={false}
-      showDrawer={false}
-      statusBarBackgroundColor={Color.green}
+      showHeader={true}
+      showBack={true}
+      statusBarBackgroundColor={Color.black}
       statusBarContentStyle={'light-content'}>
-      <Icon
-        name={'arrowleft'}
-        as={AntDesign}
-        color={Color.green}
-        size={moderateScale(25, 0.3)}
-        position={'absolute'}
-        style={{
-          zIndex: 1,
-          top: moderateScale(30, 0.3),
-          left: moderateScale(10, 0.3),
-        }}
-        onPress={() => {
-          navigation.goBack();
-        }}
-      />
-      <View
-        style={{
-          // borderWidth: 4,
-          // borderColor: Color.themeColor1,
-          alignItems: 'center',
-          height: windowHeight,
-          width: windowWidth,
-          paddingVertical: moderateScale(30, 0.3),
-          backgroundColor: Color.white,
-        }}>
-        <CustomImage
-          style={styles.img}
-          resizeMode={'contain'}
-          source={require('../Assets/Images/splash.png')}
-        />
-
-        <CustomText style={styles.Txt}>
-          {'Set your new \n'}
-          <CustomText
-            isBold
+      <LinearGradient
+        start={{x: 0.0, y: 0.25}}
+        end={{x: 0.5, y: 1.0}}
+        colors={Color.themeGradient}
+        style={styles.container}>
+      
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: windowHeight * 0.1,
+              // paddingTop : moderateScale(20,0.3),
+              alignItems: 'center',
+            }}
             style={{
-              // lineHeight: moderateScale(50, 0.3),
-              fontSize: moderateScale(40, 0.3),
-              color: Color.themeBlack,
-              // fontWeight: 'bold',
+              width: windowWidth,
             }}>
-            password
+                <CustomText isBold style={styles.text1}>
+           Change Password
           </CustomText>
-        </CustomText>
         <View style={{marginTop: moderateScale(50, 0.3)}}>
+        <TextInputWithTitle
+          iconName={'lock'}
+          iconType={FontAwesome}
+          titleText={'Current Password'}
+          secureText={false}
+          placeholder={'Current Password'}
+          setText={setCurrentPassword}
+          value={currentPassword}
+          viewHeight={0.06}
+          viewWidth={0.75}
+          inputWidth={0.74}
+          // border={1}
+          // borderColor={'#1B5CFB45'}
+          backgroundColor={'#FFFFFF'}
+          marginTop={moderateScale(12, 0.3)}
+          color={Color.themeColor}
+          placeholderColor={Color.themeLightGray}
+          borderRadius={moderateScale(1, 0.3)}
+        />
+        <TextInputWithTitle
+          iconName={'lock'}
+          iconType={FontAwesome}
+          titleText={'New password'}
+          secureText={false}
+          placeholder={'New password'}
+          setText={setPassword}
+          value={password}
+          viewHeight={0.06}
+          viewWidth={0.75}
+          inputWidth={0.74}
+         backgroundColor={'#FFFFFF'}
+          marginTop={moderateScale(12, 0.3)}
+          color={Color.themeColor}
+          placeholderColor={Color.themeLightGray}
+          borderRadius={moderateScale(1, 0.3)}
+        />
           <TextInputWithTitle
-            iconName="lock"
-            iconType={FontAwesome}
-            titleText={'Current Password'}
-            secureText={true}
-            placeholder={'Current Password'}
-            setText={setCurrentPassword}
-            value={currentPassword}
-            viewHeight={0.06}
-            viewWidth={0.9}
-            inputWidth={0.87}
-            border={1}
-            borderColor={Color.themeLightGray}
-            backgroundColor={'#F5F5F5'}
-            marginTop={moderateScale(30, 0.3)}
-            color={Color.themeLightGray}
-            placeholderColor={Color.themeLightGray}
-          />
-          <TextInputWithTitle
-            iconName="lock"
-            iconType={FontAwesome}
-            titleText={'New Password'}
-            secureText={true}
-            placeholder={'New Password'}
-            setText={setPassword}
-            value={password}
-            viewHeight={0.06}
-            viewWidth={0.9}
-            inputWidth={0.87}
-            border={1}
-            borderColor={Color.themeLightGray}
-            backgroundColor={'#F5F5F5'}
-            marginTop={moderateScale(30, 0.3)}
-            color={Color.themeLightGray}
-            placeholderColor={Color.themeLightGray}
-          />
-          <TextInputWithTitle
-            iconName="lock"
-            iconType={FontAwesome}
-            titleText={'Confirm Password'}
-            secureText={true}
-            placeholder={'Confirm Password'}
-            setText={setConfirmPassword}
-            value={confirmPassword}
-            viewHeight={0.06}
-            viewWidth={0.9}
-            inputWidth={0.87}
-            // marginTop={0.04}
-            border={1}
-            borderColor={Color.themeLightGray}
-            backgroundColor={'#F5F5F5'}
-            marginTop={moderateScale(20, 0.3)}
-            color={Color.themeLightGray}
-            placeholderColor={Color.themeLightGray}
-          />
+          iconName={'lock'}
+          iconType={FontAwesome}
+          titleText={'Confirm New password'}
+          secureText={false}
+          placeholder={'Confirm New password'}
+          setText={setConfirmPassword}
+          value={confirmPassword}
+          viewHeight={0.06}
+          viewWidth={0.75}
+          inputWidth={0.74}
+          // border={1}
+          // borderColor={'#1B5CFB45'}
+          backgroundColor={'#FFFFFF'}
+          marginTop={moderateScale(12, 0.3)}
+          color={Color.themeColor}
+          placeholderColor={Color.themeLightGray}
+          borderRadius={moderateScale(1, 0.3)}
+        />
         </View>
         <CustomButton
-          // textTransform={"capitalize"}
-          text={
-            isLoading ? (
-              <ActivityIndicator color={'#FFFFFF'} size={'small'} />
-            ) : (
-              'Submit'
-            )
-          }
-          isBold
-          textColor={Color.white}
-          width={windowWidth * 0.75}
-          height={windowHeight * 0.06}
-          marginTop={moderateScale(40, 0.3)}
-          onPress={passwordReset}
-          bgColor={Color.green}
-          borderColor={Color.white}
-          borderWidth={2}
-          borderRadius={moderateScale(30, 0.3)}
-        />
-      </View>
-    </ScreenBoiler>
+            bgColor={Color.themeColor}
+            borderColor={'white'}
+            borderWidth={1}
+            textColor={Color.black}
+            onPress={() => {console.log('Will Update profile');}}
+            width={windowWidth * 0.75}
+            height={windowHeight * 0.06}
+            text={'Update'}
+            fontSize={moderateScale(14, 0.3)}
+            textTransform={'uppercase'}
+            isGradient={true}
+            isBold
+            marginTop={moderateScale(30, 0.3)}
+            
+          />
+          </ScrollView>
+          </LinearGradient></ScreenBoiler>
+    
   );
 };
 
 const styles = ScaledSheet.create({
-  sectionContainer: {
-    // flex: 1,
-    height: windowHeight,
-    paddingTop: moderateScale(5, 0.3),
+ 
+  container: {
+    paddingTop: windowHeight * 0.03,
+    // justifyContent: "center",
+    height: windowHeight * 0.9,
+    width: windowWidth,
+    alignItems: 'center',
+    // backgroundColor : Color.themeColor
   },
-  Txt: {
-    marginTop: moderateScale(10, 0.3),
-    color: Color.themeBlack,
-    fontSize: moderateScale(22, 0.6),
+  text1: {
+    textTransform: 'uppercase',
+    color: Color.white,
     textAlign: 'center',
-  },
-  tou: {
-    marginTop: height * 0.03,
-    width: width * 0.9,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  img: {height: windowHeight * 0.16},
-  Tou: {
-    width: width * 0.9,
-    height: height * 0.055,
-    marginTop: height * 0.03,
-  },
-  txt2: {
-    color: 'white',
-    fontSize: moderateScale(16, 0.6),
-  },
-  txt3: {
-    color: '#FFFFFF',
-    fontSize: moderateScale(14, 0.6),
-  },
-  txt4: {
-    color: '#FFFFFF',
-    fontSize: moderateScale(14, 0.6),
-    borderBottomWidth: 1,
-    borderColor: Color.white,
-  },
-  txt5: {
-    color: '#FFFFFF',
-
-    fontSize: moderateScale(14, 0.6),
-  },
-  container2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: width * 0.9,
-    marginTop: height * 0.01,
+    fontSize: moderateScale(20, 0.3),
+    // marginTop : moderateScale(10,0.3),
+    // lineHeight: moderateScale(32, 0.3),
   },
 });
 
