@@ -10,8 +10,6 @@ import {
   requestWritePermission,
 } from './SRC/Utillity/utils';
 import SplashScreen from './SRC/Screens/SplashScreen';
-// import AppNavigator from './SRC/appNavigation';
-// import LoginScreen from './SRC/Screens/LoginScreen';
 import {StripeProvider} from '@stripe/stripe-react-native';
 import LandingPage from './SRC/Screens/LandingPage';
 import LandingPage1 from './SRC/Screens/LandingPage1';
