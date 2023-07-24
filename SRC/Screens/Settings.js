@@ -45,7 +45,7 @@ const Settings = () => {
   },
   {
     name : 'Wallet',
-    onPress : ()=>{navigationService.navigate('Wallet')}
+    onPress : ()=>{navigationService.navigate('WalletScreen')}
   },
   {
     name : 'Log Out',

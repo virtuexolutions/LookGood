@@ -36,6 +36,9 @@ import ChangePassword from './Screens/ChangePassword';
 import TermsAndConditions from './Screens/TermsAndConditions';
 import PaymentMethod from './Screens/PaymentMethod';
 import Support from './Screens/Support';
+import WalletScreen from './Screens/WalletScreen';
+import ImageUpload from './Screens/ImageUpload';
+import ImageScreen from './Screens/ImageScreen';
 
 
 const AppNavigator = () => {
@@ -65,7 +68,7 @@ const AppNavigator = () => {
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
         <RootNav.Navigator
-          initialRouteName={firstScreen}
+          initialRouteName={"ImageScreen"}
           screenOptions={{headerShown: false}}>
           {/* <RootNav.Screen name="Walkthrough" component={Walkthrough} /> */}
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
@@ -84,6 +87,9 @@ const AppNavigator = () => {
           <RootNav.Screen name="PaymentMethod" component={PaymentMethod} />
           <RootNav.Screen name="Support" component={Support} />
           <RootNav.Screen name="UpComingScreen" component={UpComingScreen} />
+          <RootNav.Screen name="WalletScreen" component={WalletScreen} />
+          <RootNav.Screen name="ImageUpload" component={ImageUpload} />
+          <RootNav.Screen name="ImageScreen" component={ImageScreen} />
 
 
 

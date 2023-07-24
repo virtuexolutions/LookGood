@@ -11,6 +11,7 @@ export default Color = {
   themeGreen: '#72A131',
   // themeRed: '#FFCCCB',
   red : 'red',
+  lightGray:'#EEEEEE',
 
   purple: '#083955',
   btnColor : [ '#C49948','#EBDBBD','#E3C488'],
