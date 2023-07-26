@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -8,10 +8,24 @@ import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import Color from '../Assets/Utilities/Color';
 import {Icon} from 'native-base';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../Components/CustomButton';
+import {background} from 'native-base/lib/typescript/theme/styled-system';
+import navigationService from '../navigationService';
+import ImagePickerModal from '../Components/ImagePickerModal';
 
-const ImageUpload = () => {
+const ImageUpload = props => {
+  const selectedServices = props?.route.params?.data;
+  const [showModal, setShowModal] = useState(false);
+  const [image, setImage] = useState({});
+
+  useEffect(() => {
+    
+    if(Object.keys(image).length > 0){
+      navigationService.navigate('ImageScreen', {data: selectedServices , image : image});
+    }
+  }, [image])
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -34,16 +48,34 @@ const ImageUpload = () => {
           amet sodales. Vivamus efficitur.
         </CustomText>
 
-        <Icon
-          name="scan-helper"
-          as={MaterialCommunityIcons}
+        {/* <Icon
+          name="scan-outline"
+          as={Ionicons}
           size={moderateScale(250, 0.3)}
           color={'#DADADA'}
           style={{
             marginTop: moderateScale(70, 0.3),
             marginBottom: moderateScale(70, 0.3),
           }}
-        />
+        /> */}
+        <View
+          style={{
+            marginVertical: moderateScale(20, 0.3),
+            width: windowWidth,
+            height: windowHeight * 0.45,
+           
+          }}>
+          <CustomImage
+            source={require('../Assets/Images/scan.png')}
+            resizeMode={'stretch'}
+            style={{
+              width: '100%',
+              height: '100%',
+              tintColor: 'white',
+             
+            }}
+          />
+        </View>
 
         <CustomButton
           bgColor={Color.themeColor}
@@ -52,11 +84,14 @@ const ImageUpload = () => {
           textColor={Color.black}
           width={windowWidth * 0.85}
           height={windowHeight * 0.06}
-          text={'Upload Image'}
+          text={'Choose Image'}
           fontSize={moderateScale(14, 0.3)}
           isGradient={true}
           isBold
           marginTop={moderateScale(20, 0.3)}
+          onPress={() => {
+          setShowModal(true)
+          }}
         />
 
         <View
@@ -71,6 +106,11 @@ const ImageUpload = () => {
           />
         </View>
       </LinearGradient>
+      <ImagePickerModal
+          show={showModal}
+          setShow={setShowModal}
+          setFileObject={setImage}
+        />
     </ScreenBoiler>
   );
 };

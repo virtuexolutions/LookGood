@@ -141,7 +141,7 @@ const BarberServicesScreen = props => {
         <CustomTextWithMask
           data={'All Services'}
           isBold
-          size={moderateScale(40, 0.3)}
+          size={moderateScale(30, 0.3)}
           textStyle={{
             fontSize: moderateScale(18, 0.3),
           }}
@@ -154,10 +154,11 @@ const BarberServicesScreen = props => {
           data={serviceArray}
           style={{
             width: windowWidth,
-            marginTop: moderateScale(30, 0.3),
           }}
           contentContainerStyle={{
-            paddingBottom: moderateScale(20, 0.3),
+            paddingBottom: moderateScale(40, 0.3),
+            paddingTop: moderateScale(20, 0.3),
+
           }}
           renderItem={({item, index}) => {
           
@@ -230,33 +231,51 @@ const BarberServicesScreen = props => {
             );
           }}
           ListFooterComponent={()=>{
-            return(
+            return(<>
               <CustomButton
               // bgColor={Color.themePink}
               borderColor={'white'}
               borderWidth={1}
               textColor={Color.black}
               onPress={() => {
-               if(selectedService.length > 0){
-                navigationService.navigate('ChooseDate',{data : selectedService})
-               }
-               else{
-                Platform.OS == 'android' ? 
-                ToastAndroid.show('Choose any service first to proceed',ToastAndroid.SHORT)
-                :
-                alert('Choose any service first to proceed')
-               }
+                 navigationService.navigate('ImageUpload',{data : selectedService})
+            
               }}
               width={windowWidth * 0.75}
               height={windowHeight * 0.06}
-              text={'Book Now'}
+              text={'customize your trimming'}
               fontSize={moderateScale(14, 0.3)}
-              // borderRadius={moderateScale(30, 0.3)}
               textTransform={'uppercase'}
               isGradient={true}
               isBold
               marginTop={moderateScale(30, 0.3)}
             />
+              <CustomButton
+              // bgColor={Color.themePink}
+              borderColor={'white'}
+              borderWidth={1}
+              textColor={Color.black}
+              onPress={() => {
+                if(selectedService.length > 0){
+                navigationService.navigate('ChooseDate',{data : selectedService})
+              }
+               else{
+                Platform.OS == 'android' ? 
+                ToastAndroid.show('Choose any service first to proceed',ToastAndroid.SHORT)
+                :
+                alert('Choose any service first to proceed')
+              }
+            }}
+            width={windowWidth * 0.75}
+            height={windowHeight * 0.06}
+            text={'Book Now'}
+            fontSize={moderateScale(14, 0.3)}
+            textTransform={'uppercase'}
+            isGradient={true}
+            isBold
+            marginTop={moderateScale(10, 0.3)}
+            />
+            </>
             )
           }}
         />
