@@ -77,7 +77,7 @@ const Settings = () => {
             // style={styles.bannerView}
             data={cardArray}
             contentContainerStyle={{
-              paddingBottom: windowHeight * 0.1,
+              paddingBottom: windowHeight * 0.15,
               alignItems : 'center'
             }}
             renderItem={({item, index}) => {

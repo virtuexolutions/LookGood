@@ -173,6 +173,6 @@ const styles = ScaledSheet.create({
     color: Color.white,
     fontSize: moderateScale(32, 0.3),
     // marginTop : moderateScale(10,0.3),
-    lineHeight: moderateScale(32, 0.3),
+    // lineHeight: moderateScale(32, 0.3),
   },
 });

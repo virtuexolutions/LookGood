@@ -12,11 +12,12 @@ const CustomText = (props) => {
           textTransform: "capitalize",
           // textTransform: "capitalize",
           color: Color.black,
+          fontFamily: 'Oswald-Regular' ,
+
         },
         style,
-        { fontFamily: 'Oswald' },
         isBold && {
-          fontFamily: "Oswald-Bold",
+          fontFamily: 'Oswald-Bold',
           fontWeight: "bold",
         },
       ]}

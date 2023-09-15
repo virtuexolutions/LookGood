@@ -112,7 +112,7 @@ const MyAccounts = props => {
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-              paddingBottom: windowHeight * 0.1,
+              paddingBottom: windowHeight * 0.15,
               // paddingTop : moderateScale(20,0.3),
               alignItems: 'center',
             }}
