@@ -21,6 +21,9 @@ import navigationService from '../navigationService';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
 const ChooseDate = props => {
   const selectedServices = props?.route.params?.data;
+  console.log("🚀 ~ file: ChooseDate.js:24 ~ ChooseDate ~ selectedServices:", selectedServices)
+  const image = props?.route?.params?.image
+  console.log("🚀 ~ file: ChooseDate.js:25 ~ ChooseDate ~ image:", image)
   const [date, setDate] = useState('');
   const [selectedTiming, setSelectedTiming] = useState('9:00');
 

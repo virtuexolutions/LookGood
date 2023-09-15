@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ImageBackground, View, ScrollView, FlatList, Platform, ToastAndroid} from 'react-native';
+import {ImageBackground, View, ScrollView, FlatList, Platform, ToastAndroid, Alert} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
@@ -238,7 +238,12 @@ const BarberServicesScreen = props => {
               borderWidth={1}
               textColor={Color.black}
               onPress={() => {
-                 navigationService.navigate('ImageUpload',{data : selectedService})
+                if(selectedService.length>0){
+
+                  navigationService.navigate('ImageUpload',{data : selectedService})
+                }else{
+                  Platform.OS == 'android' ? ToastAndroid.show('Please select any service', ToastAndroid.SHORT) : alert('Please select any service')
+                }
             
               }}
               width={windowWidth * 0.75}
@@ -263,7 +268,7 @@ const BarberServicesScreen = props => {
                 Platform.OS == 'android' ? 
                 ToastAndroid.show('Choose any service first to proceed',ToastAndroid.SHORT)
                 :
-                alert('Choose any service first to proceed')
+                Alert.alert('Choose any service first to proceed')
               }
             }}
             width={windowWidth * 0.75}
