@@ -1,4 +1,5 @@
 import {
+  Alert,
   ImageBackground,
   StyleSheet,
   Text,
@@ -21,6 +22,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Draggable from 'react-native-draggable';
 import Slider from '@react-native-community/slider';
 import ViewShot from 'react-native-view-shot';
+import navigationService from '../navigationService';
 
 const ImageScreen = props => {
   const data = props?.route?.params?.data;
@@ -28,50 +30,109 @@ const ImageScreen = props => {
   console.log('🚀 ~ file: ImageScreen.js:28 ~ ImageScreen ~ Image:', Image);
   const ref = useRef();
 
-  const [size, setSize] = useState(130);
+  const [size, setSize] = useState(100);
+  console.log('🚀 ~ file: ImageScreen.js:32 ~ ImageScreen ~ size:', size);
   const [rotation, setRotation] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
-  const [image, setImage] = useState(Image);
+  const [selectedCat, setSelectedCat] = useState('');
+  const [image, setImage] = useState([
+    {category: selectedCat, uri: Image?.uri},
+  ]);
+  console.log('🚀 ~ file: ImageScreen.js:37 ~ ImageScreen ~ image:', image);
   const [selectedImage, setSelectedImage] = useState({});
   const [isVisible, setIsVisible] = useState(false);
+  const [xPosition, setXPosition] = useState(100);
   console.log(
-    '🚀 ~ file: ImageScreen.js:35 ~ ImageScreen ~ isVisible:',
-    isVisible,
+    '🚀 ~ file: ImageScreen.js:39 ~ ImageScreen ~ xPosition:',
+    xPosition,
   );
+  const [YPosition, setYPosition] = useState(200);
+  console.log(
+    '🚀 ~ file: ImageScreen.js:41 ~ ImageScreen ~ YPosition:',
+    YPosition,
+  );
+  console.log(
+    xPosition < 85,
+    xPosition > 300,
+    YPosition < 200,
+    YPosition > 400,
+  );
+
+  // console.log(
+  //   '🚀 ~ file: ImageScreen.js:35 ~ ImageScreen ~ isVisible:',
+  //   isVisible,
+  // );
   const [selectedStyle, setSelectedStyle] = useState({});
-  console.log(
-    '🚀 ~ file: ImageScreen.js:25 ~ ImageScreen ~ selectedStyle:',
-    selectedStyle,
-  );
+  // console.log(
+  //   '🚀 ~ file: ImageScreen.js:25 ~ ImageScreen ~ selectedStyle:',
+  //   selectedStyle,
+  // );
   const [array, setArray] = useState([]);
   console.log('🚀 ~ file: ImageScreen.js:24 ~ ImageScreen ~ array:', array);
-  const [selectedCat, setSelectedCat] = useState('');
 
   const HairStyle = [
     {
       id: 1,
       image: require('../Assets/Images/MenHair/1.png'),
+      category: 'Hair',
     },
     {
       id: 2,
       image: require('../Assets/Images/MenHair/2.png'),
+      category: 'Hair',
     },
     {
       id: 3,
       image: require('../Assets/Images/MenHair/3.png'),
+      category: 'Hair',
     },
     {
       id: 4,
+      category: 'Hair',
       image: require('../Assets/Images/MenHair/4.png'),
     },
     {
       id: 5,
       image: require('../Assets/Images/MenHair/5.png'),
+      category: 'Hair',
     },
     {
       id: 6,
       image: require('../Assets/Images/MenHair/6.png'),
+      category: 'Hair',
+    },
+  ];
+  const BeardStyle = [
+    {
+      id: 1,
+      image: require('../Assets/Images/MenHair/1.png'),
+      category: 'Beard',
+    },
+    {
+      id: 2,
+      image: require('../Assets/Images/MenHair/2.png'),
+      category: 'Beard',
+    },
+    {
+      id: 3,
+      image: require('../Assets/Images/MenHair/3.png'),
+      category: 'Beard',
+    },
+    {
+      id: 4,
+      category: 'Beard',
+      image: require('../Assets/Images/MenHair/4.png'),
+    },
+    {
+      id: 5,
+      image: require('../Assets/Images/MenHair/5.png'),
+      category: 'Beard',
+    },
+    {
+      id: 6,
+      image: require('../Assets/Images/MenHair/6.png'),
+      category: 'Beard',
     },
   ];
 
@@ -79,37 +140,67 @@ const ImageScreen = props => {
     {
       id: 1,
       image: require('../Assets/Images/Mustaches/1.png'),
+      category: 'Mustaches',
     },
     {
       id: 2,
       image: require('../Assets/Images/Mustaches/2.png'),
+      category: 'Mustaches',
     },
     {
       id: 3,
       image: require('../Assets/Images/Mustaches/3.png'),
+      category: 'Mustaches',
     },
     {
       id: 4,
       image: require('../Assets/Images/Mustaches/4.png'),
+      category: 'Mustaches',
     },
     {
       id: 5,
       image: require('../Assets/Images/Mustaches/5.png'),
+      category: 'Mustaches',
     },
     {
       id: 6,
       image: require('../Assets/Images/Mustaches/6.png'),
+      category: 'Mustaches',
     },
   ];
+
+  const handlePrompt = item => {
+    Alert.alert('Confirmation', 'Are you sure you want to discard changes?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Confirm',
+        onPress: () => {
+          const imageClone = image.slice(0, 1);
+          console.log(
+            '🚀 ~ file: ImageScreen.js:127 ~ handlePrompt ~ imageClone:',
+            imageClone,
+          );
+          setImage(imageClone);
+          // setSelectedCat(category)
+          setSelectedStyle(item);
+          // setArray(data)
+          return true;
+        },
+      },
+    ]);
+  };
 
   const captureShot = () => {
     // on mount
     ref.current.capture().then(uri => {
       console.log('do something with ', uri);
-      setImage({uri});
+      setImage(prev => [...prev, {category: selectedCat, uri: uri}]);
       setIsVisible(!isVisible);
       setSelectedStyle({});
-      setSelectedCat('')
+      setSelectedCat('');
     });
   };
 
@@ -124,7 +215,13 @@ const ImageScreen = props => {
       showHeader={true}
       showBack={true}
       statusBarBackgroundColor={Color.black}
-      statusBarContentStyle={'light-content'}>
+      statusBarContentStyle={'light-content'}
+      showUndo={image?.length > 1 && Object.keys(selectedStyle) <= 0}
+      onUndoPress={() => {
+        const newImages = [...image];
+        newImages.pop();
+        setImage([...newImages]);
+      }}>
       <LinearGradient
         start={{x: 0.0, y: 0.25}}
         end={{x: 0.5, y: 1.0}}
@@ -148,8 +245,8 @@ const ImageScreen = props => {
             options={{fileName: 'hello', format: 'jpg', quality: 0.9}}>
             <ImageBackground
               source={
-                Object.keys(image).length > 0
-                  ? {uri: image?.uri}
+                image.length > 0
+                  ? {uri: image[image.length - 1]?.uri}
                   : require('../Assets/Images/barber.png')
               }
               resizeMode={'cover'}
@@ -159,21 +256,27 @@ const ImageScreen = props => {
                   <Draggable
                     x={100}
                     y={100}
-                    // imageSource={selectedStyle.image}
-                    // renderSize={size + 10}
-                    // style={{
-                    //   width: size + 10,
-                    //   height: size,
-                    //   transform: [{rotate: `${rotation}deg`}],
-                    // }}
-                  >
+                    minX={0}
+                    maxX={300}
+                    minY={-70}
+                    maxY={300}
+                    onDrag={(e, gestureState) => {
+                      // setXPosition(gestureState?.moveX)
+                      // setYPosition(gestureState?.moveY)
+                      console.log(
+                        'data ======= >',
+                        e?.nativeEvent?.pageX,
+                        e?.nativeEvent?.pageY,
+                      );
+                    }}>
                     <CustomImage
                       source={selectedStyle?.image}
                       style={{
-                        width: size + 10,
+                        width: size + 40,
                         height: size,
                         transform: [{rotate: `${rotation}deg`}],
                       }}
+                      resizeMode={'stretch'}
                     />
                   </Draggable>
                 )}
@@ -199,6 +302,7 @@ const ImageScreen = props => {
               isBold
               onPress={() => {
                 setSelectedCat('Hair');
+
                 setArray(HairStyle);
               }}
               marginTop={moderateScale(30, 0.3)}
@@ -217,7 +321,7 @@ const ImageScreen = props => {
               isBold
               onPress={() => {
                 setSelectedCat('Beard');
-                setArray(HairStyle);
+                setArray(BeardStyle);
               }}
               marginTop={moderateScale(10, 0.3)}
             />
@@ -239,6 +343,24 @@ const ImageScreen = props => {
               }}
               marginTop={moderateScale(10, 0.3)}
             />
+            {image.length > 1 && (
+              <CustomButton
+                bgColor={Color.themeColor}
+                borderColor={'white'}
+                borderWidth={1}
+                textColor={Color.black}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                text={'Proceed'}
+                fontSize={moderateScale(14, 0.3)}
+                isGradient={true}
+                isBold
+                onPress={() => {
+                  navigationService.navigate('ChooseDate',{data : data, image: image.slice(image.length-1)})
+                }}
+                marginTop={moderateScale(10, 0.3)}
+              />
+            )}
           </>
         ) : (
           <View
@@ -253,8 +375,11 @@ const ImageScreen = props => {
             <View
               style={{
                 width: windowWidth,
+                flexDirection: 'row',
                 marginTop: moderateScale(5, 0.3),
                 marginLeft: moderateScale(-10, 0.3),
+                justifyContent: 'center',
+                alignItems: 'center',
                 // zIndex:2,
               }}>
               <Icon
@@ -262,6 +387,7 @@ const ImageScreen = props => {
                 as={Entypo}
                 color={Color.themeColor}
                 size={10}
+                style={{left: 10, position: 'absolute'}}
                 onPress={() => {
                   if (isVisible) {
                     setIsVisible(!isVisible);
@@ -271,13 +397,27 @@ const ImageScreen = props => {
                   }
                 }}
               />
+              <CustomText
+                style={{color: Color.white, fontSize: moderateScale(15, 0.6)}}
+                isBold>
+                {selectedCat}
+              </CustomText>
             </View>
             {!isVisible ? (
               array?.map((item, index) => {
+                console.log('category', item?.category);
                 return (
                   <TouchableOpacity
                     onPress={() => {
-                      setSelectedStyle(item);
+                      if (
+                        image.find(i => {
+                          return i?.category == item?.category;
+                        })
+                      ) {
+                        handlePrompt(item);
+                      } else {
+                        setSelectedStyle(item);
+                      }
                     }}
                     style={{
                       width: windowWidth * 0.3,
@@ -292,7 +432,15 @@ const ImageScreen = props => {
                     }}>
                     <CustomImage
                       onPress={() => {
-                        setSelectedStyle(item);
+                        if (
+                          image.find(i => {
+                            return i?.category == item?.category;
+                          })
+                        ) {
+                          handlePrompt(item);
+                        } else {
+                          setSelectedStyle(item);
+                        }
                       }}
                       source={item?.image}
                       style={{

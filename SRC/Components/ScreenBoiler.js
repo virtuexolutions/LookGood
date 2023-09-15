@@ -27,7 +27,9 @@ const ScreenBoiler = props => {
     headerType,
     showList,
     Notify,
-    showUser
+    showUser,
+    showUndo,
+    onUndoPress
   } = props;
 
   return (
@@ -54,6 +56,8 @@ const ScreenBoiler = props => {
           showList={showList}
           Notify={Notify}
           showUser={showUser}
+          showUndo={showUndo}
+          onUndoPress={onUndoPress}
         />
       )}
       {children}
