@@ -27,10 +27,12 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import {useEffect} from 'react';
-import CardContainer from '../Components/CardContainer';
+// import CardContainer from '../Components/CardContainer';
 import CustomStatusBar from '../Components/CustomStatusBar';
-import CustomHeader from '../Components/CustomHeader';
+// import CustomHeader from '../Components/CustomHeader';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import ScreenBoiler from '../Components/ScreenBoiler';
+import LinearGradient from 'react-native-linear-gradient';
 
 
 const VerifyNumber = props => {
@@ -65,15 +67,17 @@ const VerifyNumber = props => {
   };
 
   const sendOTP = async () => {
-    const url = 'password/email';
+    const url = 'password/code/check';
     setIsLoading(true);
     const response = await Post(
       url,
-      {email: phoneNumber},
+      {code: code},
       apiHeader(),
     );
     setIsLoading(false);
     if (response != undefined) {
+      console.log("🚀 ~ file: VerifyNumber.js:79 ~ sendOTP ~ response:", response?.data)
+      
       Platform.OS == 'android'
         ? ToastAndroid.show(
             `OTP sent to ${phoneNumber}`,
@@ -109,38 +113,25 @@ const VerifyNumber = props => {
 
   return (
     <>
-      <CustomStatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-      <ImageBackground
-        style={{
-          flex: 1,
-          width: windowWidth,
-          height: windowHeight,
-        }}
-        resizeMode={'stretch'}
-        source={require('../Assets/Images/imageBackground.png')}>
-        <CustomHeader
-          style={{
-            marginTop: moderateScale(20, 0.3),
-          }}
-          text={'Enter OTP'}
-          leftIcon
-        />
+       <ScreenBoiler
+        // showBack={true}
+        showHeader={true}
+        statusBarBackgroundColor={Color.black}
+        statusBarContentStyle={'light-content'}>
+        <LinearGradient
+          start={{x: 0.0, y: 0.25}}
+          end={{x: 0.5, y: 1.0}}
+          colors={Color.themeGradient}
+          style={styles.container}>
+    
 
-        <KeyboardAwareScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: moderateScale(20, 0.3),
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            height: windowHeight * 0.8,
-          }}>
-          <CardContainer style={{paddingVertical: moderateScale(30, 0.3)}}>
+     
+   
             <CustomText style={styles.txt2}>Verify Account</CustomText>
             <CustomText style={styles.txt3}>
               Enter four digit code we have sent to{' '}
               {
-                <CustomText style={{color: Color.black}}>
+                <CustomText style={{color: Color.white}}>
                   {phoneNumber}
                 </CustomText>
               }
@@ -183,7 +174,7 @@ const VerifyNumber = props => {
                 </TouchableOpacity>
               }
             </CustomText>
-          </CardContainer>
+          {/* </CardContainer> */}
           <CustomButton
             // textTransform={"capitalize"}
             text={
@@ -200,12 +191,13 @@ const VerifyNumber = props => {
             marginTop={moderateScale(20, 0.3)}
             onPress={VerifyOTP}
             bgColor={Color.themeColor}
-            borderColor={Color.white}
-            borderWidth={2}
+            // borderColor={Color.white}
+            // borderWidth={2}
             borderRadius={moderateScale(30, 0.3)}
           />
-        </KeyboardAwareScrollView>
-      </ImageBackground>
+          </LinearGradient>
+          </ScreenBoiler>
+ 
     </>
   );
 };
@@ -225,7 +217,7 @@ const styles = ScaledSheet.create({
     // lineHeight: moderateScale(20, 0.3),
   },
   txt4: {
-    color: Color.themePink,
+    color: Color.white,
     fontSize: moderateScale(14, 0.6),
     borderBottomWidth: 1,
     borderColor: Color.white,
@@ -265,6 +257,56 @@ const styles = ScaledSheet.create({
     color: Color.themeColor,
     fontSize: moderateScale(36, 0.3),
     textAlign: 'center',
+  },
+ 
+ 
+  container: {
+    paddingTop: windowHeight * 0.2,
+    // justifyContent: "center",
+    height: windowHeight * 0.9,
+    width: windowWidth,
+    alignItems: 'center',
+    // backgroundColor : Color.green
+  },
+  bottomImage: {
+    width: windowWidth * 0.4,
+    alignSelf: 'center',
+    // backgroundColor : 'red'
+  },
+  textContainer: {
+    flexDirection: 'row',
+
+    width: windowWidth * 0.7,
+    height: windowWidth * 0.7,
+    borderRadius: moderateScale((windowWidth * 0.7) / 2, 0.3),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Color.white,
+  },
+  LogoText: {
+    fontSize: moderateScale(35, 0.3),
+    fontWeight: 'bold',
+  },
+  text: {
+    textTransform: 'uppercase',
+    color: Color.white,
+    fontSize: moderateScale(16, 0.3),
+    // marginTop : moderateScale(10,0.3),
+    // fontStyle : 'normal'
+  },
+  text1: {
+    textTransform: 'uppercase',
+    color: Color.white,
+    fontSize: moderateScale(32, 0.3),
+    // marginTop : moderateScale(10,0.3),
+    // lineHeight: moderateScale(32, 0.3),
+  },
+
+  phoneView: {
+    width: '80%',
+    paddingVertical: moderateScale(5, 0.3),
+    flexDirection: 'row',
+    marginTop: moderateScale(20, 0.3),
   },
 });
 

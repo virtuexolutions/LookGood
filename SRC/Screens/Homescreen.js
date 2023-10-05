@@ -16,6 +16,9 @@ import OrderCard from '../Components/OrderCard';
 
 const Homescreen = () => {
   const user = useSelector((state)=>state.commonReducer.userData);
+  const token = useSelector(state=> state.authReducer.token)
+  console.log("🚀 ~ file: Homescreen.js:20 ~ Homescreen ~ token:", token)
+  console.log("🚀 ~ file: Homescreen.js:19 ~ Homescreen ~ user:", user)
   const [index, setIndex] = useState(0);
   console.log('🚀 ~ file: Homescreen.js:18 ~ Homescreen ~ index', index);
   

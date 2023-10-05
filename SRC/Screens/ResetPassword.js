@@ -17,14 +17,15 @@ import {setIsVerified, setUserLogin, setUserToken} from '../Store/slices/auth';
 import {Platform} from 'react-native';
 import {setUserData} from '../Store/slices/common';
 import {Post} from '../Axios/AxiosInterceptorFunction';
-import CardContainer from '../Components/CardContainer';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+// import CardContainer from '../Components/CardContainer';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import CustomStatusBar from '../Components/CustomStatusBar';
-import CustomHeader from '../Components/CustomHeader';
+// import CustomHeader from '../Components/CustomHeader';
 import navigationService from '../navigationService';
-
-
-
+import ScreenBoiler from '../Components/ScreenBoiler';
+import LinearGradient from 'react-native-linear-gradient';
+import CustomImage from '../Components/CustomImage';
+import { View } from 'react-native';
 
 const ResetPassword = props => {
   const phoneNumber = props?.route?.params?.phoneNumber;
@@ -50,7 +51,6 @@ const ResetPassword = props => {
       }
     }
 
-
     // Password Length
     if (password.length < 8) {
       return Platform.OS == 'android'
@@ -72,8 +72,8 @@ const ResetPassword = props => {
     setIsLoading(false);
     if (response !== undefined) {
       Platform.OS == 'android'
-      ? ToastAndroid.show(`Password Reset successfully`, ToastAndroid.SHORT)
-      : alert(`Password Reset successfully`);
+        ? ToastAndroid.show(`Password Reset successfully`, ToastAndroid.SHORT)
+        : alert(`Password Reset successfully`);
       navigationService.navigate('LoginScreen');
     }
   };
@@ -81,43 +81,24 @@ const ResetPassword = props => {
 
   return (
     <>
-    <CustomStatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-    <ImageBackground
-      style={{
-        flex: 1,
-        width: windowWidth,
-        height: windowHeight,
-      }}
-      resizeMode={'stretch'}
-      source={require('../Assets/Images/imageBackground.png')}>
-      <CustomHeader
-        style={{
-          marginTop: moderateScale(20, 0.3),
-        }}
-        text={'Reset Password'}
-        leftIcon
-      />
-
-      <KeyboardAwareScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: moderateScale(20, 0.3),
-          alignItems: 'center',
-          justifyContent : 'center',
-          width: '100%',
-          height : windowHeight * 0.8,
-      
-        }}>
-     
-        <CardContainer style={{paddingVertical: moderateScale(30, 0.3)}}>
-          <CustomText isBold style={styles.txt2}>Reset Your Password</CustomText>
-          <CustomText style={styles.txt3}>
-            Enter your new password
+      <ScreenBoiler
+        // showBack={true}
+        showHeader={true}
+        statusBarBackgroundColor={Color.black}
+        statusBarContentStyle={'light-content'}>
+        <LinearGradient
+          start={{x: 0.0, y: 0.25}}
+          end={{x: 0.5, y: 1.0}}
+          colors={Color.themeGradient}
+          style={styles.container}>
+          <CustomText isBold style={styles.txt2}>
+            Reset Your Password
           </CustomText>
+          <CustomText style={styles.txt3}>Enter your new password</CustomText>
           <TextInputWithTitle
             // iconName="lock"
             // iconType={FontAwesome}
-            titleText={'password'}
+            // titleText={'password'}
             secureText={true}
             placeholder={'password'}
             setText={setPassword}
@@ -132,13 +113,13 @@ const ResetPassword = props => {
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
             borderRadius={moderateScale(25, 0.3)}
-            marginBottom={moderateScale(10,0.3)}
+            marginBottom={moderateScale(10, 0.3)}
             elevation
           />
-            <TextInputWithTitle
+          <TextInputWithTitle
             // iconName="lock"
             // iconType={FontAwesome}
-            titleText={'Re-type password'}
+            // titleText={'Re-type password'}
             secureText={true}
             placeholder={'Re-type password'}
             setText={setConfirmPassword}
@@ -149,14 +130,14 @@ const ResetPassword = props => {
             border={1}
             borderColor={'#1B5CFB45'}
             backgroundColor={'#FFFFFF'}
-            marginTop={moderateScale(15, 0.3)}
+            // marginTop={moderateScale(15, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
             borderRadius={moderateScale(25, 0.3)}
-            marginBottom={moderateScale(10,0.3)}
+            marginBottom={moderateScale(10, 0.3)}
             elevation
           />
-        </CardContainer>
+
           <CustomButton
             // textTransform={"capitalize"}
             text={
@@ -168,18 +149,32 @@ const ResetPassword = props => {
             }
             isBold
             textColor={Color.white}
-            width={windowWidth * 0.8}
+            width={windowWidth * 0.75}
             height={windowHeight * 0.06}
             marginTop={moderateScale(20, 0.3)}
             onPress={passwordReset}
             bgColor={Color.themeColor}
-            borderColor={Color.white}
-            borderWidth={2}
+            // borderColor={Color.white}
+            // borderWidth={2}
             borderRadius={moderateScale(30, 0.3)}
           />
-      </KeyboardAwareScrollView>
-    </ImageBackground>
-  </>
+
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              // backgroundColor: 'red',
+            }}>
+            <CustomImage
+              source={require('../Assets/Images/backgroundLogo.png')}
+              // resizeMode={'stretch'}
+              style={{}}
+            />
+          </View>
+        </LinearGradient>
+      </ScreenBoiler>
+    </>
   );
 };
 
@@ -210,7 +205,6 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(12, 0.6),
   },
 
-  
   codeFieldRoot: {
     marginTop: moderateScale(20, 0.3),
     marginBottom: moderateScale(15, 0.3),
@@ -239,6 +233,68 @@ const styles = ScaledSheet.create({
     color: Color.themeColor,
     fontSize: moderateScale(36, 0.3),
     textAlign: 'center',
+  },
+
+  txt2: {
+    color: Color.white,
+    fontSize: moderateScale(20, 0.6),
+    // fontWeight: 'bold',
+  },
+  txt3: {
+    color: Color.themePink,
+    fontSize: moderateScale(12, 0.6),
+    textAlign: 'center',
+    width: '60%',
+    marginTop: moderateScale(5, 0.3),
+    lineHeight: moderateScale(17, 0.3),
+  },
+  container: {
+    paddingTop: windowHeight * 0.2,
+    // justifyContent: "center",
+    height: windowHeight * 0.9,
+    width: windowWidth,
+    alignItems: 'center',
+    // backgroundColor : Color.green
+  },
+  bottomImage: {
+    width: windowWidth * 0.4,
+    alignSelf: 'center',
+    // backgroundColor : 'red'
+  },
+  textContainer: {
+    flexDirection: 'row',
+
+    width: windowWidth * 0.7,
+    height: windowWidth * 0.7,
+    borderRadius: moderateScale((windowWidth * 0.7) / 2, 0.3),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Color.white,
+  },
+  LogoText: {
+    fontSize: moderateScale(35, 0.3),
+    fontWeight: 'bold',
+  },
+  text: {
+    textTransform: 'uppercase',
+    color: Color.white,
+    fontSize: moderateScale(16, 0.3),
+    // marginTop : moderateScale(10,0.3),
+    // fontStyle : 'normal'
+  },
+  text1: {
+    textTransform: 'uppercase',
+    color: Color.white,
+    fontSize: moderateScale(32, 0.3),
+    // marginTop : moderateScale(10,0.3),
+    // lineHeight: moderateScale(32, 0.3),
+  },
+
+  phoneView: {
+    width: '80%',
+    paddingVertical: moderateScale(5, 0.3),
+    flexDirection: 'row',
+    marginTop: moderateScale(20, 0.3),
   },
 });
 

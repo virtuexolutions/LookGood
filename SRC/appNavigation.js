@@ -34,6 +34,9 @@ import Support from './Screens/Support';
 import WalletScreen from './Screens/WalletScreen';
 import ImageUpload from './Screens/ImageUpload';
 import ImageScreen from './Screens/ImageScreen';
+import EnterPhone from './Screens/EnterPhone';
+import VerifyNumber from './Screens/VerifyNumber';
+import ResetPassword from './Screens/ResetPassword';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -56,10 +59,12 @@ const AppNavigator = () => {
           initialRouteName={firstScreen}
           screenOptions={{headerShown: false}}>
           {/* <RootNav.Screen name="Walkthrough" component={Walkthrough} /> */}
+          <RootNav.Screen name="EnterPhone" component={EnterPhone} />
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
           <RootNav.Screen name="Homescreen" component={Homescreen} />
           <RootNav.Screen name="OrderDetails" component={OrderDetails} />
           <RootNav.Screen name="Signup" component={Signup} />
+          <RootNav.Screen name="ResetPassword" component={ResetPassword} />
           <RootNav.Screen
             name="BarberServicesScreen"
             component={BarberServicesScreen}
@@ -71,6 +76,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="MyBookings" component={MyBookings} />
           <RootNav.Screen name="MyAccounts" component={MyAccounts} />
           <RootNav.Screen name="ChangePassword" component={ChangePassword} />
+          <RootNav.Screen name="VerifyNumber" component={VerifyNumber} />
           <RootNav.Screen
             name="TermsAndConditions"
             component={TermsAndConditions}

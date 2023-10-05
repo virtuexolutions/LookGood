@@ -1,4 +1,4 @@
-export const baseUrl = "https://nifty-clarke.23-83-37-162.plesk.page";
+export const baseUrl = "https://aff5-113-203-241-8.ngrok-free.app";
 // export const baseUrl = "https://4b54-113-203-241-1.in.ngrok.io";
 export const imageUrl = `${baseUrl}/api/images/`;
 export const profilePicUrl = `${baseUrl}/uploads`
