@@ -39,7 +39,7 @@ const Signup = ({navigation}) => {
   const [lastName, setLastName] = useState('');
   // const [designation, setDesignation] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
   console.log("PASSWORD",confirmPassword)
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState({});
@@ -73,6 +73,11 @@ const Signup = ({navigation}) => {
     }
     if (Object.keys(image).length > 0) {
       formData.append('photo', image);
+    }else{
+      return Platform.OS == 'android'
+          ? ToastAndroid.show(`Image is required`, ToastAndroid.SHORT)
+          : Alert.alert(` Image is required`);
+
     }
     console.log(JSON.stringify(formData, null, 2));
     if (isNaN(contact)) {
@@ -85,7 +90,7 @@ const Signup = ({navigation}) => {
         ? ToastAndroid.show('email is not validate', ToastAndroid.SHORT)
         : Alert.alert('email is not validate');
     }
-    if (password.length < 8) {
+    if (password.length < 8 ) {
       return Platform.OS == 'android'
         ? ToastAndroid.show(
             'Password should atleast 8 character long',
@@ -252,6 +257,7 @@ const Signup = ({navigation}) => {
             borderRadius={moderateScale(1, 0.3)}
           />
           <TextInputWithTitle
+          secureText
             titleText={'Password'}
             placeholder={'Password'}
             setText={setPassword}
@@ -266,6 +272,7 @@ const Signup = ({navigation}) => {
             borderRadius={moderateScale(1, 0.3)}
           />
           <TextInputWithTitle
+          secureText
             titleText={'Confirm Password'}
             placeholder={'Confirm Password'}
             setText={setConfirmPassword}

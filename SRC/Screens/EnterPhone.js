@@ -54,7 +54,9 @@ const EnterPhone = props => {
     }
 
     const url = 'password/email';
+    setIsLoading(true)
     const response = await Post(url, body, apiHeader());
+    setIsLoading(false)
 
     if (response != undefined) {
     console.log('VERIFY=========>>>>>>', response?.data?.data[0].code);

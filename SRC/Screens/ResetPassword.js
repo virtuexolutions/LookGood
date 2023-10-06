@@ -53,15 +53,17 @@ const ResetPassword = props => {
           : Alert.alert(`${key} field is empty`);
       }
     }
+    setIsLoading(true)
 
     const response = await Post(url, body, apiHeader());
+    setIsLoading(false)
 
     if (response != undefined) {
       console.log('RSEST DATA ======>>>>>>',response?.data)
       Platform.OS === 'android'
         ? ToastAndroid.show('Password Have been Reset', ToastAndroid.SHORT)
-        : Alert.alert('Password Have been Reset');
-        navigationService.navigate('Homescreen')
+        : Alert.alert('Password Has been Reset');
+        navigationService.navigate('LoginScreen')
 
     }
   }; 
