@@ -43,7 +43,7 @@ const LoginScreen = () => {
     const response = await Post(url, body, apiHeader(token));
     setLoading(false);
     if (response != undefined) {
-     console.log(
+       console.log(
         '🚀 ~ file: LoginScreen.js:32 ~ login ~ response:',
         response?.data,
       );
@@ -71,7 +71,7 @@ const LoginScreen = () => {
           titleText={'Your Email'}
           placeholder={'Enter Your Email'}
           setText={setEmail}
-          value={email}
+          value={email}  
           viewHeight={0.06}
           viewWidth={0.75}
           inputWidth={0.74}
@@ -84,7 +84,7 @@ const LoginScreen = () => {
           borderRadius={moderateScale(1, 0.3)}
         />
         <TextInputWithTitle
-        secureText
+          secureText
           titleText={'Your Password'}
           placeholder={'Enter Your Password'}
           setText={setPassword}

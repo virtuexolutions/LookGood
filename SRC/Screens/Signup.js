@@ -37,9 +37,10 @@ const Signup = ({navigation}) => {
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [designation, setDesignation] = useState('');
+  // const [designation, setDesignation] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(false);
+  console.log("PASSWORD",confirmPassword)
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState({});
   const [userRole, setUserRole] = useState('Barber');
@@ -53,8 +54,9 @@ const Signup = ({navigation}) => {
   const SignUp = async () => {
     const params = {
       role: userRole,
-      first_name: firstName,
-      last_name: lastName,
+      first_name: `${firstName}`,
+      last_name: `${lastName}`,
+      // designation: designation,
       email: email,
       phone: contact,
       password: password,
@@ -69,61 +71,45 @@ const Signup = ({navigation}) => {
       }
       formData.append(key, params[key]);
     }
-
-
     if (Object.keys(image).length > 0) {
       formData.append('photo', image);
-    }else{
-      return Platform.OS == 'android'
-      ? ToastAndroid.show(`Image is required`, ToastAndroid.SHORT)
-      : Alert.alert(` Image is required`);
     }
-   
+    console.log(JSON.stringify(formData, null, 2));
     if (isNaN(contact)) {
       return Platform.OS == 'android'
-      ? ToastAndroid.show('phone is not a number', ToastAndroid.SHORT)
-      : Alert.alert('phone is not a number');
+        ? ToastAndroid.show('phone is not a number', ToastAndroid.SHORT)
+        : Alert.alert('phone is not a number');
     }
     if (!validateEmail(email)) {
       return Platform.OS == 'android'
-      ? ToastAndroid.show('email is not validate', ToastAndroid.SHORT)
-      : Alert.alert('email is not validate');
+        ? ToastAndroid.show('email is not validate', ToastAndroid.SHORT)
+        : Alert.alert('email is not validate');
     }
     if (password.length < 8) {
       return Platform.OS == 'android'
-      ? ToastAndroid.show(
-        'Password should atleast 8 character long',
-        ToastAndroid.SHORT,
-        )
+        ? ToastAndroid.show(
+            'Password should atleast 8 character long',
+            ToastAndroid.SHORT,
+          )
         : Alert.alert('Password should atleast 8 character long');
-      }
-      if (password != confirmPassword) {
-        return Platform.OS == 'android'
+    }
+    if (password != confirmPassword) {
+      return Platform.OS == 'android'
         ? ToastAndroid.show('Password does not match', ToastAndroid.SHORT)
         : Alert.alert('Password does not match');
-      }
-      
-      console.log(JSON.stringify(formData, null, 2));
-      
-      const url = 'register';
+    }
+
+    const url = 'register';
     setIsLoading(true);
     const response = await Post(url, formData, apiHeader());
     setIsLoading(false);
-    console.log(
-      'response?.data=========>>>>>>>',
-      response?.data,
-    );
     if (response != undefined) {
-      // console.log(
-      //   'response?.data=========>>>>>>>',
-      //   response?.data?.data,
-      // );
+      //  return  console.log("response?.data", response?.data);
       Platform.OS === 'android'
         ? ToastAndroid.show('User Registered Succesfully', ToastAndroid.SHORT)
         : Alert.alert('User Registered Succesfully');
       dispatch(setUserData(response?.data?.user_info));
-      dispatch(setUserToken({token:response?.data?.token}));
-      // dispatch(setUserRole())
+      dispatch(setUserLogin(response?.data?.token));
     }
   };
 
@@ -266,7 +252,6 @@ const Signup = ({navigation}) => {
             borderRadius={moderateScale(1, 0.3)}
           />
           <TextInputWithTitle
-            secureText
             titleText={'Password'}
             placeholder={'Password'}
             setText={setPassword}
@@ -281,7 +266,6 @@ const Signup = ({navigation}) => {
             borderRadius={moderateScale(1, 0.3)}
           />
           <TextInputWithTitle
-            secureText
             titleText={'Confirm Password'}
             placeholder={'Confirm Password'}
             setText={setConfirmPassword}
@@ -301,7 +285,7 @@ const Signup = ({navigation}) => {
             borderWidth={1}
             textColor={Color.black}
             onPress={() => {
-              SignUp();
+              SignUp()
               // dispatch(
               //   setUserData(
               //     userRole == 'Customer'
@@ -313,7 +297,7 @@ const Signup = ({navigation}) => {
             }}
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
-            text={isLoading ? <ActivityIndicator size={'small'} color={'black'} /> :'Sign Up'}
+            text={ isLoading ? <ActivityIndicator color={Color.black} size={'small'} /> : 'Sign Up'}
             fontSize={moderateScale(14, 0.3)}
             textTransform={'uppercase'}
             isGradient={true}
@@ -403,7 +387,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: moderateScale(100, 0.3),
+    width: moderateScale(100, 0.3), 
     height: moderateScale(100, 0.3),
     borderRadius: moderateScale(49, 0.3),
     marginLeft: moderateScale(2.5, 0.3),
@@ -439,7 +423,7 @@ const styles = ScaledSheet.create({
   },
   txt2: {
     fontSize: moderateScale(12, 0.3),
-    color: Color.themeColor,
+    color: Color.themeColor, 
     // fontWeight : 'bold'
     // backgroundColor : 'red'
   },

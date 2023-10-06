@@ -25,11 +25,11 @@ import navigationService from '../navigationService';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomImage from '../Components/CustomImage';
-import { View } from 'react-native';
+import {View} from 'react-native';
 
 const ResetPassword = props => {
   const phoneNumber = props?.route?.params?.phoneNumber;
-  console.log(phoneNumber);
+  console.log('osama', phoneNumber);
 
   const dispatch = useDispatch();
   const {fcmToken} = useSelector(state => state.commonReducer);
@@ -37,48 +37,35 @@ const ResetPassword = props => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const passwordReset = async () => {
-    const params = {
+  const passWordReset = async () => {
+    const url = 'password/reset';
+
+    const body = {
+      email: phoneNumber,
       password: password,
       confirm_password: confirmPassword,
-      email: phoneNumber,
     };
-    for (let key in params) {
-      if (params[key] === '') {
-        return (Platform.OS = 'android'
-          ? ToastAndroid.show('Required field is empty', ToastAndroid.SHORT)
-          : Alert.alert('Required field is empty'));
+
+    for (let key in body) {
+      if (body[key] == '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(`${key} field is empty`, ToastAndroid.SHORT)
+          : Alert.alert(`${key} field is empty`);
       }
     }
 
-    // Password Length
-    if (password.length < 8) {
-      return Platform.OS == 'android'
-        ? ToastAndroid.show(
-            'Password should atleast 8 character long',
-            ToastAndroid.SHORT,
-          )
-        : Alert.alert('Password should atleast 8 character long');
-    }
-    if (password != confirmPassword) {
-      return (Platform.OS = 'android'
-        ? ToastAndroid.show('passwords MissMatched !', ToastAndroid.SHORT)
-        : Alert.alert('passwords MissMatched !'));
-    }
+    const response = await Post(url, body, apiHeader());
 
-    const url = 'password/reset';
-    setIsLoading(true);
-    const response = await Post(url, params, apiHeader());
-    setIsLoading(false);
-    if (response !== undefined) {
-      Platform.OS == 'android'
-        ? ToastAndroid.show(`Password Reset successfully`, ToastAndroid.SHORT)
-        : alert(`Password Reset successfully`);
-      navigationService.navigate('LoginScreen');
-    }
-  };
-  // dispatch(setUserToken('123456'));
+    if (response != undefined) {
+      console.log('RSEST DATA ======>>>>>>',response?.data)
+      Platform.OS === 'android'
+        ? ToastAndroid.show('Password Have been Reset', ToastAndroid.SHORT)
+        : Alert.alert('Password Have been Reset');
+        navigationService.navigate('Homescreen')
 
+    }
+  }; 
+  
   return (
     <>
       <ScreenBoiler
@@ -152,7 +139,7 @@ const ResetPassword = props => {
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
             marginTop={moderateScale(20, 0.3)}
-            onPress={passwordReset}
+            onPress={passWordReset}
             bgColor={Color.themeColor}
             // borderColor={Color.white}
             // borderWidth={2}

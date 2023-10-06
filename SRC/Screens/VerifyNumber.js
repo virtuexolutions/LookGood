@@ -34,7 +34,6 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 
-
 const VerifyNumber = props => {
   const dispatch = useDispatch();
   const {fcmToken} = useSelector(state => state.commonReducer);
@@ -42,8 +41,6 @@ const VerifyNumber = props => {
   //params
   const fromForgot = props?.route?.params?.fromForgot;
   const phoneNumber = props?.route?.params?.phoneNumber;
-
-
 
   //states
   const [code, setCode] = useState('');
@@ -69,20 +66,16 @@ const VerifyNumber = props => {
   const sendOTP = async () => {
     const url = 'password/code/check';
     setIsLoading(true);
-    const response = await Post(
-      url,
-      {code: code},
-      apiHeader(),
-    );
+    const response = await Post(url, {code: code}, apiHeader());
     setIsLoading(false);
     if (response != undefined) {
-      console.log("🚀 ~ file: VerifyNumber.js:79 ~ sendOTP ~ response:", response?.data)
-      
+      console.log(
+        '🚀 ~ file: VerifyNumber.js:79 ~ sendOTP ~ response:',
+        response?.data,
+      );
+
       Platform.OS == 'android'
-        ? ToastAndroid.show(
-            `OTP sent to ${phoneNumber}`,
-            ToastAndroid.SHORT,
-          )
+        ? ToastAndroid.show(`OTP sent to ${phoneNumber}`, ToastAndroid.SHORT)
         : alert(`OTP sent to ${phoneNumber}`);
     }
   };
@@ -113,7 +106,7 @@ const VerifyNumber = props => {
 
   return (
     <>
-       <ScreenBoiler
+      <ScreenBoiler
         // showBack={true}
         showHeader={true}
         statusBarBackgroundColor={Color.black}
@@ -123,57 +116,50 @@ const VerifyNumber = props => {
           end={{x: 0.5, y: 1.0}}
           colors={Color.themeGradient}
           style={styles.container}>
-    
-
-     
-   
-            <CustomText style={styles.txt2}>Verify Account</CustomText>
-            <CustomText style={styles.txt3}>
-              Enter four digit code we have sent to{' '}
-              {
-                <CustomText style={{color: Color.white}}>
-                  {phoneNumber}
+          <CustomText style={styles.txt2}>Verify Account</CustomText>
+          <CustomText style={styles.txt3}>
+            Enter four digit code we have sent to{' '}
+            {
+              <CustomText style={{color: Color.white}}>
+                {phoneNumber}
+              </CustomText>
+            }
+          </CustomText>
+          <CodeField
+            placeholder={'0'}
+            ref={ref}
+            value={code}
+            onChangeText={setCode}
+            cellCount={CELL_COUNT}
+            rootStyle={styles.codeFieldRoot}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            renderCell={({index, symbol, isFocused}) => (
+              <View
+                onLayout={getCellOnLayoutHandler(index)}
+                key={index}
+                style={[styles.cellRoot, isFocused && styles.focusCell]}>
+                <CustomText
+                  style={[styles.cellText, isFocused && {color: Color.black}]}>
+                  {symbol || (isFocused ? <Cursor /> : null)}
                 </CustomText>
-              }
-            </CustomText>
-            <CodeField
-              placeholder={'0'}
-              ref={ref}
-              value={code}
-              onChangeText={setCode}
-              cellCount={CELL_COUNT}
-              rootStyle={styles.codeFieldRoot}
-              keyboardType="number-pad"
-              textContentType="oneTimeCode"
-              renderCell={({index, symbol, isFocused}) => (
-                <View
-                  onLayout={getCellOnLayoutHandler(index)}
-                  key={index}
-                  style={[styles.cellRoot, isFocused && styles.focusCell]}>
-                  <CustomText
-                    style={[
-                      styles.cellText,
-                      isFocused && {color: Color.black},
-                    ]}>
-                    {symbol || (isFocused ? <Cursor /> : null)}
-                  </CustomText>
-                </View>
-              )}
-            />
-            <CustomText style={styles.txt3}>
-              Haven't Recieved Verification Code ?{' '}
-              {
-                <TouchableOpacity
-                  disabled={timerLabel == 'Resend Code ' ? false : true}
-                  onPress={() => {
-                    sendOTP(), settimerLabel('ReSend in '), settime(120);
-                  }}>
-                  <CustomText style={[styles.txt4]}>
-                    {timerLabel} {time}
-                  </CustomText>
-                </TouchableOpacity>
-              }
-            </CustomText>
+              </View>
+            )}
+          />
+          <CustomText style={styles.txt3}>
+            Haven't Recieved Verification Code ?{' '}
+            {
+              <TouchableOpacity
+                disabled={timerLabel == 'Resend Code ' ? false : true}
+                onPress={() => {
+                  sendOTP(), settimerLabel('ReSend in '), settime(120);
+                }}>
+                <CustomText style={[styles.txt4]}>
+                  {timerLabel} {time}
+                </CustomText>
+              </TouchableOpacity>
+            }
+          </CustomText>
           {/* </CardContainer> */}
           <CustomButton
             // textTransform={"capitalize"}
@@ -195,9 +181,8 @@ const VerifyNumber = props => {
             // borderWidth={2}
             borderRadius={moderateScale(30, 0.3)}
           />
-          </LinearGradient>
-          </ScreenBoiler>
- 
+        </LinearGradient>
+      </ScreenBoiler>
     </>
   );
 };
@@ -258,8 +243,7 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(36, 0.3),
     textAlign: 'center',
   },
- 
- 
+
   container: {
     paddingTop: windowHeight * 0.2,
     // justifyContent: "center",

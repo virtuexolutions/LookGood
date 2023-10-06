@@ -27,7 +27,7 @@ import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import {Alert} from 'react-native';
 import CustomImage from '../Components/CustomImage';
-import { View } from 'react-native';
+import {View} from 'react-native';
 // import CardContainer from '../Components/CardContainer';
 // import CustomHeader from '../Components/CustomHeader';
 
@@ -40,31 +40,29 @@ const EnterPhone = props => {
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const sendOTP = async () => {
-    const url = 'password/email';
-    if (['', null, undefined].includes(phone)) {
-      return Platform.OS == 'android'
-        ? ToastAndroid.show('Email is required', ToastAndroid.SHORT)
-        : Alert.alert('Email is required');
-    }
-    setIsLoading(true);
-    const response = await Post(url, {email: phone}, apiHeader());
-    setIsLoading(false);
-    if (response != undefined) {
-      console.log('response data =>', response?.data?.data[0]?.code);
-      Platform.OS == 'android'
-        ? ToastAndroid.show(`OTP sent to ${phone}`, ToastAndroid.SHORT)
-        : alert(`OTP sent to ${phone}`);
+  const EnterOTP = async () => {
+    const body = {
+      email: phone,
+    };
 
-        alert(`${response?.data?.data[0]?.code}`)
-      fromForgot
-        ? navigationService.navigate('VerifyNumber', {
-            fromForgot: fromForgot,
-            phoneNumber: `${phone}`,
-          })
-        : navigationService.navigate('VerifyNumber', {
-            phoneNumber: `${phone}`,
-          });
+    for (let key in body) {
+      if (body[key] == '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(`${key} field is empty`, ToastAndroid.SHORT)
+          : Alert.alert(`${key} field is empty`);
+      }
+    }
+
+    const url = 'password/email';
+    const response = await Post(url, body, apiHeader());
+
+    if (response != undefined) {
+    console.log('VERIFY=========>>>>>>', response?.data?.data[0].code);
+      alert(response?.data?.data[0].code)
+      Platform.OS === 'android' 
+        ? ToastAndroid.show('Your OTP is Send', ToastAndroid.SHORT)
+        : Alert.alert('OTP is Send')       
+        navigationService.navigate('VerifyNumber',{phoneNumber : phone})
     }
   };
 
@@ -122,7 +120,8 @@ const EnterPhone = props => {
             height={windowHeight * 0.06}
             marginTop={moderateScale(15, 0.3)}
             onPress={() => {
-              sendOTP();
+              EnterOTP();
+             
             }}
             bgColor={Color.themeColor}
             borderColor={Color.white}
