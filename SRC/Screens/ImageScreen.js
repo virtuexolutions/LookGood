@@ -27,11 +27,11 @@ import navigationService from '../navigationService';
 const ImageScreen = props => {
   const data = props?.route?.params?.data;
   const Image = props?.route?.params?.image;
-  console.log('🚀 ~ file: ImageScreen.js:28 ~ ImageScreen ~ Image:', Image);
+  // console.log('🚀 ~ file: ImageScreen.js:28 ~ ImageScreen ~ Image:', Image);
   const ref = useRef();
 
   const [size, setSize] = useState(100);
-  console.log('🚀 ~ file: ImageScreen.js:32 ~ ImageScreen ~ size:', size);
+  // console.log('🚀 ~ file: ImageScreen.js:32 ~ ImageScreen ~ size:', size);
   const [rotation, setRotation] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
@@ -43,15 +43,15 @@ const ImageScreen = props => {
   const [selectedImage, setSelectedImage] = useState({});
   const [isVisible, setIsVisible] = useState(false);
   const [xPosition, setXPosition] = useState(100);
-  console.log(
-    '🚀 ~ file: ImageScreen.js:39 ~ ImageScreen ~ xPosition:',
-    xPosition,
-  );
+  // console.log(
+  //   '🚀 ~ file: ImageScreen.js:39 ~ ImageScreen ~ xPosition:',
+  //   xPosition,
+  // );
   const [YPosition, setYPosition] = useState(200);
-  console.log(
-    '🚀 ~ file: ImageScreen.js:41 ~ ImageScreen ~ YPosition:',
-    YPosition,
-  );
+  // console.log(
+  //   '🚀 ~ file: ImageScreen.js:41 ~ ImageScreen ~ YPosition:',
+  //   YPosition,
+  // );
   console.log(
     xPosition < 85,
     xPosition > 300,
@@ -69,7 +69,7 @@ const ImageScreen = props => {
   //   selectedStyle,
   // );
   const [array, setArray] = useState([]);
-  console.log('🚀 ~ file: ImageScreen.js:24 ~ ImageScreen ~ array:', array);
+  // console.log('🚀 ~ file: ImageScreen.js:24 ~ ImageScreen ~ array:', array);
 
   const HairStyle = [
     {

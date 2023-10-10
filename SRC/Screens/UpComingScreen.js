@@ -110,7 +110,7 @@ const UpComingScreen = () => {
   return (
     <ScreenBoiler
       showHeader={true}
-      showback={true}
+      showBack={true}
       showUser={true}
       statusBarBackgroundColor={Color.black}
       statusBarContentStyle={'light-content'}>

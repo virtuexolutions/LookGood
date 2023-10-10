@@ -24,6 +24,9 @@ const TextInputWithTitle = props => {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <>
+    {
+      props?.titleText &&
+    
     <CustomText style={{
       color : Color.white,
       fontSize : moderateScale(13,0.3),
@@ -32,6 +35,7 @@ const TextInputWithTitle = props => {
       width : windowWidth * props.viewWidth,
       marginTop : props.marginTop
     }}>{props?.titleText}</CustomText>
+  }
     <View
       style={[
         styles.fieldSet,
@@ -57,6 +61,9 @@ elevation: 9,
         },
             props.autoCapitalize &&{
               textTransform : props.autoCapitalize
+            },
+            props.marginTopDown && {
+              marginTop :  props.marginTopDown,
             },
         props.borderRadius && {
           borderRadius: props.borderRadius,

@@ -113,10 +113,11 @@ const ImagePickerModal = props => {
       }
       // if (response.didCancel) {
       // } else if (response.error) {
-      // } else if (response.customButton) {
+      // }
+      //  else if (response.customButton) {
       //   Alert.alert(response.customButton);
       // }
-      else {
+      // else {
         setFileObject &&
           setFileObject({
             uri: response?.assets[0]?.uri,
@@ -133,7 +134,7 @@ const ImagePickerModal = props => {
               name: response?.assets[0]?.fileName,
             },
           ]);
-      }
+      // }
     });
   };
 

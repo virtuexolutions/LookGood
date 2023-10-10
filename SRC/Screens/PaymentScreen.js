@@ -195,7 +195,7 @@ const PaymentScreen = (props) => {
           textTransform={'uppercase'}
           isGradient={true}
           isBold
-          marginBottom={moderateScale(30, 0.3)}
+          marginBottom={moderateScale(130, 0.3)}
         />
       </LinearGradient>
     </ScreenBoiler>

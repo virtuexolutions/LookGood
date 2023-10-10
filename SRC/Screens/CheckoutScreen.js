@@ -103,6 +103,7 @@ const CheckoutScreen = props => {
       showUser={true}
       statusBarBackgroundColor={Color.black}
       statusBarContentStyle={'light-content'}>
+        
       <LinearGradient
         start={{x: 0.0, y: 0.25}}
         end={{x: 0.5, y: 1.0}}
@@ -111,6 +112,7 @@ const CheckoutScreen = props => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
+            // backgroundColor:'red',
             paddingBottom: windowHeight * 0.15,
             // paddingTop : moderateScale(20,0.3),
             alignItems: 'center',
@@ -267,6 +269,7 @@ const CheckoutScreen = props => {
               paddingHorizontal: moderateScale(20, 0.3),
               width: windowWidth,
               justifyContent: 'space-between',
+              // backgroundColor:'purple',
             }}>
             <CustomText style={[styles.text1, {color: Color.white}]}>
               total
@@ -298,7 +301,7 @@ const CheckoutScreen = props => {
           textTransform={'uppercase'}
           isGradient={true}
           isBold
-          marginBottom={moderateScale(30, 0.3)}
+          marginBottom={windowHeight * 0.15}
         />
       </LinearGradient>
     </ScreenBoiler>
@@ -309,7 +312,7 @@ export default CheckoutScreen;
 
 const styles = ScaledSheet.create({
   container: {
-    paddingTop: windowHeight * 0.06,
+    // paddingTop: windowHeight * 0.06,
     // justifyContent: "center",
     height: windowHeight * 0.9,
     width: windowWidth,
