@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ImageBackground, View} from 'react-native';
+import {ImageBackground, View, ScrollView} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -64,6 +64,16 @@ const LoginScreen = () => {
         end={{x: 0.5, y: 1.0}}
         colors={Color.themeGradient}
         style={styles.container}>
+          <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            // paddingBottom: windowHeight * 0.15,
+            // paddingTop : moderateScale(20,0.3),
+            alignItems: 'center',
+          }}
+          style={{
+            width: windowWidth,
+          }}>
         <CustomText isBold style={styles.text1}>
           Sign in
         </CustomText>
@@ -171,6 +181,7 @@ const LoginScreen = () => {
             style={{}}
           />
         </View>
+        </ScrollView>
       </LinearGradient>
     </ScreenBoiler>
   );

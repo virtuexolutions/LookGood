@@ -156,7 +156,7 @@ const BarberServicesScreen = props => {
             width: windowWidth,
           }}
           contentContainerStyle={{
-            paddingBottom: moderateScale(40, 0.3),
+            paddingBottom: moderateScale(140, 0.3),
             paddingTop: moderateScale(20, 0.3),
 
           }}

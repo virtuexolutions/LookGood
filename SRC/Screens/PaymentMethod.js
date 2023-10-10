@@ -537,11 +537,12 @@ const addCard = async ()=>{
             color={'#11A44C'}
             placeholderColor={Color.themeLightGray}
             borderRadius={moderateScale(20, 0.3)}
-            keyboardType={'numeric'}
+
+            // keyboardType={'numeric'}
           />
-          <View style={[styles.phoneView, {marginTop: moderateScale(8, 0.3)}]}>
+          {/* <View style={[styles.phoneView, {marginTop: moderateScale(8, 0.3)}]}> */}
             <TextInputWithTitle
-              titleText={'Email'}
+              // titleText={'Email'}
               placeholder={'Email'}
               setText={data => {
                 setCardData(prev => {
@@ -555,18 +556,20 @@ const addCard = async ()=>{
               border={1}
               borderColor={Color.lightGrey}
               backgroundColor={'#EAEAEA'}
-              //   marginTop={moderateScale(10, 0.3)}
+              marginTopDown={moderateScale(10, 0.3)}
               color={'#11A44C'}
               placeholderColor={Color.themeLightGray}
               borderRadius={moderateScale(20, 0.3)}
               keyboardType={'numeric'}
-            />
+              // marginTop={moderateScale(10, 0.3)}
+
+/>
 
            
-          </View>
+          {/* </View> */}
           <View style={[styles.phoneView, {marginTop: moderateScale(5, 0.3)}]}>
             <TextInputWithTitle
-              titleText={'contact'}
+              // titleText={'contact'}
               placeholder={'Phone'}
               setText={data => {
                 setCardData(prev => {
@@ -575,8 +578,8 @@ const addCard = async ()=>{
               }}
               value={cardData?.phone}
               viewHeight={0.05}
-              viewWidth={0.35}
-              inputWidth={0.32}
+              viewWidth={0.3}
+              inputWidth={0.3}
               border={1}
               borderColor={Color.lightGrey}
               backgroundColor={'#EAEAEA'}
@@ -588,7 +591,7 @@ const addCard = async ()=>{
             />
 
             <TextInputWithTitle
-              titleText={'City'}
+              // titleText={'City'}
               placeholder={'City'}
               setText={data => {
                 setCardData(prev => {
@@ -597,8 +600,8 @@ const addCard = async ()=>{
               }}
               value={cardData?.city}
               viewHeight={0.05}
-              viewWidth={0.35}
-              inputWidth={0.32}
+              viewWidth={0.3}
+              inputWidth={0.3}
               border={1}
               borderColor={Color.lightGrey}
               backgroundColor={'#EAEAEA'}
@@ -829,7 +832,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     // marginTop: moderateScale(20, 0.3),
-    // backgroundColor: 'red',
+    // backgroundColor: 'rsed',
   }, 
   cardContainer: {
     width: windowWidth * 0.85,

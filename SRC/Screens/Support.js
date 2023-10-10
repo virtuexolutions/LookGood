@@ -110,7 +110,7 @@ const Support = () => {
               width: windowWidth,
             }}>
                 <CustomText isBold style={styles.text1}>
-           Change Password
+           Support and Help
           </CustomText>
           <TouchableOpacity
             style={[styles?.ContactInfoContainer, {marginTop : moderateScale(20,0.3)}]}

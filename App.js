@@ -15,6 +15,7 @@ import LandingPage from './SRC/Screens/LandingPage';
 import LandingPage1 from './SRC/Screens/LandingPage1';
 import LoginScreen from './SRC/Screens/LoginScreen';
 import AppNavigator from './SRC/appNavigation';
+import { Platform } from 'react-native';
 
 
 
@@ -61,7 +62,10 @@ const MainContainer =()=>{
     //      dispatch(SetFCMToken(_token));
     //    })
     //    .catch(() => console.log("token error"));
-    GetPermission();
+    if(Platform.OS == 'android'){
+
+      GetPermission();
+    }
   }, []);
 
   const [isloading] = useloader(true);
