@@ -43,10 +43,8 @@ const LoginScreen = () => {
     const response = await Post(url, body, apiHeader(token));
     setLoading(false);
     if (response != undefined) {
-       console.log(
-        '🚀 ~ file: LoginScreen.js:32 ~ login ~ response:',
-        response?.data,
-      );
+    console.log("🚀 ~ file: LoginScreen.js:46 ~ login ~ response:", response?.data)
+    
       dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
     }

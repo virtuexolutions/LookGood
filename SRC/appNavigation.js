@@ -37,6 +37,8 @@ import ImageScreen from './Screens/ImageScreen';
 import EnterPhone from './Screens/EnterPhone';
 import VerifyNumber from './Screens/VerifyNumber';
 import ResetPassword from './Screens/ResetPassword';
+import AddService from './Screens/AddService';
+import TimeScreen from './Screens/TimeScreen';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -70,6 +72,8 @@ const AppNavigator = () => {
             component={BarberServicesScreen}
           />
           <RootNav.Screen name="ChooseDate" component={ChooseDate} />
+          <RootNav.Screen name="TimeScreen" component={TimeScreen} />
+          <RootNav.Screen name="AddService" component={AddService} />
           <RootNav.Screen name="TabNavigation" component={TabNavigation} />
           <RootNav.Screen name="CheckoutScreen" component={CheckoutScreen} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />

@@ -21,32 +21,28 @@ import {Icon} from 'native-base';
 import numeral from 'numeral';
 import navigationService from '../navigationService';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
-import { useDispatch, useSelector } from 'react-redux';
-import { setWholeCart } from '../Store/slices/common';
+import {useDispatch, useSelector} from 'react-redux';
+import {setWholeCart} from '../Store/slices/common';
 
 const CheckoutScreen = props => {
   const dispatch = useDispatch();
-  const cartData = useSelector((state)=>state.commonReducer.cartData)
+  const cartData = useSelector(state => state.commonReducer.cartData);
   // console.log("🚀 ~ file: CheckoutScreen.js:30 ~ CheckoutScreen ~ cartData", cartData)
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
   // console.log("🚀 ~ file: CheckoutScreen.js:28 ~ CheckoutScreen ~ finalData", finalData)
   const [subTotal, setSubTotal] = useState(0);
-  console.log("🚀 ~ file: CheckoutScreen.js:29 ~ CheckoutScreen ~ subTotal", subTotal)
+  console.log(
+    '🚀 ~ file: CheckoutScreen.js:29 ~ CheckoutScreen ~ subTotal',
+    subTotal,
+  );
   const [type, setItem] = useState('');
   const [finalStateData, setFinalStateData] = useState(
     fromStore ? cartData : finalData?.services,
   );
-  console.log(
-    '🚀 ~ file: CheckoutScreen.js:32 ~ CheckoutScreen ~ finalStateData',
-    finalStateData,
-  );
+
   const [arrayDropDown, setArrayDropdown] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState();
-  // console.log(
-  //   '🚀 ~ file: CheckoutScreen.js:22 ~ CheckoutScreen ~ finalData',
-  //   finalStateData,finalData
-  // );
 
   const servicesArray = [
     {
@@ -71,30 +67,23 @@ const CheckoutScreen = props => {
     // finalStateData.map((x, index) => {
     //   return setSubTotal(prev => x?.price + prev);
     // });
-    
   }, []);
-
-
-  
 
   useEffect(() => {
     fromStore &&
-      (setSelectedPrice(servicesArray.find(data => data.name == type))
+      setSelectedPrice(servicesArray.find(data => data.name == type));
       // setSubTotal(prev => prev + selectedPrice?.price)
-      )
   }, [type]);
 
   useEffect(() => {
-    setSubTotal(0),
-    fromStore &&(
-    dispatch(setWholeCart(finalStateData))
-    )
-     finalStateData.map((x,index)=>{
-      const price = x?.price *x?.quantity ;
-      return setSubTotal(prev=>  prev + price)
-    })
-  }, [finalStateData])
-  
+    setSubTotal(0), fromStore && dispatch(setWholeCart(finalStateData));
+    finalStateData.map((x, index) => {
+      const price = x?.price * x?.quantity;
+      return setSubTotal(prev => prev + price);
+    });
+  }, [finalStateData]);
+
+ 
 
   return (
     <ScreenBoiler
@@ -103,7 +92,6 @@ const CheckoutScreen = props => {
       showUser={true}
       statusBarBackgroundColor={Color.black}
       statusBarContentStyle={'light-content'}>
-        
       <LinearGradient
         start={{x: 0.0, y: 0.25}}
         end={{x: 0.5, y: 1.0}}
@@ -120,7 +108,7 @@ const CheckoutScreen = props => {
           style={{
             width: windowWidth,
           }}>
-          { finalStateData.map((item, index) => {
+          {finalStateData.map((item, index) => {
             return (
               <View
                 style={{
@@ -191,10 +179,8 @@ const CheckoutScreen = props => {
                             setFinalStateData(
                               finalStateData.filter(
                                 (x, index) => x?.quantity > 0,
-                              ))
-                            
-                            
-                            );
+                              ),
+                            ));
                         }}
                       />
                     </View>

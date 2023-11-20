@@ -12,6 +12,25 @@ import CustomButton from './CustomButton';
 import navigationService from '../navigationService';
 
 const OrderCard = ({item}) => {
+  console.log('🚀 ~ file: OrderCard.js:15 ~ OrderCard ~ item:', item);
+
+  const calculateTotalAmount = () => {
+    const bookingDetail = item?.booking_detail;
+
+    if (!Array.isArray(bookingDetail) || bookingDetail.length === 0) {
+      return 0;
+    }
+
+    const serviceNames = bookingDetail
+      .map(service => service?.service_info?.name)
+      .filter(Boolean);
+
+    console.log('Service Names:', serviceNames);
+
+    return serviceNames.join(', ');
+  };
+  const servicesText = calculateTotalAmount();
+
   return (
     <View style={styles.card}>
       <View
@@ -19,9 +38,18 @@ const OrderCard = ({item}) => {
           flexDirection: 'row',
           alignItems: 'center',
         }}>
-        <CustomImage source={item?.image} style={styles.image} />
+        <CustomImage
+          source={{
+            uri: item?.barber_info?.photo
+              ? item?.barber_info?.photo
+              : item?.member_info?.photo,
+          }}
+          style={styles.image}
+        />
         <CustomText isBold numberOfLines={2} style={styles.name}>
-          {item?.name}
+          {item?.barber_info?.first_name
+            ? item?.barber_info?.first_name
+            : item?.member_info?.first_name}
         </CustomText>
       </View>
       <View style={styles.eachRow}>
@@ -33,7 +61,7 @@ const OrderCard = ({item}) => {
           }}>
           Date :{' '}
         </CustomText>
-        <CustomText style={styles.heading}>{item?.date}</CustomText>
+        <CustomText style={styles.heading}>{item?.booking_date}</CustomText>
       </View>
       <View style={styles.eachRow}>
         <CustomText
@@ -44,7 +72,7 @@ const OrderCard = ({item}) => {
           }}>
           time :{' '}
         </CustomText>
-        <CustomText style={styles.heading}>{item?.time}</CustomText>
+        <CustomText style={styles.heading}>{item?.booking_time}</CustomText>
       </View>
       <View style={styles.eachRow}>
         <CustomText
@@ -56,53 +84,40 @@ const OrderCard = ({item}) => {
           Amount :{' '}
         </CustomText>
         <CustomText style={styles.heading}>
-          {numeral(item?.amount).format('$0,0.0')}
+          {numeral(calculateTotalAmount()).format('$0,0.0')}
         </CustomText>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          marginTop : moderateScale(3,0,.3)
-        }}>
-        <View
+      <View style={styles.eachRow}>
+        <CustomText
+          isBold
           style={{
-            width: moderateScale(18, 0.3),
-            height: moderateScale(18, 0.3),
-            borderRadius: moderateScale(9, 0.3),
-            backgroundColor: Color.black,
-            justifyContent: 'center',
-            alignItems: 'center',
+            width: windowWidth * 0.16,
+            fontSize: moderateScale(12, 0.3)
           }}>
-          <Icon
-            name="md-location-sharp"
-            as={Ionicons}
-            size={moderateScale(11, 0.3)}
-            color={Color.themeColor}
-          />
-        </View>
-        <CustomText numberOfLines={2} style={[styles.heading, {width: '80%'}]}>
-          {item?.address}
+          Services :{' '}
+        </CustomText>
+        <CustomText numberOfLines={1} style={styles.heading}>
+          {servicesText}
         </CustomText>
       </View>
       <CustomButton
-            bgColor={Color.themeColor}
-            borderColor={'white'}
-            borderWidth={1}
-            textColor={Color.black}
-            onPress={() => {
-                navigationService.navigate('OrderDetails',{item : item})
-            }}
-            width={windowWidth * 0.15}
-            height={windowHeight * 0.02}
-            text={'Details'}
-            fontSize={moderateScale(8, 0.3)}
-            textTransform={'uppercase'}
-            isGradient={true}
-            isBold
-            alignSelf ={'flex-end'}
-            marginTop={moderateScale(10,0.3)}
-            
-          />
+        bgColor={Color.themeColor}
+        borderColor={'white'}
+        borderWidth={1}
+        textColor={Color.black}
+        onPress={() => {
+          navigationService.navigate('OrderDetails', {item: item});
+        }}
+        width={windowWidth * 0.15}
+        height={windowHeight * 0.02}
+        text={'Details'}
+        fontSize={moderateScale(8, 0.3)}
+        textTransform={'uppercase'}
+        isGradient={true}
+        isBold
+        alignSelf={'flex-end'}
+        marginTop={moderateScale(10, 0.3)}
+      />
     </View>
   );
 };
@@ -119,7 +134,7 @@ const styles = ScaledSheet.create({
     borderColor: Color.themeColor,
     marginRight: moderateScale(10, 0.3),
     padding: moderateScale(5, 0.3),
-    marginBottom : moderateScale(15,0.3)
+    marginBottom: moderateScale(15, 0.3),
   },
   image: {
     width: moderateScale(40, 0.3),
@@ -143,7 +158,6 @@ const styles = ScaledSheet.create({
   heading: {
     fontSize: moderateScale(11, 0.3),
     marginLeft: moderateScale(5, 0.3),
-    fontStyle : 'italic'
+    fontStyle: 'italic',
   },
- 
 });

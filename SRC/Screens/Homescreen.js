@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -13,15 +13,54 @@ import CustomTextWithMask from '../Components/CustomTextWithMask';
 import BarberCard from '../Components/BarberCard';
 import {useSelector} from 'react-redux';
 import OrderCard from '../Components/OrderCard';
+import {Get} from '../Axios/AxiosInterceptorFunction';
 
 const Homescreen = () => {
-  const user = useSelector((state)=>state.commonReducer.userData);
-  const token = useSelector(state=> state.authReducer.token)
-  console.log("🚀 ~ file: Homescreen.js:20 ~ Homescreen ~ token:", token)
-  console.log("🚀 ~ file: Homescreen.js:19 ~ Homescreen ~ user:", user)
+  const [isLoading, setIsLoading] = useState(false);
+  const [Loading, setLoading] = useState(false);
+  const [barberData, setBarberData] = useState([]);
+  const [orderData, setOrderData] = useState([]);
+  console.log("🚀 ~ file: Homescreen.js:23 ~ Homescreen ~ orderData:", orderData)
+  const user = useSelector(state => state.commonReducer.userData);
+  const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ file: Homescreen.js:20 ~ Homescreen ~ token:', token);
+  console.log('🚀 ~ file: Homescreen.js:19 ~ Homescreen ~ user:', user);
   const [index, setIndex] = useState(0);
   console.log('🚀 ~ file: Homescreen.js:18 ~ Homescreen ~ index', index);
-  
+
+  const BarberList = async () => {
+    const url = `auth/barber/list`;
+    setIsLoading(true);
+    const response = await Get(url, token);
+    setIsLoading(false);
+    if (response != undefined) {
+      console.log(
+        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:333333555',
+        response?.data?.users,
+      );
+      setBarberData(response?.data?.users);
+    }
+  };
+
+  useEffect(() => {
+    BarberList();
+  }, []);
+
+  const GetBarberBooking = async () => {
+    const url = `auth/barber/booking/list`;
+    setLoading(true);
+    const response = await Get(url, token);
+
+    setLoading(false);
+    if (response != undefined) {
+      setOrderData(response?.data?.barber_booking_list);
+    }
+  };
+  // TIME GET API END
+
+  useEffect(() => {
+    GetBarberBooking();
+  }, []);
 
   const bannerArray = [
     {
@@ -70,7 +109,7 @@ const Homescreen = () => {
       time: moment().format('hh : mm A'),
       amount: 1000,
       address: '13th Street. 47 W 13th St, New York,',
-          services: [
+      services: [
         'Blow dry with curling and striaght iron',
         'Blow dry',
         'Hair cut with Blow dry',
@@ -80,7 +119,7 @@ const Homescreen = () => {
         'Meni pedi',
         'nail cutting',
         'pink and white fill',
-      ]
+      ],
     },
     {
       image: require('../Assets/Images/dummyCustomer2.png'),
@@ -89,7 +128,7 @@ const Homescreen = () => {
       time: moment().format('hh : mm A'),
       amount: 1000,
       address: '13th Street. 47 W 13th St, New York,',
-        services: [
+      services: [
         'Blow dry with curling and striaght iron',
         'Blow dry',
         'Hair cut with Blow dry',
@@ -108,7 +147,7 @@ const Homescreen = () => {
       time: moment().format('hh : mm A'),
       amount: 1000,
       address: '13th Street. 47 W 13th St, New York,',
-        services: [
+      services: [
         'Blow dry with curling and striaght iron',
         'Blow dry',
         'Hair cut with Blow dry',
@@ -127,7 +166,7 @@ const Homescreen = () => {
       time: moment().format('hh : mm A'),
       amount: 1000,
       address: '13th Street. 47 W 13th St, New York,',
-        services: [
+      services: [
         'Blow dry with curling and striaght iron',
         'Blow dry',
         'Hair cut with Blow dry',
@@ -146,7 +185,7 @@ const Homescreen = () => {
       time: moment().format('hh : mm A'),
       amount: 1000,
       address: '13th Street. 47 W 13th St, New York,',
-        services: [
+      services: [
         'Blow dry with curling and striaght iron',
         'Blow dry',
         'Hair cut with Blow dry',
@@ -205,7 +244,7 @@ const Homescreen = () => {
                       height: windowHeight * 0.46,
                     }}>
                     <CustomImage
-                      source={item?.image}
+                      source={item?.photo}
                       resizeMode={'stretch'}
                       style={{
                         width: '100%',
@@ -291,7 +330,7 @@ const Homescreen = () => {
                 flexWrap: 'wrap',
                 //   paddingHorizontal : moderateScale()
               }}>
-              {cardArray.map((x, index) => {
+              {barberData?.map((x, index) => {
                 return (
                   <BarberCard
                     item={x}
@@ -384,7 +423,7 @@ const Homescreen = () => {
               contentContainerStyle={{
                 paddingHorizontal: moderateScale(8, 0.3),
               }}
-              data={orderArray}
+              data={orderData}
               horizontal
               renderItem={({item, index}) => {
                 return <OrderCard item={item} />;
@@ -413,7 +452,7 @@ const Homescreen = () => {
               contentContainerStyle={{
                 paddingHorizontal: moderateScale(8, 0.3),
               }}
-              data={orderArray}
+              data={orderData}
               numColumns={2}
               renderItem={({item, index}) => {
                 return <OrderCard item={item} />;

@@ -1,5 +1,14 @@
-import React, {useState} from 'react';
-import {ImageBackground, View, ScrollView, FlatList, Platform, ToastAndroid, Alert} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  ImageBackground,
+  View,
+  ScrollView,
+  FlatList,
+  Platform,
+  ToastAndroid,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
@@ -15,72 +24,92 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {TouchableOpacity} from 'react-native';
 import navigationService from '../navigationService';
 import numeral from 'numeral';
+import {Get} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
 
 const BarberServicesScreen = props => {
   const [selectedService, setSelectedService] = useState([]);
-  console.log("🚀 ~ file: BarberServicesScreen.js:19 ~ BarberServicesScreen ~ selectedService", selectedService)
+  const [barberDetails, setBarberDetails] = useState([]);
+  const [Loading, setLoading] = useState(false);
+  const token = useSelector(state => state.authReducer.token);
   const detail = props?.route?.params?.detail;
+
+  const BarberDetals = async () => {
+    const url = `auth/barber/detail/${detail?.id}`;
+    setLoading(true);
+    const response = await Get(url, token);
+
+    setLoading(false);
+    if (response != undefined) {
+      // return console.log('🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000Alpha High Command',response?.data?.user_detail);
+      setBarberDetails(response?.data?.user_detail);
+    }
+  };
+
+  useEffect(() => {
+    BarberDetals();
+  }, []);
 
   const serviceArray = [
     {
       name: 'Blow dry',
-      price: 15.50,
-      quantity : 1,
+      price: 15.5,
+      quantity: 1,
     },
     {
       name: 'Blow dry with curling and striaght iron',
-      price: 18.50,
-      quantity : 1,
+      price: 18.5,
+      quantity: 1,
     },
     {
       name: 'Hair cut with Blow dry',
-      price: 12.50,
-      quantity : 1,
+      price: 12.5,
+      quantity: 1,
     },
     {
       name: 'Mens haircut',
-      price: 22.50,
-      quantity : 1,
+      price: 22.5,
+      quantity: 1,
     },
     {
       name: 'Gloss',
-      price: 19.50,
-      quantity : 1,
+      price: 19.5,
+      quantity: 1,
     },
     {
       name: 'Gel Polist',
-      price: 32.50,
-      quantity : 1,
+      price: 32.5,
+      quantity: 1,
     },
     {
       name: 'Meni pedi',
-      price: 21.50,
-      quantity : 1,
+      price: 21.5,
+      quantity: 1,
     },
     {
       name: 'nail cutting',
-      price: 52.50,
-      quantity : 1,
+      price: 52.5,
+      quantity: 1,
     },
     {
       name: 'pink and white fill',
-      price: 22.50,
-      quantity : 1,
+      price: 22.5,
+      quantity: 1,
     },
     {
       name: 'Polish change',
-      price: 32.50,
-      quantity : 1,
+      price: 32.5,
+      quantity: 1,
     },
     {
       name: 'Acrylic fill',
-      price: 72.50,
-      quantity : 1,
+      price: 72.5,
+      quantity: 1,
     },
     {
       name: 'partial highlight',
-      price: 72.50,
-      quantity : 1,
+      price: 72.5,
+      quantity: 1,
     },
   ];
   return (
@@ -101,10 +130,10 @@ const BarberServicesScreen = props => {
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <CustomImage style={styles.image} source={detail?.image} />
+          <CustomImage style={styles.image} source={{uri: detail?.photo}} />
           <View style={{marginLeft: moderateScale(10, 0.3)}}>
             <CustomTextWithMask
-              data={detail?.name}
+              data={detail?.first_name}
               isBold
               size={moderateScale(20, 0.3)}
               textStyle={{
@@ -149,141 +178,157 @@ const BarberServicesScreen = props => {
             marginTop: moderateScale(20, 0.3),
           }}
         />
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={serviceArray}
-          style={{
-            width: windowWidth,
-          }}
-          contentContainerStyle={{
-            paddingBottom: moderateScale(140, 0.3),
-            paddingTop: moderateScale(20, 0.3),
 
-          }}
-          renderItem={({item, index}) => {
-          
-            return (
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => {
-                  let data=[];
-                  let index1 = 0;
-                  !selectedService.some(data => {
-                    return data.name == item?.name;
-                  }) ? (setSelectedService(prev => [...prev, item])
-                  ):(
-                   data = [...selectedService],
-                  index1 = data.findIndex(x=>x?.name==item?.name),
-                    console.log("🚀 ~ file: BarberServicesScreen.js:157 ~ BarberServicesScreen ~ data", index1),
-                  data.splice(index1,1),
-                  setSelectedService(data)
-
-                  )
-                }}
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginVertical: moderateScale(10, 0.3),
-                  width: windowWidth,
-                  paddingRight: moderateScale(20, 0.3),
-                  alignItems: 'center',
-                }}>
-                <Icon
-                  name={
-                    selectedService.some(data => {
-                      return data.name == item?.name;
-                    })
-                      ? 'check-circle-o'
-                      : 'circle-o'
-                  }
-                  as={FontAwesome}
-                  color={
-                    selectedService.some(data => {
-                      return data.name == item?.name;
-                    })
-                      ? Color.themeColor
-                      : Color.white
-                  }
-                  size={moderateScale(17, 0.3)}
-                  style={{}}
-                />
-                <CustomText
-                  isBold
-                  style={{
-                    fontSize: moderateScale(14, 0.3),
-                    width: windowWidth * 0.45,
-                    color: Color.white,
-                    position: 'absolute',
-                    left: moderateScale(40, 0.3),
-                  }}>
-                  {item?.name}
-                </CustomText>
-                <CustomText
-                  isBold
-                  style={{
-                    fontSize: moderateScale(14, 0.3),
-                    color: Color.white,
-                  }}>
-                  {numeral(item?.price).format('$0,0.0')}
-                </CustomText>
-              </TouchableOpacity>
-            
-            );
-          }}
-          ListFooterComponent={()=>{
-            return(<>
-              <CustomButton
-              // bgColor={Color.themePink}
-              borderColor={'white'}
-              borderWidth={1}
-              textColor={Color.black}
-              onPress={() => {
-                if(selectedService.length>0){
-
-                  navigationService.navigate('ImageUpload',{data : selectedService})
-                }else{
-                  Platform.OS == 'android' ? ToastAndroid.show('Please select any service', ToastAndroid.SHORT) : alert('Please select any service')
-                }
-            
-              }}
-              width={windowWidth * 0.75}
-              height={windowHeight * 0.06}
-              text={'customize your trimming'}
-              fontSize={moderateScale(14, 0.3)}
-              textTransform={'uppercase'}
-              isGradient={true}
-              isBold
-              marginTop={moderateScale(30, 0.3)}
-            />
-              <CustomButton
-              // bgColor={Color.themePink}
-              borderColor={'white'}
-              borderWidth={1}
-              textColor={Color.black}
-              onPress={() => {
-                if(selectedService.length > 0){
-                navigationService.navigate('ChooseDate',{data : selectedService})
-              }
-               else{
-                Platform.OS == 'android' ? 
-                ToastAndroid.show('Choose any service first to proceed',ToastAndroid.SHORT)
-                :
-                Alert.alert('Choose any service first to proceed')
-              }
+        {Loading ? (
+          <View
+            style={{alignSelf: 'center', marginTop: moderateScale(20, 0.3)}}>
+            <ActivityIndicator size={moderateScale(30, 0.6)} color={'white'} />
+          </View>
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={barberDetails.services}
+            style={{
+              width: windowWidth,
             }}
-            width={windowWidth * 0.75}
-            height={windowHeight * 0.06}
-            text={'Book Now'}
-            fontSize={moderateScale(14, 0.3)}
-            textTransform={'uppercase'}
-            isGradient={true}
-            isBold
-            marginTop={moderateScale(10, 0.3)}
-            />
-            </>
-            )
-          }}
-        />
+            contentContainerStyle={{
+              paddingBottom: moderateScale(140, 0.3),
+              paddingTop: moderateScale(20, 0.3),
+            }}
+            renderItem={({item, index}) => {
+              return (
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    let data = [];
+                    let index1 = 0;
+                    !selectedService.some(data => {
+                      return data.name == item?.name;
+                    })
+                      ? setSelectedService(prev => [...prev, item])
+                      : ((data = [...selectedService]),
+                        (index1 = data.findIndex(x => x?.name == item?.name)),
+                        console.log(
+                          '🚀 ~ file: BarberServicesScreen.js:157 ~ BarberServicesScreen ~ data',
+                          index1,
+                        ),
+                        data.splice(index1, 1),
+                        setSelectedService(data));
+                  }}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginVertical: moderateScale(10, 0.3),
+                    width: windowWidth,
+                    paddingRight: moderateScale(20, 0.3),
+                    alignItems: 'center',
+                  }}>
+                  <Icon
+                    name={
+                      selectedService.some(data => {
+                        return data.name == item?.name;
+                      })
+                        ? 'check-circle-o'
+                        : 'circle-o'
+                    }
+                    as={FontAwesome}
+                    color={
+                      selectedService.some(data => {
+                        return data.name == item?.name;
+                      })
+                        ? Color.themeColor
+                        : Color.white
+                    }
+                    size={moderateScale(17, 0.3)}
+                    style={{}}
+                  />
+                  <CustomText
+                    isBold
+                    style={{
+                      fontSize: moderateScale(14, 0.3),
+                      width: windowWidth * 0.45,
+                      color: Color.white,
+                      position: 'absolute',
+                      left: moderateScale(40, 0.3),
+                    }}>
+                    {item?.name}
+                  </CustomText>
+                  <CustomText
+                    isBold
+                    style={{
+                      fontSize: moderateScale(14, 0.3),
+                      color: Color.white,
+                    }}>
+                    {numeral(item?.price).format('$0,0.0')}
+                  </CustomText>
+                </TouchableOpacity>
+              );
+            }}
+            ListFooterComponent={() => {
+              return (
+                <>
+                  <CustomButton
+                    // bgColor={Color.themePink}
+                    borderColor={'white'}
+                    borderWidth={1}
+                    textColor={Color.black}
+                    onPress={() => {
+                      if (selectedService.length > 0) {
+                        navigationService.navigate('ImageUpload', {
+                          data: selectedService,
+                        });
+                      } else {
+                        Platform.OS == 'android'
+                          ? ToastAndroid.show(
+                              'Please select any service',
+                              ToastAndroid.SHORT,
+                            )
+                          : alert('Please select any service');
+                      }
+                    }}
+                    width={windowWidth * 0.75}
+                    height={windowHeight * 0.06}
+                    text={'customize your trimming'}
+                    fontSize={moderateScale(14, 0.3)}
+                    textTransform={'uppercase'}
+                    isGradient={true}
+                    isBold
+                    marginTop={moderateScale(30, 0.3)}
+                  />
+                  <CustomButton
+                    // bgColor={Color.themePink}
+                    borderColor={'white'}
+                    borderWidth={1}
+                    textColor={Color.black}
+                    onPress={() => {
+                      if (selectedService.length > 0) {
+                        navigationService.navigate('ChooseDate', {
+                          data: selectedService,
+                          Data:barberDetails,
+                        });
+                      } else {
+                        Platform.OS == 'android'
+                          ? ToastAndroid.show(
+                              'Choose any service first to proceed',
+                              ToastAndroid.SHORT,
+                            )
+                          : Alert.alert('Choose any service first to proceed');
+                      }
+                    }}
+                    width={windowWidth * 0.75}
+                    height={windowHeight * 0.06}
+                    text={'Book Now'}
+                    fontSize={moderateScale(14, 0.3)}
+                    textTransform={'uppercase'}
+                    isGradient={true}
+                    isBold
+                    marginTop={moderateScale(10, 0.3)}
+                  />
+                </>
+              );
+            }}
+          />
+        )}
       </LinearGradient>
     </ScreenBoiler>
   );
@@ -299,25 +344,18 @@ const styles = ScaledSheet.create({
     width: windowWidth,
     alignItems: 'center',
     paddingLeft: moderateScale(20, 0.3),
-    // backgroundColor : Color.green
   },
   text1: {
     textTransform: 'uppercase',
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(20, 0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   text1Absolute: {
     textTransform: 'uppercase',
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(16, 0.3),
-    // position : 'absolute',
-    // bottom : moderateScale(10,0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   bannerView: {
     width: windowWidth * 0.85,

@@ -20,6 +20,7 @@ import { setCartData, setRemoveCardData } from '../Store/slices/common';
 // import {setCartData} from '../Store/combineReducer';
 
 const BarberCard = ({item, onPress, addedInWishlist  }) => {
+  console.log("🚀 ~ file: BarberCard.js:23 ~ BarberCard ~ item:", item)
   const cartData = useSelector((state)=>state.commonReducer.cartData)
   console.log("🚀 ~ file: BarberCard.js:24 ~ BarberCard ~ cartData", cartData)
   const dispatch = useDispatch();
@@ -84,7 +85,7 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
             </View>
 }
           <CustomImage
-            source={item?.image}
+            source={{uri : item?.photo}}
             resizeMode={'stretch'}
             style={{
               height: windowHeight * 0.21,
@@ -101,7 +102,7 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
               textAlign: 'center',
               marginTop: moderateScale(5, 0.3),
             }}>
-            {item?.name}
+            {item?.first_name}
           </CustomText>
           {added && (
             <TouchableOpacity

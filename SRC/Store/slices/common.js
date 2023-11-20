@@ -29,7 +29,6 @@ const CommonSlice = createSlice({
     },
     setUserData(state, action) {
       state.userData = action?.payload;
-      // state.userData = action?.payload?.userData;
     },
     setUserLogOut(state, action) {
       state.userData = {};

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -19,15 +19,61 @@ import CustomTextWithMask from '../Components/CustomTextWithMask';
 import {Calendar} from 'react-native-calendars';
 import navigationService from '../navigationService';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import {useEffect} from 'react';
+import {useNavigation} from '@react-navigation/native';
 const ChooseDate = props => {
   const selectedServices = props?.route.params?.data;
-  console.log("🚀 ~ file: ChooseDate.js:24 ~ ChooseDate ~ selectedServices:", selectedServices)
-  const image = props?.route?.params?.image
-  console.log("🚀 ~ file: ChooseDate.js:25 ~ ChooseDate ~ image:", image)
+  console.log("🚀 ~ file: ChooseDate.js:28 ~ ChooseDate ~ selectedServices:", selectedServices)
+  const barberDetails = props?.route.params?.Data;
+  const image = props?.route?.params?.image;
   const [date, setDate] = useState('');
-  const [selectedTiming, setSelectedTiming] = useState('9:00');
+  const [selectedTiming, setSelectedTiming] = useState([]);
+  const [Loading, setLoading] = useState(false);
+  const [bookingResponse, setBookingResponse] = useState(null);
+  const token = useSelector(state => state.authReducer.token);
+  const navigation = useNavigation();
+  const Booking = async () => {
+    const selectedServiceTiming = barberDetails?.service_timing.find(
+      item => item.time === selectedTiming?.time,
+    );
 
-  const timingArray = ['9:00', '1:00', '11:00', '12:00', '13:00'];
+    if (!date || !selectedTiming || !selectedServices) {
+      Platform.OS === 'android'
+        ? ToastAndroid.show(
+            'Please select date, time, and services',
+            ToastAndroid.SHORT,
+          )
+        : alert('Please select date, time, and services');
+      return;
+    }
+
+   
+
+    const selectedServiceIds = selectedServices.map(service => service.id);
+
+    const body = {
+      barber_id: selectedServiceTiming?.barber_id,
+      service_id: selectedServiceIds,
+      booking_date: date,
+      booking_time: selectedTiming?.time,
+    };
+    console.log("🚀 ~ file: ChooseDate.js:62 ~ Booking ~ body:", body)
+    const url = 'auth/booking';
+
+    setLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setLoading(false);
+
+    if (response?.data?.success) {
+      setBookingResponse(response?.data);
+      Platform.OS === 'android'
+        ? ToastAndroid.show('Booking successful', ToastAndroid.SHORT)
+        : Alert.alert('Booking successful');
+        navigation.goBack();
+    }
+  };
   return (
     <ScreenBoiler
       showHeader={true}
@@ -87,7 +133,6 @@ const ChooseDate = props => {
               textDayFontSize: moderateScale(16, 0.3),
               textMonthFontSize: moderateScale(16, 0.3),
               textDayHeaderFontSize: moderateScale(16, 0.3),
-            
             }}
             markedDates={{
               ...{
@@ -100,7 +145,7 @@ const ChooseDate = props => {
               },
             }}
           />
-          
+
           <CustomTextWithMask
             data={`Time`}
             textStyle={{
@@ -113,7 +158,7 @@ const ChooseDate = props => {
           />
 
           <View style={styles.timingView}>
-            {timingArray.map((item, index) => {
+            {barberDetails?.service_timing.map((item, index) => {
               return (
                 <TouchableOpacity
                   activeOpacity={0.9}
@@ -146,7 +191,7 @@ const ChooseDate = props => {
                         color:
                           item == selectedTiming ? Color.black : Color.white,
                       }}>
-                      {item}
+                      {item?.time}
                     </CustomText>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -157,24 +202,25 @@ const ChooseDate = props => {
             // borderColor={'white'}
             // borderWidth={1}
             textColor={Color.black}
-            onPress={() => {
-              if (date.length > 0 && selectedTiming != '') {
-                navigationService.navigate('CheckoutScreen', {
-                    finalData :{
-                    services: selectedServices,
-                    date: date,
-                    time : selectedTiming,
-                    }
-                });
-              } else {
-                Platform.OS == 'android'
-                  ? ToastAndroid.show(
-                      'Please Select any schedule first',
-                      ToastAndroid.SHORT,
-                    )
-                  : alert('Please Select any schedule first');
-              }
-            }}
+            onPress={Booking}
+            // onPress={() => {
+            //   if (date.length > 0 && selectedTiming != '') {
+            //     navigationService.navigate('CheckoutScreen', {
+            //       finalData: {
+            //         services: selectedServices,
+            //         date: date,
+            //         time: selectedTiming,
+            //       },
+            //     });
+            //   } else {
+            //     Platform.OS == 'android'
+            //       ? ToastAndroid.show(
+            //           'Please Select any schedule first',
+            //           ToastAndroid.SHORT,
+            //         )
+            //       : alert('Please Select any schedule first');
+            //   }
+            // }}
             width={windowWidth * 0.8}
             height={windowHeight * 0.06}
             text={'Next'}
@@ -219,5 +265,4 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(10, 0.3),
     // backgroundColor : 'red'
   },
-
 });
