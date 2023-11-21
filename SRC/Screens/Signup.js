@@ -115,6 +115,7 @@ const Signup = ({navigation}) => {
         : Alert.alert('User Registered Succesfully');
       dispatch(setUserData(response?.data?.user_info));
       dispatch(setUserLogin(response?.data?.token));
+      dispatch(setUserToken({token:response?.data?.token}))
     }
   };
 
@@ -272,7 +273,7 @@ const Signup = ({navigation}) => {
             borderRadius={moderateScale(1, 0.3)}
           />
           <TextInputWithTitle
-          secureText
+            secureText
             titleText={'Confirm Password'}
             placeholder={'Confirm Password'}
             setText={setConfirmPassword}
@@ -293,6 +294,7 @@ const Signup = ({navigation}) => {
             textColor={Color.black}
             onPress={() => {
               SignUp()
+              
               // dispatch(
               //   setUserData(
               //     userRole == 'Customer'

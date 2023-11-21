@@ -30,6 +30,8 @@ const DropDownSingleSelect = ({
   myJobs,
   Colors,
   dropdownStyle,
+  borderWidth,
+  borderColor
 }) => {
 
   return (
@@ -153,6 +155,8 @@ const styles = ScaledSheet.create({
     backgroundColor: Color.themeInputText,
     height: height * 0.057,
     borderRadius: moderateScale(20, 0.3),
+    borderWidth:1,
+    borderColor: Color.themeColor1,
   },
   main: {
     position: 'relative',
@@ -171,7 +175,7 @@ const styles = ScaledSheet.create({
     width: width * 0.75,
     // marginLeft: 38,
     fontSize: moderateScale(15, 0.3),
-    color: Color.themeLightGray,
+    color: Color.themeColor1,
     textAlign: 'left',
     textTransform: 'capitalize',
   },
@@ -188,7 +192,7 @@ const styles = ScaledSheet.create({
   },
   icon: {
     marginTop: 3,
-    color: Color.themeBlack,
+    color: Color.themeColor1,
   },
   icon2: {
     color: Color.themeColor,

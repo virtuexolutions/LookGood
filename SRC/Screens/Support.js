@@ -25,9 +25,10 @@ import {useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
 import CustomButton from '../Components/CustomButton';
 import LinearGradient from 'react-native-linear-gradient';
+import { validateEmail } from '../Config';
 
 const Support = () => {
-  const token = useSelector((state)=>state.authReducer.token)
+  const token = useSelector(state => state.authReducer.token);
   const isFocused = useIsFocused();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -56,36 +57,46 @@ const Support = () => {
   //   // setSubject('');
   //   // setMessage('');
   // }, [isFocused]);
-  // const sendQuestion = async () => {
-  //   const url = 'auth/contact/submit';
-  //   const body = {
-  //     name: fullName,
-  //     phone: phone,
-  //     email: email,
-  //     subject: subject,
-  //     description: message,
-  //   };
-  //   for (let key in body) {
-  //     if (body[key] === '') {
-  //       return Platform.OS == 'android'
-  //         ? ToastAndroid.show(`${key}  is required`, ToastAndroid.SHORT)
-  //         : alert(`${key}  is required`);
-  //     }
-  //   }
-  //   setSubmitLoading(true);
 
-  //   const response = await Post(url, body, apiHeader(token));
-  //   setSubmitLoading(false);
-  //   if (response != undefined) {
-  //     Platform.OS == 'android'
-  //       ? ToastAndroid.show(
-  //           'Sent Successfully',
-  //           ToastAndroid.SHORT,
-  //         )
-  //       : alert('Sent Successfully');
-  //     navigationService.navigate('HomeScreen');
-  //   }
-  // };
+  const Support = async () => {
+    const url = 'auth/support/submit';
+    const body = {
+      name: fullName,
+      phone: phone,
+      email: email,
+      subject: subject,
+      description: message,
+    };
+    for (let key in body) {
+      if (body[key] === '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(`${key}  is required`, ToastAndroid.SHORT)
+          : alert(`${key}  is required`);
+      }
+    }
+
+    if (isNaN(phone)) {
+      return Platform.OS == 'android'
+        ? ToastAndroid.show('phone is not a number', ToastAndroid.SHORT)
+        : Alert.alert('phone is not a number');
+    }
+    if (!validateEmail(email)) {
+      return Platform.OS == 'android'
+        ? ToastAndroid.show('email is not validate', ToastAndroid.SHORT)
+        : Alert.alert('email is not validate');
+    }
+
+    setSubmitLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setSubmitLoading(false);
+    if (response != undefined) {
+    //  console.log('🚀 ~ file: Support.js:80 ~ Support ~ response:',response?.data?.data,);
+      Platform.OS == 'android'
+        ? ToastAndroid.show('Sent Successfully', ToastAndroid.SHORT)
+        : alert('Sent Successfully');
+      navigationService.navigate('TabNavigation');
+    }
+  };
 
   return (
     <ScreenBoiler
@@ -98,27 +109,28 @@ const Support = () => {
         end={{x: 0.5, y: 1.0}}
         colors={Color.themeGradient}
         style={styles.container}>
-      
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: windowHeight * 0.15,
-              // paddingTop : moderateScale(20,0.3),
-              alignItems: 'center',
-            }}
-            style={{
-              width: windowWidth,
-            }}>
-                <CustomText isBold style={styles.text1}>
-           Support and Help
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingBottom: windowHeight * 0.15,
+            // paddingTop : moderateScale(20,0.3),
+            alignItems: 'center',
+          }}
+          style={{
+            width: windowWidth,
+          }}>
+          <CustomText isBold style={styles.text1}>
+            Support and Help
           </CustomText>
           <TouchableOpacity
-            style={[styles?.ContactInfoContainer, {marginTop : moderateScale(20,0.3)}]}
+            style={[
+              styles?.ContactInfoContainer,
+              {marginTop: moderateScale(20, 0.3)},
+            ]}
             activeOpacity={0.85}
             onPress={() => {
               Linking.openURL(`tel:${supportData?.phone}`);
-            }}
-          >
+            }}>
             <FontAwesome
               name="phone"
               color={Color.themeColor}
@@ -134,12 +146,14 @@ const Support = () => {
             </CustomText>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles?.ContactInfoContainer,{marginBottom: moderateScale(20,0.3)}]}
+            style={[
+              styles?.ContactInfoContainer,
+              {marginBottom: moderateScale(20, 0.3)},
+            ]}
             activeOpacity={0.85}
             onPress={() => {
               Linking.openURL(`mailto: ${supportData?.official_email}`);
-            }}
-          >
+            }}>
             <Entypo
               name="mail"
               color={Color.themeColor}
@@ -154,7 +168,7 @@ const Support = () => {
                 : 'not added yet'}
             </CustomText>
           </TouchableOpacity>
-         
+
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
             <TextInputWithTitle
               titleText={'Your Name'}
@@ -163,15 +177,15 @@ const Support = () => {
               setText={setFullName}
               value={fullName}
               viewHeight={0.06}
-             viewWidth={0.85}
+              viewWidth={0.85}
               inputWidth={0.84}
-          // border={1}
-          // borderColor={'#1B5CFB45'}
-          backgroundColor={'#FFFFFF'}
-          marginTop={moderateScale(12, 0.3)}
-          color={Color.themeColor}
-          placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+              // border={1}
+              // borderColor={'#1B5CFB45'}
+              backgroundColor={'#FFFFFF'}
+              marginTop={moderateScale(12, 0.3)}
+              color={Color.themeColor}
+              placeholderColor={Color.themeLightGray}
+              borderRadius={moderateScale(1, 0.3)}
             />
             <TextInputWithTitle
               titleText={'Phone'}
@@ -216,15 +230,15 @@ const Support = () => {
               setText={setSubject}
               value={subject}
               viewHeight={0.06}
-             viewWidth={0.85}
+              viewWidth={0.85}
               inputWidth={0.84}
-          // border={1}
-          // borderColor={'#1B5CFB45'}
-          backgroundColor={'#FFFFFF'}
-          marginTop={moderateScale(12, 0.3)}
-          color={Color.themeColor}
-          placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+              // border={1}
+              // borderColor={'#1B5CFB45'}
+              backgroundColor={'#FFFFFF'}
+              marginTop={moderateScale(12, 0.3)}
+              color={Color.themeColor}
+              placeholderColor={Color.themeLightGray}
+              borderRadius={moderateScale(1, 0.3)}
             />
 
             <TextInputWithTitle
@@ -234,49 +248,50 @@ const Support = () => {
               setText={setMessage}
               value={message}
               viewHeight={0.06}
-             viewWidth={0.85}
+              viewWidth={0.85}
               inputWidth={0.84}
-          // border={1}
-          // borderColor={'#1B5CFB45'}
-          backgroundColor={'#FFFFFF'}
-          marginTop={moderateScale(12, 0.3)}
-          color={Color.themeColor}
-          placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+              // border={1}
+              // borderColor={'#1B5CFB45'}
+              backgroundColor={'#FFFFFF'}
+              marginTop={moderateScale(12, 0.3)}
+              color={Color.themeColor}
+              placeholderColor={Color.themeLightGray}
+              borderRadius={moderateScale(1, 0.3)}
               multiline={true}
             />
-             <CustomButton
-            bgColor={Color.themeColor}
-            borderColor={'white'}
-            borderWidth={1}
-            textColor={Color.black}
-            onPress={() => {console.log('Will Update profile');}}
-            width={windowWidth * 0.85}
-            height={windowHeight * 0.06}
-            text={'Send Question'}
-            fontSize={moderateScale(14, 0.3)}
-            textTransform={'uppercase'}
-            isGradient={true}
-            isBold
-            marginTop={moderateScale(30, 0.3)}
-            
-          />
+            <CustomButton
+              bgColor={Color.themeColor}
+              borderColor={'white'}
+              borderWidth={1}
+              textColor={Color.black}
+              onPress={() => {
+                Support();
+              }}
+              width={windowWidth * 0.85}
+              height={windowHeight * 0.06}
+              text={ submitLoading ? <ActivityIndicator color={Color.white} size={'small'} /> :'Send Question'}
+              fontSize={moderateScale(14, 0.3)}
+              textTransform={'uppercase'}
+              isGradient={true}
+              isBold
+              marginTop={moderateScale(30, 0.3)}
+            />
           </View>
-       </ScrollView></LinearGradient></ScreenBoiler>
+        </ScrollView>
+      </LinearGradient>
+    </ScreenBoiler>
   );
 };
 
 export default Support;
 
 const styles = ScaledSheet.create({
- 
-  
   icon1: {
     fontWeight: 'bold',
     marginLeft: 30,
     width: windowWidth * 0.09,
   },
-  
+
   Txt1: {
     fontSize: moderateScale(20, 0.3),
     fontWeight: 'bold',
@@ -287,10 +302,9 @@ const styles = ScaledSheet.create({
     // alignSelf: "flex-start",
   },
   contactInfoText: {
-    fontSize: moderateScale(13, 0.3),color : Color.white
+    fontSize: moderateScale(13, 0.3),
+    color: Color.white,
   },
-
-
 
   ContactInfoContainer: {
     width: windowWidth,

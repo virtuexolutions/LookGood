@@ -43,16 +43,9 @@ const CheckoutScreen = props => {
   const [finalStateData, setFinalStateData] = useState(
     fromStore ? cartData : finalData?.services,
   );
-  console.log(
-    '🚀 ~ file: CheckoutScreen.js:32 ~ CheckoutScreen ~ finalStateData',
-    finalStateData,
-  );
+
   const [arrayDropDown, setArrayDropdown] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState();
-  // console.log(
-  //   '🚀 ~ file: CheckoutScreen.js:22 ~ CheckoutScreen ~ finalData',
-  //   finalStateData,finalData
-  // );
 
   const servicesArray = [
     {
@@ -92,6 +85,8 @@ const CheckoutScreen = props => {
       return setSubTotal(prev => prev + price);
     });
   }, [finalStateData]);
+
+ 
 
   return (
     <ScreenBoiler
