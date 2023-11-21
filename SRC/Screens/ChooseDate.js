@@ -21,10 +21,14 @@ import navigationService from '../navigationService';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
 const ChooseDate = props => {
   const selectedServices = props?.route.params?.data;
-  console.log("🚀 ~ file: ChooseDate.js:24 ~ ChooseDate ~ selectedServices:", selectedServices)
-  const image = props?.route?.params?.image
-  console.log("🚀 ~ file: ChooseDate.js:25 ~ ChooseDate ~ image:", image)
+  console.log(
+    '🚀 ~ file: ChooseDate.js:24 ~ ChooseDate ~ selectedServices:',
+    selectedServices,
+  );
+  const image = props?.route?.params?.image;
+  console.log('🚀 ~ file: ChooseDate.js:25 ~ ChooseDate ~ image:', image);
   const [date, setDate] = useState('');
+  const [location, setLocation] = useState('');
   const [selectedTiming, setSelectedTiming] = useState('9:00');
 
   const timingArray = ['9:00', '1:00', '11:00', '12:00', '13:00'];
@@ -87,7 +91,6 @@ const ChooseDate = props => {
               textDayFontSize: moderateScale(16, 0.3),
               textMonthFontSize: moderateScale(16, 0.3),
               textDayHeaderFontSize: moderateScale(16, 0.3),
-            
             }}
             markedDates={{
               ...{
@@ -100,7 +103,7 @@ const ChooseDate = props => {
               },
             }}
           />
-          
+
           <CustomTextWithMask
             data={`Time`}
             textStyle={{
@@ -153,6 +156,73 @@ const ChooseDate = props => {
               );
             })}
           </View>
+
+          <CustomTextWithMask
+            data={`Location`}
+            textStyle={{
+              fontSize: moderateScale(13, 0.3),
+              marginTop: moderateScale(10, 0.3),
+              marginLeft: windowWidth * 0.1,
+            }}
+            isBold
+            size={30}
+          />
+          <View style={styles.userTypeContainer}>
+            <View style={styles.innerContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setLocation('custom');
+                  navigationService.navigate('SearchLocation', {
+                    finalData: {
+                      services: selectedServices,
+                      date: date,
+                      time: selectedTiming,
+                    },
+                  });
+                }}
+                activeOpacity={0.9}
+                style={[
+                  styles.circle,
+                  location == 'custom' && {
+                    backgroundColor: Color.themeColor1,
+                    borderColor: Color.themeColor1,
+                  },
+                ]}></TouchableOpacity>
+              <CustomText
+                isBold
+                style={styles.txt2}
+                onPress={() => {
+                  setLocation('custom');
+                  navigationService.navigate('SearchLocation', {
+                    finalData: {
+                      services: selectedServices,
+                      date: date,
+                      time: selectedTiming,
+                    },
+                  });
+                }}>
+                Custom Location
+              </CustomText>
+            </View>
+            <View style={styles.innerContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setLocation('shop');
+                }}
+                activeOpacity={0.9}
+                style={[
+                  styles.circle,
+                  location == 'shop' && {
+                    backgroundColor: Color.themeColor1,
+                    borderColor: Color.themeColor1,
+                  },
+                ]}></TouchableOpacity>
+              <CustomText isBold style={styles.txt2}>
+                Barber shop
+              </CustomText>
+            </View>
+          </View>
+
           <CustomButton
             // borderColor={'white'}
             // borderWidth={1}
@@ -160,11 +230,11 @@ const ChooseDate = props => {
             onPress={() => {
               if (date.length > 0 && selectedTiming != '') {
                 navigationService.navigate('CheckoutScreen', {
-                    finalData :{
+                  finalData: {
                     services: selectedServices,
                     date: date,
-                    time : selectedTiming,
-                    }
+                    time: selectedTiming,
+                  },
                 });
               } else {
                 Platform.OS == 'android'
@@ -211,6 +281,15 @@ const styles = ScaledSheet.create({
     // marginTop : moderateScale(10,0.3),
     // lineHeight: moderateScale(32, 0.3),
   },
+  circle: {
+    height: moderateScale(13, 0.3),
+    width: moderateScale(13, 0.3),
+    borderRadius: moderateScale(6.5, 0.3),
+    borderWidth: 1,
+    backgroundColor: Color.white,
+    borderColor: Color.themeColor,
+    marginRight: moderateScale(5, 0.3),
+  },
   timingView: {
     width: windowWidth * 0.8,
     flexWrap: 'wrap',
@@ -219,5 +298,32 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(10, 0.3),
     // backgroundColor : 'red'
   },
-
+  userTypeContainer: {
+    width: windowWidth * 0.7,
+    // backgroundColor : Color.red,
+    padding: moderateScale(10, 0.3),
+    marginTop: moderateScale(10, 0.3),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  txt2: {
+    fontSize: moderateScale(12, 0.3),
+    color: Color.themeColor,
+    // fontWeight : 'bold'
+    // backgroundColor : 'red'
+  },
+  innerContainer: {
+    // width: '48%',
+    // backgroundColor : 'green',
+    // paddingVertical : moderateScale(5,0.3),
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  txt4: {
+    color: Color.white,
+    fontSize: moderateScale(14, 0.6),
+    borderBottomWidth: 1,
+    borderColor: Color.themeColor,
+    marginBottom: moderateScale(5, 0.3),
+  },
 });

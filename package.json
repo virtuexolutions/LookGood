@@ -8,8 +8,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-      "postinstall": "patch-package"
-   
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.6",
@@ -22,7 +21,6 @@
     "@stripe/stripe-react-native": "^0.19.0",
     "axios": "^0.21.4",
     "babel-plugin-r-if": "^0.0.3",
-    "react-native-view-shot": "^3.6.0",
     "lottie-react-native": "^5.1.4",
     "moment": "^2.29.3",
     "native-base": "^3.4.13",
@@ -35,6 +33,7 @@
     "react-native-confirmation-code-field": "^7.3.0",
     "react-native-draggable": "^3.3.0",
     "react-native-gesture-handler": "^2.4.2",
+    "react-native-google-places-autocomplete": "^2.5.6",
     "react-native-image-picker": "^4.8.4",
     "react-native-image-viewing": "^0.2.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
@@ -52,6 +51,7 @@
     "react-native-skeleton-placeholder": "^5.0.0",
     "react-native-svg": "^12.4.4",
     "react-native-vector-icons": "^9.1.0",
+    "react-native-view-shot": "^3.6.0",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "redux-persist": "^6.0.0",

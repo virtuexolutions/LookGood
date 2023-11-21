@@ -37,6 +37,7 @@ import ImageScreen from './Screens/ImageScreen';
 import EnterPhone from './Screens/EnterPhone';
 import VerifyNumber from './Screens/VerifyNumber';
 import ResetPassword from './Screens/ResetPassword';
+import SearchLocation from './Screens/SearchLocation';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -73,6 +74,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="TabNavigation" component={TabNavigation} />
           <RootNav.Screen name="CheckoutScreen" component={CheckoutScreen} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
+          <RootNav.Screen name="SearchLocation" component={SearchLocation} />
           <RootNav.Screen name="MyBookings" component={MyBookings} />
           <RootNav.Screen name="MyAccounts" component={MyAccounts} />
           <RootNav.Screen name="ChangePassword" component={ChangePassword} />

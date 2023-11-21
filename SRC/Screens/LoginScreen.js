@@ -118,7 +118,7 @@ const LoginScreen = () => {
           onPress={() => {
             login();
 
-            // dispatch(setUserToken({token: true}));
+            // dispatch(setUserToken({token: 'skjfhkjhfdjjsdfjlkjlkfj;kdf;l'}));
           }}
           width={windowWidth * 0.75}
           height={windowHeight * 0.06}
