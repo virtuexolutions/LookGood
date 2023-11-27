@@ -306,11 +306,6 @@ const Homescreen = () => {
                   </View>
                 );
               }}
-              ListEmptyComponent={()=>{
-                return(<View>
-               <NoData />
-                </View>)
-              }}
             />
 
             <CustomText
@@ -414,7 +409,7 @@ const Homescreen = () => {
               </CustomText>
               <CustomText
                 onPress={() => {
-                  navigationService.navigate('UpComingScreen', {data:orderData});
+                  navigationService.navigate('UpComingScreen');
                 }}
                 style={styles.viewAll}>
                 View all
@@ -422,6 +417,16 @@ const Homescreen = () => {
             </View>
             <FlatList
               decelerationRate={'fast'}
+              ListEmptyComponent={()=>{
+                return(<NoData
+                  style={{
+                    height: windowHeight * 0.25,
+                    width: windowWidth * 0.6,
+                    alignItems: 'center',
+                  }}
+                  text={'No Upcoming Orders'}
+                />)
+              }}
               showsHorizontalScrollIndicator={false}
               style={{
                 marginTop: moderateScale(10, 0.3),
@@ -433,16 +438,6 @@ const Homescreen = () => {
               horizontal
               renderItem={({item, index}) => {
                 return <OrderCard item={item} />;
-              }}
-              ListEmptyComponent={()=>{
-                return(<NoData
-                  style={{
-                    height: windowHeight * 0.25,
-                    width: windowWidth * 0.6,
-                    alignItems: 'center',
-                  }}
-                  text={'No Upcoming Orders'}
-                />)
               }}
             />
             <CustomText
@@ -469,10 +464,6 @@ const Homescreen = () => {
                 paddingHorizontal: moderateScale(8, 0.3),
               }}
               data={orderData}
-              numColumns={2}
-              renderItem={({item, index}) => {
-                return <OrderCard item={item} />;
-              }}
               ListEmptyComponent={()=>{
                 return(<NoData
                   style={{
@@ -480,8 +471,12 @@ const Homescreen = () => {
                     width: windowWidth * 0.6,
                     alignItems: 'center',
                   }}
-                  text={'No new orders'}
+                  text={'No Upcoming Orders'}
                 />)
+              }}
+              numColumns={2}
+              renderItem={({item, index}) => {
+                return <OrderCard item={item} />;
               }}
             />
           </ScrollView>
