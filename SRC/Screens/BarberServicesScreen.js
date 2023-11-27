@@ -29,8 +29,12 @@ import {useSelector} from 'react-redux';
 
 const BarberServicesScreen = props => {
   const [selectedService, setSelectedService] = useState([]);
+  console.log("🚀 ~ file: BarberServicesScreen.js:32 ~ BarberServicesScreen ~ selectedService:", selectedService)
   const [barberDetails, setBarberDetails] = useState([]);
-  console.log("🚀 ~ file: BarberServicesScreen.js:33 ~ BarberServicesScreen ~ barberDetails:", barberDetails.services)
+  console.log(
+    '🚀 ~ file: BarberServicesScreen.js:33 ~ BarberServicesScreen ~ barberDetails:',
+    barberDetails.services,
+  );
   const [Loading, setLoading] = useState(false);
   const token = useSelector(state => state.authReducer.token);
   const detail = props?.route?.params?.detail;
@@ -113,6 +117,7 @@ const BarberServicesScreen = props => {
       quantity: 1,
     },
   ];
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -134,7 +139,7 @@ const BarberServicesScreen = props => {
           <CustomImage style={styles.image} source={{uri: detail?.photo}} />
           <View style={{marginLeft: moderateScale(10, 0.3)}}>
             <CustomTextWithMask
-              data={detail?.first_name}
+              data={`${detail?.first_name} ${detail?.last_name}`}
               isBold
               size={moderateScale(20, 0.3)}
               textStyle={{
@@ -182,8 +187,15 @@ const BarberServicesScreen = props => {
 
         {Loading ? (
           <View
-            style={{alignSelf: 'center', marginTop: moderateScale(20, 0.3)}}>
-            <ActivityIndicator size={moderateScale(30, 0.6)} color={'white'} />
+            style={{
+              alignItems: 'center',
+              height: windowHeight * 0.4,
+              justifyContent: 'center',
+            }}>
+            <ActivityIndicator
+              size={moderateScale(30, 0.6)}
+              color={Color.themeColor}
+            />
           </View>
         ) : (
           <FlatList
@@ -201,20 +213,30 @@ const BarberServicesScreen = props => {
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress={() => {
-                    let data = [];
-                    let index1 = 0;
-                    !selectedService.some(data => {
-                      return data.name == item?.name;
-                    })
-                      ? setSelectedService(prev => [...prev, item])
-                      : ((data = [...selectedService]),
-                        (index1 = data.findIndex(x => x?.name == item?.name)),
-                        console.log(
-                          '🚀 ~ file: BarberServicesScreen.js:157 ~ BarberServicesScreen ~ data',
-                          index1,
-                        ),
-                        data.splice(index1, 1),
-                        setSelectedService(data));
+                    if (
+                      selectedService?.some(data => data?.name == item?.name)
+                    ) {
+                      setSelectedService(
+                        selectedService?.filter(data => data?.name != item?.name),
+                      );
+                    }else{
+                      setSelectedService(prev => [...prev, item])
+                    }
+
+                    // let data = [];
+                    // let index1 = 0;
+                    // !selectedService.some(data => {
+                    //   return data.name == item?.name;
+                    // })
+                    //   ? setSelectedService(prev => [...prev, item])
+                    //   : ((data = [...selectedService]),
+                    //     (index1 = data.findIndex(x => x?.name == item?.name)),
+                    //     console.log(
+                    //       '🚀 ~ file: BarberServicesScreen.js:157 ~ BarberServicesScreen ~ data',
+                    //       index1,
+                    //     ),
+                    //     data.splice(index1, 1),
+                    //     setSelectedService(data));
                   }}
                   style={{
                     flexDirection: 'row',
@@ -305,7 +327,7 @@ const BarberServicesScreen = props => {
                       if (selectedService.length > 0) {
                         navigationService.navigate('ChooseDate', {
                           data: selectedService,
-                          Data:barberDetails,
+                          Data: barberDetails,
                         });
                       } else {
                         Platform.OS == 'android'

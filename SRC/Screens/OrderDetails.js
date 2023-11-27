@@ -225,10 +225,6 @@ const styles = ScaledSheet.create({
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(16, 0.3),
-    // position : 'absolute',
-    // bottom : moderateScale(10,0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   bannerView: {
     width: windowWidth * 0.85,
@@ -243,7 +239,7 @@ const styles = ScaledSheet.create({
   containerCard: {
     marginTop: windowHeight * 0.08,
     width: windowWidth * 0.9,
-    height: windowHeight * 0.73,
+    height: windowHeight * 0.68,
     backgroundColor: Color.white,
     borderRadius: moderateScale(20, 0.3),
     alignItems: 'center',
@@ -258,22 +254,16 @@ const styles = ScaledSheet.create({
   name: {
     marginTop: moderateScale(5, 0.3),
     fontSize: moderateScale(20, 0.3),
-    // marginLeft: moderateScale(3, 0.3),
-    // width: '70%',
-    // backgroundColor : 'red',
+  
   },
   eachRow: {
     flexDirection: 'row',
     width: '70%',
-    // backgroundColor : 'red',
-    // marginTop : moderateScale(5,0.3),
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   heading: {
     fontSize: moderateScale(13, 0.3),
-    // marginLeft: moderateScale(5, 0.3),
-    // fontStyle : 'normal'
   },
   mapView: {
     width: windowWidth * 0.7,

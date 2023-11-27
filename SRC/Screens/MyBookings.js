@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
+import {
+  ImageBackground,
+  View,
+  ScrollView,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -15,8 +21,11 @@ import {useSelector} from 'react-redux';
 const MyBookings = () => {
   const [item, setItem] = useState('');
   const [Loading, setLoading] = useState(false);
-  const [bookingResponse, setBookingResponse] = useState(null);
-  console.log("🚀 ~ file: MyBookings.js:19 ~ MyBookings ~ bookingResponse:", bookingResponse)
+  const [bookingResponse, setBookingResponse] = useState([]);
+  console.log(
+    '🚀 ~ file: MyBookings.js:19 ~ MyBookings ~ bookingResponse:',
+    bookingResponse,
+  );
 
   const token = useSelector(state => state.authReducer.token);
 
@@ -28,15 +37,13 @@ const MyBookings = () => {
 
     setLoading(false);
     if (response != undefined) {
-      // return console.log(
-      //     '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000PARTY',
-      //     response?.data?.data,
-      //   );
-        setBookingResponse(response?.data?.data);
+      console.log(
+        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000PARTY',
+        response?.data,
+      );
+      setBookingResponse(response?.data?.data);
     }
   };
-
-  // Booking GET API END
 
   useEffect(() => {
     GetBooking();
@@ -169,22 +176,33 @@ const MyBookings = () => {
           }}
         />
 
-        <FlatList
-          decelerationRate={'fast'}
-          showsVerticalScrollIndicator={false}
-          style={{
-            marginTop: moderateScale(10, 0.3),
-          }}
-          contentContainerStyle={{
-            paddingHorizontal: moderateScale(8, 0.3),
-            paddingBottom: moderateScale(30, 0.3),
-          }}
-          data={bookingResponse}
-          numColumns={2}
-          renderItem={({item, index}) => {
-            return <OrderCard item={item} />;
-          }}
-        />
+        {Loading ? (
+          <View
+            style={{
+              width: windowWidth * 0.8,
+              height: windowHeight * 0.7,
+              justifyContent: 'center',
+            }}>
+            <ActivityIndicator size={'large'} color={Color.themeColor} />
+          </View>
+        ) : (
+          <FlatList
+            decelerationRate={'fast'}
+            showsVerticalScrollIndicator={false}
+            style={{
+              marginTop: moderateScale(10, 0.3),
+            }}
+            contentContainerStyle={{
+              paddingHorizontal: moderateScale(8, 0.3),
+              paddingBottom: moderateScale(30, 0.3),
+            }}
+            data={bookingResponse}
+            numColumns={2}
+            renderItem={({item, index}) => {
+              return <OrderCard item={item} />;
+            }}
+          />
+        )}
       </LinearGradient>
     </ScreenBoiler>
   );

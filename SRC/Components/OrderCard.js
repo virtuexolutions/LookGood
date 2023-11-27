@@ -159,5 +159,6 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(11, 0.3),
     marginLeft: moderateScale(5, 0.3),
     fontStyle: 'italic',
+    width:windowWidth*0.24
   },
 });

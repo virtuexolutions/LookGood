@@ -66,23 +66,17 @@ const CheckoutScreen = props => {
     setSubTotal(0);
     setArrayDropdown([]);
     servicesArray.map(x => setArrayDropdown(prev => [...prev, x?.name]));
-
-    // finalStateData.map((x, index) => {
-    //   return setSubTotal(prev => x?.price + prev);
-    // });
   }, []);
 
   useEffect(() => {
     fromStore &&
       setSelectedPrice(servicesArray.find(data => data.name == type));
-      // setSubTotal(prev => prev + selectedPrice?.price)
   }, [type]);
 
   useEffect(() => {
     setSubTotal(0), fromStore && dispatch(setWholeCart(finalStateData));
     finalStateData.map((x, index) => {
-      const price = x?.price * x?.quantity;
-      return setSubTotal(prev => prev + price);
+      return setSubTotal(prev => prev + x?.price);
     });
   }, [finalStateData]);
 
@@ -140,7 +134,7 @@ const CheckoutScreen = props => {
                       {item?.name}
                     </CustomText>
                     <CustomText isBold>
-                      {numeral(item?.price * item?.quantity).format('$0,0.0')}
+                      {numeral(item?.price).format('$0,0.0')}
                     </CustomText>
                   </View>
                   {fromStore && (
@@ -240,7 +234,7 @@ const CheckoutScreen = props => {
                   paddingHorizontal: moderateScale(20, 0.3),
                   width: windowWidth,
                   justifyContent: 'space-between',
-                }}>
+                }}>finalData
                 <CustomText style={[styles.text1, {color: Color.white}]}>
                   Subtotal
                 </CustomText>
