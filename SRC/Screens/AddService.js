@@ -61,7 +61,10 @@ const AddService = () => {
   const Services = async () => {
     if (service.some(item => item?.price == '')) {
       return Platform.OS == 'android'
-        ? ToastAndroid.show('Please add price for all the services', ToastAndroid.SHORT)
+        ? ToastAndroid.show(
+            'Please add price for all the services',
+            ToastAndroid.SHORT,
+          )
         : Alert.alert('Please add price for all the services');
     }
     const body = {
@@ -187,6 +190,17 @@ const AddService = () => {
           <FlatList
             showsVerticalScrollIndicator={false}
             data={service}
+            ListEmptyComponent={()=>{
+              return(<NoData
+                style={{
+                  height: windowHeight * 0.25,
+                  width: windowWidth * 0.6,
+                  alignItems: 'center',
+                  // backgroundColor:'red'
+                }}
+                text={'No Services Added Yet'}
+              />)
+            }}
             renderItem={({item, index}) => {
               console.log('🚀 ~ file: AddService.js:241 ~ item:', item);
               return (

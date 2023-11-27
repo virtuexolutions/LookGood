@@ -8,7 +8,11 @@ import CustomText from './CustomText';
 
 const NoData = ({textStyle, style, text}) => {
   return (
-    <View>
+    <View style={{
+      // backgroundColor:'green',
+      // justifyContent:'center',
+      alignItems:'center'
+    }}>
       <View style={style}>
         <Lottie
           source={require('../Assets/Images/animation3.json')}

@@ -11,6 +11,7 @@ import OrderCard from '../Components/OrderCard';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
+import NoData from '../Components/NoData';
 
 const MyBookings = () => {
   const [item, setItem] = useState('');
@@ -170,6 +171,17 @@ const MyBookings = () => {
         />
 
         <FlatList
+          ListEmptyComponent={()=>{
+            return(<NoData
+              style={{
+                height: windowHeight * 0.25,
+                width: windowWidth * 0.6,
+                alignItems: 'center',
+                // backgroundColor:'red'
+              }}
+              text={'No Booking yet'}
+            />)
+          }}
           decelerationRate={'fast'}
           showsVerticalScrollIndicator={false}
           style={{
