@@ -26,10 +26,10 @@ import {formRegEx, formRegExReplacer, imageUrl} from '../Config';
 import CustomButton from '../Components/CustomButton';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../Components/CustomText';
+import navigationService from '../navigationService';
 
 const ChangePassword = props => {
   const token = useSelector(state => state.authReducer.token);
-  console.log(token);
   const dispatch = useDispatch();
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -78,7 +78,7 @@ const ChangePassword = props => {
       navigationService.navigate('HomeScreen')
     }
   };
-  // dispatch(setUserToken('123456'));
+ 
 
   return (
     <ScreenBoiler
@@ -110,7 +110,7 @@ const ChangePassword = props => {
           iconName={'lock'}
           iconType={FontAwesome}
           titleText={'Current Password'}
-          secureText={false}
+          secureText
           placeholder={'Current Password'}
           setText={setCurrentPassword}
           value={currentPassword}
@@ -126,17 +126,18 @@ const ChangePassword = props => {
           borderRadius={moderateScale(1, 0.3)}
         />
         <TextInputWithTitle
+     
           iconName={'lock'}
           iconType={FontAwesome}
           titleText={'New password'}
-          secureText={false}
+          secureText
           placeholder={'New password'}
           setText={setPassword}
           value={password}
           viewHeight={0.06}
           viewWidth={0.75}
           inputWidth={0.74}
-         backgroundColor={'#FFFFFF'}
+          backgroundColor={'#FFFFFF'}
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
@@ -146,7 +147,7 @@ const ChangePassword = props => {
           iconName={'lock'}
           iconType={FontAwesome}
           titleText={'Confirm New password'}
-          secureText={false}
+          secureText
           placeholder={'Confirm New password'}
           setText={setConfirmPassword}
           value={confirmPassword}
@@ -167,10 +168,10 @@ const ChangePassword = props => {
             borderColor={'white'}
             borderWidth={1}
             textColor={Color.black}
-            onPress={() => {console.log('Will Update profile');}}
+            onPress={() => {passwordReset()}}
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
-            text={'Update'}
+            text={isLoading ? <ActivityIndicator color={'black'} size={'small'}/> :'Update'}
             fontSize={moderateScale(14, 0.3)}
             textTransform={'uppercase'}
             isGradient={true}

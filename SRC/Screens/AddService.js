@@ -26,6 +26,7 @@ import ServiceComponent from '../Components/ServiceComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import {useNavigation} from '@react-navigation/native';
+import NoData from '../Components/NoData';
 
 const AddService = () => {
   const [Loading, setLoading] = useState(false);
@@ -36,17 +37,17 @@ const AddService = () => {
   const token = useSelector(state => state.authReducer.token);
   console.log('🚀 ~ file: AddService.js:33 ~ AddService ~ token999888:', token);
 
-
-  // GET API START 
+  // GET API START
   const GetServices = async () => {
     const url = `auth/barber/service `;
     setLoading(true);
     const response = await Get(url, token);
-   
+
     setLoading(false);
     if (response != undefined) {
       console.log(
-        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000',response?.data?.data,
+        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000',
+        response?.data?.data,
       );
       setService(response?.data?.data);
     }
@@ -56,9 +57,13 @@ const AddService = () => {
     GetServices();
   }, []);
 
-
-// POST API START 
+  // POST API START
   const Services = async () => {
+    if (service.some(item => item?.price == '')) {
+      return Platform.OS == 'android'
+        ? ToastAndroid.show('Please add price for all the services', ToastAndroid.SHORT)
+        : Alert.alert('Please add price for all the services');
+    }
     const body = {
       service_name: service,
     };
@@ -86,7 +91,6 @@ const AddService = () => {
     }
   };
 
- 
   useEffect(() => {
     console.log('changed');
   }, [service]);
@@ -184,7 +188,7 @@ const AddService = () => {
             showsVerticalScrollIndicator={false}
             data={service}
             renderItem={({item, index}) => {
-              console.log("🚀 ~ file: AddService.js:241 ~ item:", item)
+              console.log('🚀 ~ file: AddService.js:241 ~ item:', item);
               return (
                 <ServiceComponent
                   service={service}

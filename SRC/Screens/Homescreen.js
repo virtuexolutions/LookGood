@@ -14,6 +14,7 @@ import BarberCard from '../Components/BarberCard';
 import {useSelector} from 'react-redux';
 import OrderCard from '../Components/OrderCard';
 import {Get} from '../Axios/AxiosInterceptorFunction';
+import NoData from '../Components/NoData';
 
 const Homescreen = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -305,6 +306,11 @@ const Homescreen = () => {
                   </View>
                 );
               }}
+              ListEmptyComponent={()=>{
+                return(<View>
+               <NoData />
+                </View>)
+              }}
             />
 
             <CustomText
@@ -408,7 +414,7 @@ const Homescreen = () => {
               </CustomText>
               <CustomText
                 onPress={() => {
-                  navigationService.navigate('UpComingScreen');
+                  navigationService.navigate('UpComingScreen', {data:orderData});
                 }}
                 style={styles.viewAll}>
                 View all
@@ -427,6 +433,16 @@ const Homescreen = () => {
               horizontal
               renderItem={({item, index}) => {
                 return <OrderCard item={item} />;
+              }}
+              ListEmptyComponent={()=>{
+                return(<NoData
+                  style={{
+                    height: windowHeight * 0.25,
+                    width: windowWidth * 0.6,
+                    alignItems: 'center',
+                  }}
+                  text={'No Upcoming Orders'}
+                />)
               }}
             />
             <CustomText
@@ -456,6 +472,16 @@ const Homescreen = () => {
               numColumns={2}
               renderItem={({item, index}) => {
                 return <OrderCard item={item} />;
+              }}
+              ListEmptyComponent={()=>{
+                return(<NoData
+                  style={{
+                    height: windowHeight * 0.25,
+                    width: windowWidth * 0.6,
+                    alignItems: 'center',
+                  }}
+                  text={'No new orders'}
+                />)
               }}
             />
           </ScrollView>

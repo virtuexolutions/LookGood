@@ -8,8 +8,10 @@ import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment/moment';
 import OrderCard from '../Components/OrderCard';
+import NoData from '../Components/NoData';
 
-const UpComingScreen = () => {
+const UpComingScreen = (props) => {
+  const data = props?.route?.params?.data
   const orderArray = [
     {
       image: require('../Assets/Images/dummyCustomer1.png'),
@@ -119,14 +121,9 @@ const UpComingScreen = () => {
         end={{x: 0.5, y: 1.0}}
         colors={Color.themeGradient}
         style={styles.container}>
-        
-         
               <CustomText isBold style={styles.text1}>
                 UpComing Orders
               </CustomText>
-
-             
-           
             <FlatList
             decelerationRate={'fast'}
               showsVerticalScrollIndicator={false}
@@ -137,8 +134,18 @@ const UpComingScreen = () => {
                 paddingHorizontal: moderateScale(8, 0.3),
                 paddingVertical : moderateScale(30,0.3)
               }}
-              data={orderArray}
+              data={data}
               numColumns={2}
+              ListEmptyComponent={()=>{
+                return(<NoData
+                  style={{
+                    height: windowHeight * 0.25,
+                    width: windowWidth * 0.6,
+                    alignItems: 'center',
+                  }}
+                  text={'No Upcoming Orders'}
+                />)
+              }}
            
               
               renderItem={({item, index}) => {

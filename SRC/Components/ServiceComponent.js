@@ -13,6 +13,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
 import TextInputWithTitle from './TextInputWithTitle';
+import { Platform } from 'react-native';
+import { ToastAndroid } from 'react-native';
 
 const ServiceComponent = ({setService, service, item}) => {
   // console.log("🚀 ~ file: ServiceComponent.js:18 ~ ServiceComponent888888888 ~ item:", item)
@@ -92,7 +94,12 @@ const ServiceComponent = ({setService, service, item}) => {
             );
           }}
           onSelect={(selectedItem, index) => {
-            setService(prev => [...prev], (item.name = selectedItem));
+            if(service.some(item=> item?.name==selectedItem)){
+             return Platform.OS == 'android' ?  ToastAndroid.show('Service already added!',ToastAndroid.SHORT): Alert.alert("Service already added!");
+            }else{
+
+              setService(prev => [...prev], (item.name = selectedItem));
+            }
           }}
           backgroundColor={Color.white}
         />

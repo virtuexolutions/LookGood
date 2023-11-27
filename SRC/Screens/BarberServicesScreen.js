@@ -30,6 +30,7 @@ import {useSelector} from 'react-redux';
 const BarberServicesScreen = props => {
   const [selectedService, setSelectedService] = useState([]);
   const [barberDetails, setBarberDetails] = useState([]);
+  console.log("🚀 ~ file: BarberServicesScreen.js:33 ~ BarberServicesScreen ~ barberDetails:", barberDetails.services)
   const [Loading, setLoading] = useState(false);
   const token = useSelector(state => state.authReducer.token);
   const detail = props?.route?.params?.detail;
