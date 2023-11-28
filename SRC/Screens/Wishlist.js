@@ -3,7 +3,7 @@ import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,13 +13,17 @@ import navigationService from '../navigationService';
 import moment from 'moment/moment';
 import CustomTextWithMask from '../Components/CustomTextWithMask';
 import BarberCard from '../Components/BarberCard';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
 
 const Wishlist = () => {
-  const [selected , setSelected] = useState('barber');
-  const [data ,setData] = useState([])
+  const [selected, setSelected] = useState('barber');
+  const token = useSelector(state => state.authReducer.token);
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
  
-  
+
   const cardArray = [
     {
       image: require('../Assets/Images/barbarDummy1.png'),
@@ -81,8 +85,8 @@ const Wishlist = () => {
     },
   ];
   useEffect(() => {
-    selected == 'barber' ? setData(cardArray) : setData(storeArray)
-  }, [selected])
+    selected == 'barber' ? setData(cardArray) : setData(storeArray);
+  }, [selected]);
   return (
     <ScreenBoiler
       showHeader={true}
@@ -98,48 +102,48 @@ const Wishlist = () => {
         <CustomText isBold style={styles.text1}>
           Wishlist
         </CustomText>
-        <View style={{
-          flexDirection :  'row',
-          marginTop : moderateScale(10,0.3),
-          justifyContent : 'space-between',
-          alignSelf : 'center',
-          width :  windowWidth * 0.48, 
-        }}>
-  <CustomButton
-          // borderColor={'white'}
-          // borderWidth={1}
-          textColor={Color.black}
-          onPress={() => {
-          setSelected('barber')
-          }}
-          width={windowWidth * 0.22}
-          height={windowHeight * 0.05}
-          text={'barber'}
-          fontSize={moderateScale(14, 0.3)}
-          // borderRadius={moderateScale(30, 0.3)}
-          textTransform={'uppercase'}
-          isGradient={true}
-          isBold
-          marginBottom={moderateScale(30, 0.3)}
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            marginTop: moderateScale(10, 0.3),
+            justifyContent: 'space-between',
+            alignSelf: 'center',
+            width: windowWidth * 0.48,
+          }}>
           <CustomButton
-          // borderColor={'white'}
-          // borderWidth={1}
-          textColor={Color.black}
-          onPress={() => {
-         setSelected('Product')
-          }}
-          width={windowWidth * 0.22}
-          height={windowHeight * 0.05}
-          text={'Product'}
-          fontSize={moderateScale(14, 0.3)}
-          // borderRadius={moderateScale(30, 0.3)}
-          textTransform={'uppercase'}
-          isGradient={true}
-          isBold
-          marginBottom={moderateScale(30, 0.3)}
-        />
-
+            // borderColor={'white'}
+            // borderWidth={1}
+            textColor={Color.black}
+            onPress={() => {
+              setSelected('barber');
+            }}
+            width={windowWidth * 0.22}
+            height={windowHeight * 0.05}
+            text={'barber'}
+            fontSize={moderateScale(14, 0.3)}
+            // borderRadius={moderateScale(30, 0.3)}
+            textTransform={'uppercase'}
+            isGradient={true}
+            isBold
+            marginBottom={moderateScale(30, 0.3)}
+          />
+          <CustomButton
+            // borderColor={'white'}
+            // borderWidth={1}
+            textColor={Color.black}
+            onPress={() => {
+              setSelected('Product');
+            }}
+            width={windowWidth * 0.22}
+            height={windowHeight * 0.05}
+            text={'Product'}
+            fontSize={moderateScale(14, 0.3)}
+            // borderRadius={moderateScale(30, 0.3)}
+            textTransform={'uppercase'}
+            isGradient={true}
+            isBold
+            marginBottom={moderateScale(30, 0.3)}
+          />
         </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -161,9 +165,7 @@ const Wishlist = () => {
               flexWrap: 'wrap',
               //   paddingHorizontal : moderateScale()
             }}>
-            {
-            
-            data.map((x, index) => {
+            {data.map((x, index) => {
               return (
                 <BarberCard
                   item={x}

@@ -29,12 +29,7 @@ import {useSelector} from 'react-redux';
 
 const BarberServicesScreen = props => {
   const [selectedService, setSelectedService] = useState([]);
-  console.log("🚀 ~ file: BarberServicesScreen.js:32 ~ BarberServicesScreen ~ selectedService:", selectedService)
   const [barberDetails, setBarberDetails] = useState([]);
-  console.log(
-    '🚀 ~ file: BarberServicesScreen.js:33 ~ BarberServicesScreen ~ barberDetails:',
-    barberDetails.services,
-  );
   const [Loading, setLoading] = useState(false);
   const token = useSelector(state => state.authReducer.token);
   const detail = props?.route?.params?.detail;
@@ -152,7 +147,7 @@ const BarberServicesScreen = props => {
               startingValue={3}
               ratingCount={5}
               onFinishRating={() => {
-                console.log('dsadasd');
+          
               }}
               // ratingColor="red"
               imageSize={moderateScale(15, 0.3)}
@@ -299,6 +294,7 @@ const BarberServicesScreen = props => {
                       if (selectedService.length > 0) {
                         navigationService.navigate('ImageUpload', {
                           data: selectedService,
+                          barber: barberDetails,
                         });
                       } else {
                         Platform.OS == 'android'
@@ -327,7 +323,7 @@ const BarberServicesScreen = props => {
                       if (selectedService.length > 0) {
                         navigationService.navigate('ChooseDate', {
                           data: selectedService,
-                          Data: barberDetails,
+                          barber: barberDetails,
                         });
                       } else {
                         Platform.OS == 'android'

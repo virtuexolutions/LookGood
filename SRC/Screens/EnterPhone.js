@@ -36,7 +36,6 @@ const height = Dimensions.get('window').height;
 
 const EnterPhone = props => {
   const fromForgot = props?.route?.params?.fromForgot;
-  console.log('here=>', fromForgot);
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -59,7 +58,6 @@ const EnterPhone = props => {
     setIsLoading(false)
 
     if (response != undefined) {
-    console.log('VERIFY=========>>>>>>', response?.data?.data[0].code);
       alert(response?.data?.data[0].code)
       Platform.OS === 'android' 
         ? ToastAndroid.show('Your OTP is Send', ToastAndroid.SHORT)

@@ -35,7 +35,6 @@ const AddService = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ file: AddService.js:33 ~ AddService ~ token999888:', token);
 
   // GET API START
   const GetServices = async () => {
@@ -45,10 +44,6 @@ const AddService = () => {
 
     setLoading(false);
     if (response != undefined) {
-      console.log(
-        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000',
-        response?.data?.data,
-      );
       setService(response?.data?.data);
     }
   };
@@ -70,7 +65,7 @@ const AddService = () => {
     const body = {
       service_name: service,
     };
-    console.log('🚀 ~ file: AddService.js:61 ~ Services ~ body:', body);
+
 
     for (let key in body) {
       if (service.length == 0) {
@@ -86,7 +81,6 @@ const AddService = () => {
     setIsLoading(false);
 
     if (response != undefined) {
-      console.log('VERIFY=========>>>>>>', response?.data);
       Platform.OS === 'android'
         ? ToastAndroid.show('Servicess Add', ToastAndroid.SHORT)
         : Alert.alert('Servicess Add');
@@ -94,9 +88,9 @@ const AddService = () => {
     }
   };
 
-  useEffect(() => {
-    console.log('changed');
-  }, [service]);
+  // useEffect(() => {
+  //   console.log('changed');
+  // }, [service]);
 
   return (
     <ScreenBoiler
@@ -202,7 +196,6 @@ const AddService = () => {
               />)
             }}
             renderItem={({item, index}) => {
-              console.log('🚀 ~ file: AddService.js:241 ~ item:', item);
               return (
                 <ServiceComponent
                   service={service}

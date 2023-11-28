@@ -16,13 +16,14 @@ import ImagePickerModal from '../Components/ImagePickerModal';
 
 const ImageUpload = props => {
   const selectedServices = props?.route.params?.data;
+  const barber = props?.route?.params?.barber
   const [showModal, setShowModal] = useState(false);
   const [image, setImage] = useState({});
 
   useEffect(() => {
     
     if(Object.keys(image).length > 0){
-      navigationService.navigate('ImageScreen', {data: selectedServices , image : image});
+      navigationService.navigate('ImageScreen', {data: selectedServices , image : image, barber:barber});
     }
   }, [image])
 

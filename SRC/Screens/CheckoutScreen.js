@@ -27,18 +27,11 @@ import {setWholeCart} from '../Store/slices/common';
 const CheckoutScreen = props => {
   const dispatch = useDispatch();
   const cartData = useSelector(state => state.commonReducer.cartData);
-  // console.log("🚀 ~ file: CheckoutScreen.js:30 ~ CheckoutScreen ~ cartData", cartData)
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
-  console.log(
-    '🚀 ~ file: CheckoutScreen.js:28 ~ CheckoutScreen ~ finalData',
-    finalData,
-  );
+ 
   const [subTotal, setSubTotal] = useState(0);
-  console.log(
-    '🚀 ~ file: CheckoutScreen.js:29 ~ CheckoutScreen ~ subTotal',
-    subTotal,
-  );
+ 
   const [type, setItem] = useState('');
   const [finalStateData, setFinalStateData] = useState(
     fromStore ? cartData : finalData?.services,

@@ -3,10 +3,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  ToastAndroid,
+  Platform,
+  Alert,
   View,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import CustomImage from './CustomImage';
 import Color from '../Assets/Utilities/Color';
 import CustomText from './CustomText';
@@ -17,19 +20,33 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import numeral from 'numeral';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCartData, setRemoveCardData } from '../Store/slices/common';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 // import {setCartData} from '../Store/combineReducer';
 
 const BarberCard = ({item, onPress, addedInWishlist  }) => {
-  console.log("🚀 ~ file: BarberCard.js:23 ~ BarberCard ~ item:", item)
   const cartData = useSelector((state)=>state.commonReducer.cartData)
-  console.log("🚀 ~ file: BarberCard.js:24 ~ BarberCard ~ cartData", cartData)
+  const token = useSelector(state => state.authReducer.token)
   const dispatch = useDispatch();
-  // console.log("🚀 ~ file: BarberCard.js:20 ~ BarberCard ~ addedInWishlist", addedInWishlist)
+  const [isLoading, setIsLoading] = useState(false)
   const [start, setStart] = useState(false);
   const [added, setAdded] = useState(addedInWishlist ? addedInWishlist : false);
-  console.log("🚀 ~ file: BarberCard.js:23 ~ BarberCard ~ added", added)
   const animationRef = useRef();
 
+  const addToWishList = async () => {
+    const url = 'auth/wishlist';
+    const body = {
+      barber_id: item?.id,
+    };
+
+    setIsLoading(true);
+    const response = await  Post(url, body, apiHeader(token));
+    setIsLoading(true);
+    if (response != undefined) {
+      Platform.OS == 'android' ? ToastAndroid.show('Added to wishList', ToastAndroid.SHORT) : Alert.alert('Added to wishList')
+     
+    }
+  };
+  
   useEffect(() => {
     if (start) {
       setTimeout(() => {
@@ -40,12 +57,10 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
 
   return (
     <View style={{
-      // height : windowHeight * 0.4,
-      // backgroundColor : 'blue'
     }}>
     <Pressable
       onLongPress={() => {
-        added == false && (setStart(true), animationRef.current?.play());
+        added == false && (setStart(true), animationRef.current?.play(), addToWishList()) ;
       }}
       onPress={onPress}>
       {({pressed}) => (
@@ -59,7 +74,7 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
             loop
             //   onAnimationFinish={()=>{ console.log('fdsfsdfsdf'), animationRef.current?.pause();}}
             onAnimationLoop={() => {
-              console.log('fdsfdsfsdfsd');
+      
               // setSpeed(0)
             }}
           />

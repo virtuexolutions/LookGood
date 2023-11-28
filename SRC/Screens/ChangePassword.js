@@ -74,7 +74,7 @@ const ChangePassword = props => {
       Platform.OS == 'android'
         ? ToastAndroid.show('Password changed successfully', ToastAndroid.SHORT)
         : alert('Password changed successfully');
-      console.log(response?.data);
+   
       navigationService.navigate('HomeScreen')
     }
   };

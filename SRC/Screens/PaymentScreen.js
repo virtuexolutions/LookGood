@@ -7,10 +7,11 @@ import {
   TouchableOpacity,
   Platform,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -22,13 +23,53 @@ import {Icon} from 'native-base';
 import numeral from 'numeral';
 import navigationService from '../navigationService';
 import CustomImage from '../Components/CustomImage';
-import { useDispatch } from 'react-redux';
-import { setWholeCart } from '../Store/slices/common';
+import {useDispatch, useSelector} from 'react-redux';
+import {setWholeCart} from '../Store/slices/common';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 
-const PaymentScreen = (props) => {
+const PaymentScreen = props => {
   const dispatch = useDispatch();
-  const fromStore = props?.route?.params?.fromStore
-  console.log("🚀 ~ file: PaymentScreen.js:28 ~ PaymentScreen ~ fromStore", fromStore)
+  const fromStore = props?.route?.params?.fromStore;
+  const finalData = props?.route?.params?.finalData;
+  const [isLoading, setIsLoading] = useState(false);
+  const token = useSelector(state=> state.authReducer.token)
+  
+
+  const Booking = async () => {
+
+    const selectedServiceIds = finalData?.services.map(service => service.id);
+    const formData = new FormData()
+
+    const body = {
+      barber_id: finalData?.time?.barber_id,
+      service_id: selectedServiceIds,
+      booking_date: finalData?.date,
+      booking_time: finalData?.time?.time,
+      image:finalData?.image[0] 
+    };
+   
+    for(let key in body){
+      formData.append(key, body[key])
+    }
+    console.log('🚀 ~ file: PaymentScreen.js:50 ~ Booking ~ body:', formData);
+    const url = 'auth/booking';
+    setIsLoading(true);
+    const response = await Post(url, formData, apiHeader(token));
+    setIsLoading(false);
+
+    if (response != undefined) {
+      console.log("🚀 ~ file: PaymentScreen.js:60 ~ Booking ~ response:", response?.data)
+      // setBookingResponse(response?.data);
+
+      Platform.OS === 'android'
+        ? ToastAndroid.show('Booking successful', ToastAndroid.SHORT)
+        : Alert.alert('Booking successful');
+
+      navigationService.navigate('TabNavigation');
+      fromStore && dispatch(setWholeCart([]));
+    }
+  };
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -61,6 +102,7 @@ const PaymentScreen = (props) => {
           </CustomText>
           <View style={[styles.container1, {height: windowHeight * 0.15}]}>
             <CustomImage
+              // source={{uri:finalData?.image[0]?.uri}}
               source={require('../Assets/Images/address.png')}
               resizeMode={'stretch'}
               style={{
@@ -88,43 +130,46 @@ const PaymentScreen = (props) => {
                   width: windowWidth * 0.4,
                   color: Color.themeLightGray,
                 }}>
-                2301 Maxwell Farm Road, California
+                {finalData?.location?.name}
               </CustomText>
             </View>
           </View>
-          {fromStore &&
-          <>
-          <CustomText
-            isBold
-            style={[styles.subHeading, {width: windowWidth * 0.9}]}>
-            Courier
-          </CustomText>
-          <View style={[styles.container1, {height: windowHeight * 0.06}]}>
-            <CustomText
-              isBold
-              style={[
-                styles.subHeading,
-                {color: Color.black, marginTop: moderateScale(0, 0.3)},
-              ]}>
-              Regular
-            </CustomText>
-            <CustomText
-              style={[
-                styles.subHeading,
-                {color: Color.themeLightGray, marginTop: moderateScale(0, 0.3)},
-              ]}>
-              3-6 days
-            </CustomText>
-            <CustomText
-              style={[
-                styles.subHeading,
-                {color: Color.black, marginTop: moderateScale(0, 0.3)},
-              ]}>
-              $2.05
-            </CustomText>
-          </View>
-          </>
-}
+          {fromStore && (
+            <>
+              <CustomText
+                isBold
+                style={[styles.subHeading, {width: windowWidth * 0.9}]}>
+                Courier
+              </CustomText>
+              <View style={[styles.container1, {height: windowHeight * 0.06}]}>
+                <CustomText
+                  isBold
+                  style={[
+                    styles.subHeading,
+                    {color: Color.black, marginTop: moderateScale(0, 0.3)},
+                  ]}>
+                  Regular
+                </CustomText>
+                <CustomText
+                  style={[
+                    styles.subHeading,
+                    {
+                      color: Color.themeLightGray,
+                      marginTop: moderateScale(0, 0.3),
+                    },
+                  ]}>
+                  3-6 days
+                </CustomText>
+                <CustomText
+                  style={[
+                    styles.subHeading,
+                    {color: Color.black, marginTop: moderateScale(0, 0.3)},
+                  ]}>
+                  $2.05
+                </CustomText>
+              </View>
+            </>
+          )}
           <CustomText
             isBold
             style={[styles.subHeading, {width: windowWidth * 0.9}]}>
@@ -169,27 +214,21 @@ const PaymentScreen = (props) => {
               <Icon
                 name="keyboard-arrow-down"
                 as={MaterialIcons}
-              size={moderateScale(20, 0.3)}
+                size={moderateScale(20, 0.3)}
                 color={Color.black}
               />
             </View>
           </View>
         </ScrollView>
         <CustomButton
-          // borderColor={'white'}
-          // borderWidth={1}
+      
           textColor={Color.black}
           onPress={() => {
-            Platform.OS == 'android'
-              ? ToastAndroid.show('Booked', ToastAndroid.SHORT)
-              : alert('Booked');
-
-            navigationService.navigate('TabNavigation');
-            fromStore && dispatch(setWholeCart([]))
+            Booking();
           }}
           width={windowWidth * 0.9}
           height={windowHeight * 0.06}
-          text={'Pay now'}
+          text={isLoading ? <ActivityIndicator color={Color.black} size={'small'}/> : 'Pay now'}
           fontSize={moderateScale(14, 0.3)}
           // borderRadius={moderateScale(30, 0.3)}
           textTransform={'uppercase'}

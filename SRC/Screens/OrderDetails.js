@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,13 +13,21 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import numeral from 'numeral';
 import {Icon} from 'native-base';
 import CustomButton from '../Components/CustomButton';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import {ActivityIndicator} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 const OrderDetails = props => {
   const item = props?.route?.params?.item;
   console.log('🚀 ~ file: OrderDetails.js:19 ~ OrderDetails ~ item:', item);
+  const navigation = useNavigation();
+  const token = useSelector(state => state.authReducer.token);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading2, setisLoading2] = useState(false);
 
   const calculateTotalAmount = () => {
-    console.log('Booking Details:', item?.booking_detail);
+    console.log('Booking Details:', item);
 
     const totalAmount = item?.booking_detail?.reduce((sum, booking) => {
       const bookingTotal =
@@ -33,6 +41,23 @@ const OrderDetails = props => {
     console.log('Total Amount:', totalAmount);
 
     return numeral(totalAmount).format('$0,0.0');
+  };
+
+  const changeStatus = async value => {
+    const url = `auth/barber/booking/status/${item?.id}`;
+    const body = {
+      status: value,
+    };
+    value == 'accept' ? setIsLoading(true) : setisLoading2(true);
+    const response = await Post(url, body, apiHeader(token));
+    value == 'accept' ? setIsLoading(false) : setisLoading2(false);
+    if (response != undefined) {
+      console.log(
+        '🚀 ~ file: OrderDetails.js:51 ~ changeStatus ~ response:',
+        response?.data,
+      );
+      navigation.goBack();
+    }
   };
 
   return (
@@ -162,40 +187,57 @@ const OrderDetails = props => {
               source={require('../Assets/Images/map.png')}
               style={styles.mapView}
             />
-            <CustomButton
-              bgColor={Color.themeColor}
-              borderColor={'white'}
-              borderWidth={1}
-              textColor={Color.black}
-              onPress={() => {
-                console.log('Sign up will happen');
-              }}
-              width={windowWidth * 0.75}
-              height={windowHeight * 0.06}
-              text={'Accept'}
-              fontSize={moderateScale(14, 0.3)}
-              textTransform={'uppercase'}
-              isGradient={true}
-              isBold
-              marginTop={moderateScale(30, 0.3)}
-            />
-            <CustomButton
-              bgColor={Color.themeColor}
-              borderColor={'white'}
-              borderWidth={1}
-              textColor={Color.black}
-              onPress={() => {
-                console.log('Will reject Appointment');
-              }}
-              width={windowWidth * 0.75}
-              height={windowHeight * 0.06}
-              text={'Reject'}
-              fontSize={moderateScale(14, 0.3)}
-              textTransform={'uppercase'}
-              isGradient={true}
-              isBold
-              marginTop={moderateScale(10, 0.3)}
-            />
+            {item?.status == 'pending' && (
+              <>
+              
+                <CustomButton
+                  bgColor={Color.themeColor}
+                  borderColor={'white'}
+                  borderWidth={1}
+                  textColor={Color.black}
+                  onPress={() => {
+                    changeStatus('accept');
+                  }}
+                  width={windowWidth * 0.75}
+                  height={windowHeight * 0.06}
+                  text={
+                    isLoading ? (
+                      <ActivityIndicator color={Color.black} size={'small'} />
+                    ) : (
+                      'Accept'
+                    )
+                  }
+                  fontSize={moderateScale(14, 0.3)}
+                  textTransform={'uppercase'}
+                  isGradient={true}
+                  isBold
+                  marginTop={moderateScale(30, 0.3)}
+                />
+                <CustomButton
+                  bgColor={Color.themeColor}
+                  borderColor={'white'}
+                  borderWidth={1}
+                  textColor={Color.black}
+                  onPress={() => {
+                    changeStatus('reject');
+                  }}
+                  width={windowWidth * 0.75}
+                  height={windowHeight * 0.06}
+                  text={
+                    isLoading2 ? (
+                      <ActivityIndicator color={Color.black} size={'small'} />
+                    ) : (
+                      'Reject'
+                    )
+                  }
+                  fontSize={moderateScale(14, 0.3)}
+                  textTransform={'uppercase'}
+                  isGradient={true}
+                  isBold
+                  marginTop={moderateScale(10, 0.3)}
+                />
+              </>
+            )}
           </ScrollView>
         </View>
       </LinearGradient>
@@ -254,7 +296,6 @@ const styles = ScaledSheet.create({
   name: {
     marginTop: moderateScale(5, 0.3),
     fontSize: moderateScale(20, 0.3),
-  
   },
   eachRow: {
     flexDirection: 'row',

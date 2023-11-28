@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
+import {
+  ImageBackground,
+  View,
+  ScrollView,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
@@ -15,19 +21,18 @@ import {useSelector} from 'react-redux';
 import OrderCard from '../Components/OrderCard';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import NoData from '../Components/NoData';
+import {useIsFocused} from '@react-navigation/native';
 
 const Homescreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [Loading, setLoading] = useState(false);
   const [barberData, setBarberData] = useState([]);
   const [orderData, setOrderData] = useState([]);
-  console.log("🚀 ~ file: Homescreen.js:23 ~ Homescreen ~ orderData:", orderData)
+  const focused = useIsFocused();
+
   const user = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ file: Homescreen.js:20 ~ Homescreen ~ token:', token);
-  console.log('🚀 ~ file: Homescreen.js:19 ~ Homescreen ~ user:', user);
   const [index, setIndex] = useState(0);
-  console.log('🚀 ~ file: Homescreen.js:18 ~ Homescreen ~ index', index);
 
   const BarberList = async () => {
     const url = `auth/barber/list`;
@@ -35,17 +40,9 @@ const Homescreen = () => {
     const response = await Get(url, token);
     setIsLoading(false);
     if (response != undefined) {
-      console.log(
-        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:333333555',
-        response?.data?.users,
-      );
       setBarberData(response?.data?.users);
     }
   };
-
-  useEffect(() => {
-    BarberList();
-  }, []);
 
   const GetBarberBooking = async () => {
     const url = `auth/barber/booking/list`;
@@ -57,11 +54,12 @@ const Homescreen = () => {
       setOrderData(response?.data?.barber_booking_list);
     }
   };
-  // TIME GET API END
 
+  // TIME GET API END
   useEffect(() => {
+    BarberList();
     GetBarberBooking();
-  }, []);
+  }, [focused]);
 
   const bannerArray = [
     {
@@ -199,6 +197,8 @@ const Homescreen = () => {
       ],
     },
   ];
+
+  
   return (
     <ScreenBoiler
       showHeader={true}
@@ -232,6 +232,7 @@ const Homescreen = () => {
               isBold
               size={40}
             />
+
             <FlatList
               style={styles.bannerView}
               data={bannerArray}
@@ -331,18 +332,30 @@ const Homescreen = () => {
                 flexWrap: 'wrap',
                 //   paddingHorizontal : moderateScale()
               }}>
-              {barberData?.map((x, index) => {
-                return (
-                  <BarberCard
-                    item={x}
-                    onPress={() => {
-                      navigationService.navigate('BarberServicesScreen', {
-                        detail: x,
-                      });
-                    }}
-                  />
-                );
-              })}
+              {isLoading ? (
+                <View
+                  style={{
+                    width: windowWidth * 0.9,
+                    height: windowHeight * 0.15,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <ActivityIndicator color={Color.themeColor} size={'large'} />
+                </View>
+              ) : (
+                barberData.map((x, index) => {
+                  return (
+                    <BarberCard
+                      item={x}
+                      onPress={() => {
+                        navigationService.navigate('BarberServicesScreen', {
+                          detail: x,
+                        });
+                      }}
+                    />
+                  );
+                })
+              )}
             </View>
           </ScrollView>
         ) : (
@@ -350,7 +363,7 @@ const Homescreen = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               paddingBottom: windowHeight * 0.155,
-              // paddingTop : moderateScale(20,0.3),
+
               alignItems: 'center',
             }}
             style={{
@@ -415,31 +428,40 @@ const Homescreen = () => {
                 View all
               </CustomText>
             </View>
-            <FlatList
-              decelerationRate={'fast'}
-              ListEmptyComponent={()=>{
-                return(<NoData
-                  style={{
-                    height: windowHeight * 0.25,
-                    width: windowWidth * 0.6,
-                    alignItems: 'center',
-                  }}
-                  text={'No Upcoming Orders'}
-                />)
-              }}
-              showsHorizontalScrollIndicator={false}
-              style={{
-                marginTop: moderateScale(10, 0.3),
-              }}
-              contentContainerStyle={{
-                paddingHorizontal: moderateScale(8, 0.3),
-              }}
-              data={orderData}
-              horizontal
-              renderItem={({item, index}) => {
-                return <OrderCard item={item} />;
-              }}
-            />
+            {isLoading ? (
+              <View
+                style={{height: windowHeight * 0.23, justifyContent: 'center'}}>
+                <ActivityIndicator color={Color.themeColor} size={'large'} />
+              </View>
+            ) : (
+              <FlatList
+                decelerationRate={'fast'}
+                ListEmptyComponent={() => {
+                  return (
+                    <NoData
+                      style={{
+                        height: windowHeight * 0.25,
+                        width: windowWidth * 0.6,
+                        alignItems: 'center',
+                      }}
+                      text={'No Upcoming Orders'}
+                    />
+                  );
+                }}
+                showsHorizontalScrollIndicator={false}
+                style={{
+                  marginTop: moderateScale(10, 0.3),
+                }}
+                contentContainerStyle={{
+                  paddingHorizontal: moderateScale(8, 0.3),
+                }}
+                data={orderData.reverse()}
+                horizontal
+                renderItem={({item, index}) => { 
+                  return <OrderCard item={item} />;
+                }}
+              />
+            )}
             <CustomText
               isBold
               style={[
@@ -454,31 +476,40 @@ const Homescreen = () => {
               ]}>
               New Orders
             </CustomText>
-            <FlatList
-              decelerationRate={'fast'}
-              showsVerticalScrollIndicator={false}
-              style={{
-                marginTop: moderateScale(10, 0.3),
-              }}
-              contentContainerStyle={{
-                paddingHorizontal: moderateScale(8, 0.3),
-              }}
-              data={orderData}
-              ListEmptyComponent={()=>{
-                return(<NoData
-                  style={{
-                    height: windowHeight * 0.25,
-                    width: windowWidth * 0.6,
-                    alignItems: 'center',
-                  }}
-                  text={'No Upcoming Orders'}
-                />)
-              }}
-              numColumns={2}
-              renderItem={({item, index}) => {
-                return <OrderCard item={item} />;
-              }}
-            />
+            {isLoading ? (
+              <View
+                style={{height: windowHeight * 0.23, justifyContent: 'center'}}>
+                <ActivityIndicator color={Color.themeColor} size={'large'} />
+              </View>
+            ) : (
+              <FlatList
+                decelerationRate={'fast'}
+                showsVerticalScrollIndicator={false}
+                style={{
+                  marginTop: moderateScale(10, 0.3),
+                }}
+                contentContainerStyle={{
+                  paddingHorizontal: moderateScale(8, 0.3),
+                }}
+                data={orderData.filter(item => item?.status == 'pending')}
+                ListEmptyComponent={() => {
+                  return (
+                    <NoData
+                      style={{
+                        height: windowHeight * 0.25,
+                        width: windowWidth * 0.6,
+                        alignItems: 'center',
+                      }}
+                      text={'No Upcoming Orders'}
+                    />
+                  );
+                }}
+                numColumns={2}
+                renderItem={({item, index}) => {
+                  return <OrderCard item={item} />;
+                }}
+              />
+            )}
           </ScrollView>
         )}
       </LinearGradient>

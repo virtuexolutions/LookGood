@@ -17,12 +17,7 @@ import { Platform } from 'react-native';
 import { ToastAndroid } from 'react-native';
 
 const ServiceComponent = ({setService, service, item}) => {
-  // console.log("🚀 ~ file: ServiceComponent.js:18 ~ ServiceComponent888888888 ~ item:", item)
-  // const [value, setvalue] = useState('')
-  console.log(
-    '🚀 ~ file: ServiceComponent.js:16 ~ ServiceComponent ~ service:',
-    service,
-  );
+ 
   const serviceArray = [
     'Blow dry',
     'Blow dry with curling and striaght iron',

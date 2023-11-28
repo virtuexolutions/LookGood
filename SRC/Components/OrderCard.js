@@ -12,10 +12,12 @@ import CustomButton from './CustomButton';
 import navigationService from '../navigationService';
 
 const OrderCard = ({item}) => {
-  console.log('🚀 ~ file: OrderCard.js:15 ~ OrderCard ~ item:', item);
+console.log("🚀 ~ file: OrderCard.js:15 ~ OrderCard ~ item:", item?.booking_detail)
+
 
   const calculateTotalAmount = () => {
     const bookingDetail = item?.booking_detail;
+    // const amount = item?.booking_detail.reduce((a,b)=> a+b)
 
     if (!Array.isArray(bookingDetail) || bookingDetail.length === 0) {
       return 0;
@@ -24,8 +26,6 @@ const OrderCard = ({item}) => {
     const serviceNames = bookingDetail
       .map(service => service?.service_info?.name)
       .filter(Boolean);
-
-    console.log('Service Names:', serviceNames);
 
     return serviceNames.join(', ');
   };
