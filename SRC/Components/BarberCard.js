@@ -24,6 +24,7 @@ import { Post } from '../Axios/AxiosInterceptorFunction';
 // import {setCartData} from '../Store/combineReducer';
 
 const BarberCard = ({item, onPress, addedInWishlist  }) => {
+  // console.log("🚀 ~ file: BarberCard.js:27 ~ BarberCard ~ item:", item)
   const cartData = useSelector((state)=>state.commonReducer.cartData)
   const token = useSelector(state => state.authReducer.token)
   const dispatch = useDispatch();
@@ -56,7 +57,7 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
   }, [start]);
 
   return (
-    <View style={{
+    <View style={{ paddingHorizontal:moderateScale(10,.6),paddingVertical:moderateScale(5,.6)
     }}>
     <Pressable
       onLongPress={() => {
@@ -85,6 +86,7 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
               minWidth: moderateScale(50,0.3),
               paddingHorizontal: moderateScale(10, 0.3),
               paddingVertical: moderateScale(5, 0.3),
+              marginHorizontal:moderateScale(10,.3),
               borderRadius: moderateScale(20, 0.3),
               backgroundColor: 'rgba(0,0,0,0.7)',
               justifyContent : 'center',
@@ -117,7 +119,7 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
               textAlign: 'center',
               marginTop: moderateScale(5, 0.3),
             }}>
-            {item?.first_name}
+            {item?.first_name }
           </CustomText>
           {added && (
             <TouchableOpacity

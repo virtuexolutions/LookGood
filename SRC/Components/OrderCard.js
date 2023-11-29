@@ -12,8 +12,15 @@ import CustomButton from './CustomButton';
 import navigationService from '../navigationService';
 
 const OrderCard = ({item}) => {
-console.log("🚀 ~ file: OrderCard.js:15 ~ OrderCard ~ item:", item?.booking_detail)
-
+ 
+  const amount = () => {
+    let totalAmount = 0;
+    item?.booking_detail.map(data => {
+      totalAmount += data?.service_info?.price;
+    });
+    // console.log('Total======>>>>>>>>>', totalAmount);
+    return totalAmount;
+  };
 
   const calculateTotalAmount = () => {
     const bookingDetail = item?.booking_detail;
@@ -84,7 +91,8 @@ console.log("🚀 ~ file: OrderCard.js:15 ~ OrderCard ~ item:", item?.booking_de
           Amount :{' '}
         </CustomText>
         <CustomText style={styles.heading}>
-          {numeral(calculateTotalAmount()).format('$0,0.0')}
+          {/* {numeral(calculateTotalAmount()).format('$0,0.0')} */}
+          {amount()}
         </CustomText>
       </View>
       <View style={styles.eachRow}>
@@ -92,7 +100,7 @@ console.log("🚀 ~ file: OrderCard.js:15 ~ OrderCard ~ item:", item?.booking_de
           isBold
           style={{
             width: windowWidth * 0.16,
-            fontSize: moderateScale(12, 0.3)
+            fontSize: moderateScale(12, 0.3),
           }}>
           Services :{' '}
         </CustomText>
@@ -159,6 +167,6 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(11, 0.3),
     marginLeft: moderateScale(5, 0.3),
     fontStyle: 'italic',
-    width:windowWidth*0.24
+    width: windowWidth * 0.24,
   },
 });

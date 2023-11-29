@@ -41,7 +41,10 @@ const BarberServicesScreen = props => {
 
     setLoading(false);
     if (response != undefined) {
-      // return console.log('🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000Alpha High Command',response?.data?.user_detail);
+      console.log(
+        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000Alpha High Command',
+        response?.data?.user_detail,
+      );
       setBarberDetails(response?.data?.user_detail);
     }
   };
@@ -146,9 +149,7 @@ const BarberServicesScreen = props => {
               readonly
               startingValue={3}
               ratingCount={5}
-              onFinishRating={() => {
-          
-              }}
+              onFinishRating={() => {}}
               // ratingColor="red"
               imageSize={moderateScale(15, 0.3)}
               style={{width: windowWidth * 0.2}}
@@ -203,6 +204,25 @@ const BarberServicesScreen = props => {
               paddingBottom: moderateScale(140, 0.3),
               paddingTop: moderateScale(20, 0.3),
             }}
+            ListEmptyComponent={() => {
+              return (
+                <View
+                  style={{
+                    height: windowHeight * 0.1,
+                    justifyContent: 'center',
+                  }}>
+                  <CustomText
+                    style={{
+                      fontSize: moderateScale(15, 0.6),
+                      color: Color.white,
+                      textAlign: 'center',
+                    }}
+                    isBold>
+                    No services found
+                  </CustomText>
+                </View>
+              );
+            }}
             renderItem={({item, index}) => {
               return (
                 <TouchableOpacity
@@ -212,10 +232,12 @@ const BarberServicesScreen = props => {
                       selectedService?.some(data => data?.name == item?.name)
                     ) {
                       setSelectedService(
-                        selectedService?.filter(data => data?.name != item?.name),
+                        selectedService?.filter(
+                          data => data?.name != item?.name,
+                        ),
                       );
-                    }else{
-                      setSelectedService(prev => [...prev, item])
+                    } else {
+                      setSelectedService(prev => [...prev, item]);
                     }
 
                     // let data = [];

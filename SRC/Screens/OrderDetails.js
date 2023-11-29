@@ -17,6 +17,7 @@ import {Post} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import ImageView from 'react-native-image-viewing';
 
 const OrderDetails = props => {
   const item = props?.route?.params?.item;
@@ -25,6 +26,7 @@ const OrderDetails = props => {
   const token = useSelector(state => state.authReducer.token);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setisLoading2] = useState(false);
+  const [imageModal, setImageModal] = useState(false);
 
   const calculateTotalAmount = () => {
     console.log('Booking Details:', item);
@@ -183,13 +185,61 @@ const OrderDetails = props => {
             ) : (
               <CustomText style={{color: 'red'}}>No services chosen</CustomText>
             )}
+
+            {item?.image && (
+              <CustomText
+                onPress={() => {
+                  setImageModal(true);
+                }}
+                isBold
+                style={{
+                  marginTop: moderateScale(20, 0.3),
+                  width: windowWidth * 0.7,
+                  // width: windowWidth * 0.16,
+                  fontSize: moderateScale(14, 0.3),
+                }}>
+                Attachments {' '}
+              </CustomText>
+            )}
+              {item?.image && (
+              <CustomText
+                onPress={() => {
+                  setImageModal(true);
+                }}
+                isBold
+                style={{
+                  marginTop: moderateScale(20, 0.3),
+                  width: windowWidth * 0.7,
+                  // width: windowWidth * 0.16,
+                  fontSize: moderateScale(14, 0.3),
+                }}>
+                location :{' '}
+              </CustomText>
+            )}
+          
+
+            {item?.location && (
+              <CustomText
+                onPress={() => {
+                  setImageModal(true);
+                }}
+                isBold
+                style={{
+                  marginTop: moderateScale(20, 0.3),
+                  width: windowWidth * 0.7,
+                  // width: windowWidth * 0.16,
+                  fontSize: moderateScale(14, 0.3),
+                }}>
+                Attachments :{' '}
+              </CustomText>
+            )}
+
             <CustomImage
               source={require('../Assets/Images/map.png')}
               style={styles.mapView}
             />
             {item?.status == 'pending' && (
               <>
-              
                 <CustomButton
                   bgColor={Color.themeColor}
                   borderColor={'white'}
@@ -239,6 +289,12 @@ const OrderDetails = props => {
               </>
             )}
           </ScrollView>
+          <ImageView
+            images={[{uri: item?.image}]}
+            imageIndex={0}
+            visible={imageModal}
+            onRequestClose={() => setImageModal(false)}
+          />
         </View>
       </LinearGradient>
     </ScreenBoiler>

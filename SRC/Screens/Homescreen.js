@@ -246,7 +246,7 @@ const Homescreen = () => {
                       height: windowHeight * 0.46,
                     }}>
                     <CustomImage
-                      source={item?.photo}
+                      source={item?.image}
                       resizeMode={'stretch'}
                       style={{
                         width: '100%',
@@ -322,41 +322,52 @@ const Homescreen = () => {
               ]}>
               Recommended{' '}
             </CustomText>
-            <View
+            {isLoading ? (
+            <View style={{justifyContent:'center', alignItems:'center', height:windowHeight*0.6}}>
+              <ActivityIndicator color={Color.themeColor} size={'large'} />
+            </View>
+          ) : (
+            <FlatList
+              decelerationRate={'fast'}
+              numColumns={2}
+              ListEmptyComponent={() => {
+                return (
+                  <NoData
+                    style={{
+                      height: windowHeight * 0.25,
+                      width: windowWidth * 0.6,
+                      alignItems: 'center',
+                    }}
+                    text={'No Upcoming Orders'}
+                  />
+                );
+              }}
               style={{
-                paddingTop: moderateScale(10, 0.3),
-                width: windowWidth * 0.85,
-                //   backgroundColor : 'red',
-                flexDirection: 'row',
+                marginTop: moderateScale(10, 0.3),
+              }}
+              contentContainerStyle={{
+                width: windowWidth,
+                alignItems: 'center',
                 justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                //   paddingHorizontal : moderateScale()
-              }}>
-              {isLoading ? (
-                <View
-                  style={{
-                    width: windowWidth * 0.9,
-                    height: windowHeight * 0.15,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <ActivityIndicator color={Color.themeColor} size={'large'} />
-                </View>
-              ) : (
-                barberData.map((x, index) => {
-                  return (
-                    <BarberCard
-                      item={x}
+                // paddingHorizontal: moderateScale(8, 0.3),
+              }}
+              data={barberData.reverse()}
+              renderItem={({item, index}) => {
+                // console.log("🚀 ~ file: Homescreen.js:356 ~ Homescreen ~ item:", item)
+                return (
+                  <BarberCard
+                      item={item}
                       onPress={() => {
                         navigationService.navigate('BarberServicesScreen', {
-                          detail: x,
+                          detail: item,
                         });
                       }}
                     />
-                  );
-                })
-              )}
-            </View>
+                );
+              }}
+            />
+          )}
+       
           </ScrollView>
         ) : (
           <ScrollView
@@ -506,6 +517,7 @@ const Homescreen = () => {
                 }}
                 numColumns={2}
                 renderItem={({item, index}) => {
+                  console.log("🚀 ~ file: Homescreen.js:520 ~ Homescreen ~ item:", item)
                   return <OrderCard item={item} />;
                 }}
               />

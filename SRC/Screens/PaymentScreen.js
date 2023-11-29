@@ -31,6 +31,7 @@ const PaymentScreen = props => {
   const dispatch = useDispatch();
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
+  console.log("🚀 ~ file: PaymentScreen.js:34 ~ PaymentScreen ~ finalData:", finalData)
   const [isLoading, setIsLoading] = useState(false);
   const token = useSelector(state=> state.authReducer.token)
   
@@ -42,16 +43,18 @@ const PaymentScreen = props => {
 
     const body = {
       barber_id: finalData?.time?.barber_id,
-      service_id: selectedServiceIds,
+    
       booking_date: finalData?.date,
       booking_time: finalData?.time?.time,
-      image:finalData?.image[0] 
+      image: finalData?.image[0],
+      custom_location:finalData?.location?.name
     };
    
     for(let key in body){
       formData.append(key, body[key])
     }
-    console.log('🚀 ~ file: PaymentScreen.js:50 ~ Booking ~ body:', formData);
+    selectedServiceIds?.map((item, index)=>formData.append(`service_id[${index}]`, item))
+     console.log('🚀 ~ file: PaymentScreen.js:50 ~ Booking ~ body:', body);
     const url = 'auth/booking';
     setIsLoading(true);
     const response = await Post(url, formData, apiHeader(token));

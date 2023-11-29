@@ -228,13 +228,13 @@ const ChooseDate = props => {
             // borderWidth={1}
             textColor={Color.black}
             onPress={() => {
-              if (!date || Object.keys(selectedTiming).length==0 || !selectedServices) {
+              if (!date || Object.keys(selectedTiming).length==0 || !selectedServices || location == '') {
                 return Platform.OS === 'android'
                   ? ToastAndroid.show(
-                      'Please select date, time, and services',
+                      'Please select date, time, location and services',
                       ToastAndroid.SHORT,
                     )
-                  : alert('Please select date, time, and services');
+                  : alert('Please select date, time, location and services');
                
               }else if(location=='shop'){
                 navigationService.navigate('CheckoutScreen', {
