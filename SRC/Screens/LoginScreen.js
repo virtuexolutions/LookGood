@@ -71,6 +71,7 @@ const LoginScreen = () => {
           }}
           style={{
             width: windowWidth,
+            zIndex : 1,
           }}>
         <CustomText isBold style={styles.text1}>
           Sign in
@@ -166,6 +167,7 @@ const LoginScreen = () => {
           forgot password?
         </CustomText>
 
+        </ScrollView>
         <View
           style={{
             position: 'absolute',
@@ -179,7 +181,6 @@ const LoginScreen = () => {
             style={{}}
           />
         </View>
-        </ScrollView>
       </LinearGradient>
     </ScreenBoiler>
   );

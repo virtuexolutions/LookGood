@@ -104,7 +104,8 @@ const EnterPhone = props => {
             // marginTop={moderateScale(30, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(25, 0.3)}
+            borderRadius={moderateScale(1, 0.3)}
+            marginTopDown={moderateScale(10,0.3)}
             elevation
           />
 

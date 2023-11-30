@@ -257,6 +257,9 @@ const Signup = ({navigation}) => {
             placeholderColor={Color.themeLightGray}
             borderRadius={moderateScale(1, 0.3)}
           />
+          <View style={{
+            zIndex : 1,
+          }}>
           <TextInputWithTitle
           secureText
             titleText={'Password'}
@@ -265,7 +268,7 @@ const Signup = ({navigation}) => {
             value={password}
             viewHeight={0.06}
             viewWidth={0.75}
-            inputWidth={0.74}
+            inputWidth={0.6}
             backgroundColor={'#FFFFFF'}
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
@@ -280,13 +283,14 @@ const Signup = ({navigation}) => {
             value={confirmPassword}
             viewHeight={0.06}
             viewWidth={0.75}
-            inputWidth={0.74}
+            inputWidth={0.6}
             backgroundColor={'#FFFFFF'}
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
             borderRadius={moderateScale(1, 0.3)}
           />
+          </View>
           <CustomButton
             bgColor={Color.themeColor}
             borderColor={'white'}
@@ -333,7 +337,7 @@ const Signup = ({navigation}) => {
               bottom: 0,
               right: 0,
               // zIndex : -1,
-              backgroundColor: 'transparent',
+              // backgroundColor: 'red',
             }}>
             <CustomImage
               source={require('../Assets/Images/backgroundLogo.png')}
@@ -341,6 +345,7 @@ const Signup = ({navigation}) => {
               style={{}}
             />
           </View>
+         
         </LinearGradient>
 
         <ImagePickerModal
@@ -348,6 +353,7 @@ const Signup = ({navigation}) => {
           setShow={setShowModal}
           setFileObject={setImage}
         />
+        
       </KeyboardAwareScrollView>
       {/* // </ScreenBoiler> */}
     </>

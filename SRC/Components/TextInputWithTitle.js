@@ -83,7 +83,7 @@ elevation: 9,
           alignItems: props.alignItems,
         },
         props.iconName && !props.rightIcon &&{
-          paddingLeft: moderateScale(40, 0.3),
+          paddingLeft: moderateScale(20, 0.3),
         },
       ]}
     >
@@ -123,6 +123,7 @@ elevation: 9,
             style={[
               {
                 width: windowWidth * props.inputWidth,
+                // backgroundColor : 'red'
               },
               Platform.OS === 'android'
                 ? styles.inputBox
@@ -142,12 +143,14 @@ elevation: 9,
           />
           <TouchableOpacity
             onPress={() => {
+              console.log('dfasfas')
               setShowPassword(!showPassword);
             }}
             style={{
               paddingHorizontal: Dimensions.get('window').width * 0.04,
               position: 'absolute',
               right: 0,
+              zIndex: 1,
               height:
                 Platform.OS === 'android'
                   ? Dimensions.get('window').height * 0.0725
@@ -162,6 +165,13 @@ elevation: 9,
               as={FontAwesome}
               color={Color.themeColor}
               size={moderateScale(18,0.3)}
+              onPress={() => {
+                console.log('dfasfas')
+                setShowPassword(!showPassword);
+              }}
+              style={{
+                zIndex: 1,
+              }}
             />
           </TouchableOpacity>
         </>
@@ -220,7 +230,7 @@ const styles = ScaledSheet.create({
     backgroundColor: Color.white,
     borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     borderColor: Color.lightGrey,
     flexDirection: 'row',
     placeholderTextColor: Color.white,
