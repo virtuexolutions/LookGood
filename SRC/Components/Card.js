@@ -27,7 +27,7 @@ export const Card = ({item, onPress}) => {
           textColor={Color.black}
           width={windowWidth * 0.8}
           height={windowHeight * 0.04}
-          text={'Apply'}
+          text={'Use'}
           fontSize={moderateScale(11, 0.3)}
            onPress={onPress}
           isGradient={true}

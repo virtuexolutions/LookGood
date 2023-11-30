@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Platform,
+  Alert,
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -31,6 +32,8 @@ import Modal from 'react-native-modal';
 const Vouchers = props => {
   const dispatch = useDispatch();
   const navigation = useNavigation()
+  const total = props?.route?.params?.total
+  console.log("🚀 ~ file: Vouchers.js:35 ~ Vouchers ~ total:", total)
 
   const voucherCardData = [
     {
@@ -103,6 +106,9 @@ const Vouchers = props => {
                 <Card
                   item={item}
                   onPress={() => {
+                    if(item?.minOrder > total){
+                      return Platform.OS == 'android'? ToastAndroid.show('You cannot use this voucher', ToastAndroid.SHORT) : Alert.alert('You acnnot use this voucher')
+                    }
                     dispatch(setVoucherData(item))
                     navigation.goBack()
                   }}
@@ -111,7 +117,7 @@ const Vouchers = props => {
             }}
           />
         </ScrollView>
-        <Modal sty>
+        <Modal style={{}}>
             <View></View>
         </Modal>
 
