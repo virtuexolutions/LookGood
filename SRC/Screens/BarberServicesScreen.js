@@ -41,7 +41,10 @@ const BarberServicesScreen = props => {
 
     setLoading(false);
     if (response != undefined) {
-      // return console.log('🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000Alpha High Command',response?.data?.user_detail);
+      console.log(
+        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000Alpha High Command',
+        response?.data?.user_detail,
+      );
       setBarberDetails(response?.data?.user_detail);
     }
   };
@@ -112,6 +115,7 @@ const BarberServicesScreen = props => {
       quantity: 1,
     },
   ];
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -133,7 +137,7 @@ const BarberServicesScreen = props => {
           <CustomImage style={styles.image} source={{uri: detail?.photo}} />
           <View style={{marginLeft: moderateScale(10, 0.3)}}>
             <CustomTextWithMask
-              data={detail?.first_name}
+              data={`${detail?.first_name} ${detail?.last_name}`}
               isBold
               size={moderateScale(20, 0.3)}
               textStyle={{
@@ -145,9 +149,7 @@ const BarberServicesScreen = props => {
               readonly
               startingValue={3}
               ratingCount={5}
-              onFinishRating={() => {
-                console.log('dsadasd');
-              }}
+              onFinishRating={() => {}}
               // ratingColor="red"
               imageSize={moderateScale(15, 0.3)}
               style={{width: windowWidth * 0.2}}
@@ -181,8 +183,15 @@ const BarberServicesScreen = props => {
 
         {Loading ? (
           <View
-            style={{alignSelf: 'center', marginTop: moderateScale(20, 0.3)}}>
-            <ActivityIndicator size={moderateScale(30, 0.6)} color={'white'} />
+            style={{
+              alignItems: 'center',
+              height: windowHeight * 0.4,
+              justifyContent: 'center',
+            }}>
+            <ActivityIndicator
+              size={moderateScale(30, 0.6)}
+              color={Color.themeColor}
+            />
           </View>
         ) : (
           <FlatList
@@ -195,25 +204,56 @@ const BarberServicesScreen = props => {
               paddingBottom: moderateScale(140, 0.3),
               paddingTop: moderateScale(20, 0.3),
             }}
+            ListEmptyComponent={() => {
+              return (
+                <View
+                  style={{
+                    height: windowHeight * 0.1,
+                    justifyContent: 'center',
+                  }}>
+                  <CustomText
+                    style={{
+                      fontSize: moderateScale(15, 0.6),
+                      color: Color.white,
+                      textAlign: 'center',
+                    }}
+                    isBold>
+                    No services found
+                  </CustomText>
+                </View>
+              );
+            }}
             renderItem={({item, index}) => {
               return (
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress={() => {
-                    let data = [];
-                    let index1 = 0;
-                    !selectedService.some(data => {
-                      return data.name == item?.name;
-                    })
-                      ? setSelectedService(prev => [...prev, item])
-                      : ((data = [...selectedService]),
-                        (index1 = data.findIndex(x => x?.name == item?.name)),
-                        console.log(
-                          '🚀 ~ file: BarberServicesScreen.js:157 ~ BarberServicesScreen ~ data',
-                          index1,
+                    if (
+                      selectedService?.some(data => data?.name == item?.name)
+                    ) {
+                      setSelectedService(
+                        selectedService?.filter(
+                          data => data?.name != item?.name,
                         ),
-                        data.splice(index1, 1),
-                        setSelectedService(data));
+                      );
+                    } else {
+                      setSelectedService(prev => [...prev, item]);
+                    }
+
+                    // let data = [];
+                    // let index1 = 0;
+                    // !selectedService.some(data => {
+                    //   return data.name == item?.name;
+                    // })
+                    //   ? setSelectedService(prev => [...prev, item])
+                    //   : ((data = [...selectedService]),
+                    //     (index1 = data.findIndex(x => x?.name == item?.name)),
+                    //     console.log(
+                    //       '🚀 ~ file: BarberServicesScreen.js:157 ~ BarberServicesScreen ~ data',
+                    //       index1,
+                    //     ),
+                    //     data.splice(index1, 1),
+                    //     setSelectedService(data));
                   }}
                   style={{
                     flexDirection: 'row',
@@ -276,6 +316,7 @@ const BarberServicesScreen = props => {
                       if (selectedService.length > 0) {
                         navigationService.navigate('ImageUpload', {
                           data: selectedService,
+                          barber: barberDetails,
                         });
                       } else {
                         Platform.OS == 'android'
@@ -304,7 +345,7 @@ const BarberServicesScreen = props => {
                       if (selectedService.length > 0) {
                         navigationService.navigate('ChooseDate', {
                           data: selectedService,
-                          Data:barberDetails,
+                          barber: barberDetails,
                         });
                       } else {
                         Platform.OS == 'android'

@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   ToastAndroid,
+  Platform,
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -25,61 +26,20 @@ import {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 const ChooseDate = props => {
   const selectedServices = props?.route.params?.data;
-  console.log(
-    '🚀 ~ file: ChooseDate.js:24 ~ ChooseDate ~ selectedServices:',
-    selectedServices,
-  );
-  
   const [location, setLocation] = useState('');
-  console.log("🚀 ~ file: ChooseDate.js:28 ~ ChooseDate ~ selectedServices:", selectedServices)
-  const barberDetails = props?.route.params?.Data;
+  const barberDetails = props?.route.params?.barber;
+  // console.log("🚀 ~ file: ChooseDate.js:31 ~ ChooseDate ~ barberDetails:", barberDetails)
   const image = props?.route?.params?.image;
+  // console.log("🚀 ~ file: ChooseDate.js:32 ~ ChooseDate ~ image:", image)
   const [date, setDate] = useState('');
-  const [selectedTiming, setSelectedTiming] = useState([]);
+  const [selectedTiming, setSelectedTiming] = useState({});
+  // console.log("🚀 ~ file: ChooseDate.js:34 ~ ChooseDate ~ selectedTiming:", selectedTiming)
   const [Loading, setLoading] = useState(false);
   const [bookingResponse, setBookingResponse] = useState(null);
   const token = useSelector(state => state.authReducer.token);
   const navigation = useNavigation();
-  const Booking = async () => {
-    const selectedServiceTiming = barberDetails?.service_timing.find(
-      item => item.time === selectedTiming?.time,
-    );
 
-    if (!date || !selectedTiming || !selectedServices) {
-      Platform.OS === 'android'
-        ? ToastAndroid.show(
-            'Please select date, time, and services',
-            ToastAndroid.SHORT,
-          )
-        : alert('Please select date, time, and services');
-      return;
-    }
-
-   
-
-    const selectedServiceIds = selectedServices.map(service => service.id);
-
-    const body = {
-      barber_id: selectedServiceTiming?.barber_id,
-      service_id: selectedServiceIds,
-      booking_date: date,
-      booking_time: selectedTiming?.time,
-    };
-    console.log("🚀 ~ file: ChooseDate.js:62 ~ Booking ~ body:", body)
-    const url = 'auth/booking';
-
-    setLoading(true);
-    const response = await Post(url, body, apiHeader(token));
-    setLoading(false);
-
-    if (response?.data?.success) {
-      setBookingResponse(response?.data);
-      Platform.OS === 'android'
-        ? ToastAndroid.show('Booking successful', ToastAndroid.SHORT)
-        : Alert.alert('Booking successful');
-        navigation.goBack();
-    }
-  };
+ 
   return (
     <ScreenBoiler
       showHeader={true}
@@ -220,13 +180,7 @@ const ChooseDate = props => {
               <TouchableOpacity
                 onPress={() => {
                   setLocation('custom');
-                  navigationService.navigate('SearchLocation', {
-                    finalData: {
-                      services: selectedServices,
-                      date: date,
-                      time: selectedTiming,
-                    },
-                  });
+                
                 }}
                 activeOpacity={0.9}
                 style={[
@@ -241,13 +195,6 @@ const ChooseDate = props => {
                 style={styles.txt2}
                 onPress={() => {
                   setLocation('custom');
-                  navigationService.navigate('SearchLocation', {
-                    finalData: {
-                      services: selectedServices,
-                      date: date,
-                      time: selectedTiming,
-                    },
-                  });
                 }}>
                 Custom Location
               </CustomText>
@@ -265,7 +212,12 @@ const ChooseDate = props => {
                     borderColor: Color.themeColor1,
                   },
                 ]}></TouchableOpacity>
-              <CustomText isBold style={styles.txt2}>
+              <CustomText
+                isBold
+                onPress={() => {
+                  setLocation('shop');
+                }}
+                style={styles.txt2}>
                 Barber shop
               </CustomText>
             </View>
@@ -275,7 +227,36 @@ const ChooseDate = props => {
             // borderColor={'white'}
             // borderWidth={1}
             textColor={Color.black}
-            onPress={Booking}
+            onPress={() => {
+              if (!date || Object.keys(selectedTiming).length==0 || !selectedServices || location == '') {
+                return Platform.OS === 'android'
+                  ? ToastAndroid.show(
+                      'Please select date, time, location and services',
+                      ToastAndroid.SHORT,
+                    )
+                  : alert('Please select date, time, location and services');
+               
+              }else if(location=='shop'){
+                navigationService.navigate('CheckoutScreen', {
+                  finalData: {
+                    services: selectedServices,
+                    date: date,
+                    time: selectedTiming,
+                    location:{name:'barber shop'},
+                    image:image
+                  },
+                });
+              }else{
+                navigationService.navigate('SearchLocation', {
+                  finalData: {
+                    services: selectedServices,
+                    date: date,
+                    time: selectedTiming,
+                    image:image
+                  },
+                });
+              }
+            }}
             // onPress={() => {
             //   if (date.length > 0 && selectedTiming != '') {
             //     navigationService.navigate('CheckoutScreen', {

@@ -33,6 +33,7 @@
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-calendars": "^1.1285.0",
     "react-native-confirmation-code-field": "^7.3.0",
+    "react-native-raw-bottom-sheet": "^2.2.0",
     "react-native-draggable": "^3.3.0",
     "react-native-gesture-handler": "^2.4.2",
     "react-native-google-places-autocomplete": "^2.5.6",

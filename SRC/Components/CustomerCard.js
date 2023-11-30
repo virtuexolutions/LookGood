@@ -1,5 +1,5 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
@@ -10,59 +10,79 @@ import {Icon} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from './CustomButton';
 import navigationService from '../navigationService';
-import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
-const OrderCard = ({item}) => {
-  // const [buttonText ,setButtonText] =useState(user?.role == 'customer' ? 'reviwes' : 'detail')
-  const user =useSelector(state => state.commonReducer.userData)
- 
-  const amount = () => {
-    let totalAmount = 0;
-    item?.booking_detail.map(data => {
-      totalAmount += data?.service_info?.price;
-    });
-    // console.log('Total======>>>>>>>>>', totalAmount);
-    return totalAmount;
-  };
+const CustomerCard = ({item}) => {
+    const navigation =useNavigation()
+  //   const amount = () => {
+  //     let totalAmount = 0;
+  //     item?.booking_detail.map(data => {
+  //       totalAmount += data?.service_info?.price;
+  //     });
+  //     // console.log('Total======>>>>>>>>>', totalAmount);
+  //     return totalAmount;
+  //   };
 
-  const calculateTotalAmount = () => {
-    const bookingDetail = item?.booking_detail;
-    // const amount = item?.booking_detail.reduce((a,b)=> a+b)
+  //   const calculateTotalAmount = () => {
+  //     const bookingDetail = item?.booking_detail;
+  //     // const amount = item?.booking_detail.reduce((a,b)=> a+b)
 
-    if (!Array.isArray(bookingDetail) || bookingDetail.length === 0) {
-      return 0;
-    }
+  //     if (!Array.isArray(bookingDetail) || bookingDetail.length === 0) {
+  //       return 0;
+  //     }
 
-    const serviceNames = bookingDetail
-      .map(service => service?.service_info?.name)
-      .filter(Boolean);
+  //     const serviceNames = bookingDetail
+  //       .map(service => service?.service_info?.name)
+  //       .filter(Boolean);
 
-    return serviceNames.join(', ');
-  };
-  const servicesText = calculateTotalAmount();
+  //     return serviceNames.join(', ');
+  //   };
+  //   const servicesText = calculateTotalAmount();
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+    onPress={() => navigation.navigate('CustomerBookingDetail')}
+    style={styles.card}>
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
+          paddingHorizontal: moderateScale(2, 0.3),
         }}>
-        <CustomImage
-          source={{
-            uri: item?.barber_info?.photo
-              ? item?.barber_info?.photo
-              : item?.member_info?.photo,
-          }}
-          style={styles.image}
-        />
+        <View
+          style={{
+            height: windowHeight * 0.13,
+            width: windowWidth * 0.25,
+            // backgroundColor:'red',
+            overflow: 'hidden',
+          }}>
+          <CustomImage
+            source={{
+              uri: item?.barber_info?.photo
+                ? item?.barber_info?.photo
+                : item?.member_info?.photo,
+            }}
+            style={[
+              styles.image,
+              {
+                height: '100%',
+                width: '100%',
+              },
+            ]}
+          />
+        </View>
+        <View style={{
+            paddingHorizontal:moderateScale(10,0.3),
+            // backgroundColor:'red',
+            width:windowWidth*0.58
+        }}>
+
         <CustomText isBold numberOfLines={2} style={styles.name}>
           {item?.barber_info?.first_name
             ? item?.barber_info?.first_name
             : item?.member_info?.first_name}
         </CustomText>
-      </View>
-      <View style={styles.eachRow}>
+        <View style={styles.eachRow}>
         <CustomText
           isBold
           style={{
@@ -73,7 +93,7 @@ const OrderCard = ({item}) => {
         </CustomText>
         <CustomText style={styles.heading}>{item?.booking_date}</CustomText>
       </View>
-      <View style={styles.eachRow}>
+        <View style={styles.eachRow}>
         <CustomText
           isBold
           style={{
@@ -84,7 +104,7 @@ const OrderCard = ({item}) => {
         </CustomText>
         <CustomText style={styles.heading}>{item?.booking_time}</CustomText>
       </View>
-      <View style={styles.eachRow}>
+        <View style={styles.eachRow}>
         <CustomText
           isBold
           style={{
@@ -94,11 +114,11 @@ const OrderCard = ({item}) => {
           Amount :{' '}
         </CustomText>
         <CustomText style={styles.heading}>
-          {/* {numeral(calculateTotalAmount()).format('$0,0.0')} */}
-          {amount()}
+          {/* {numeral(calculateTotalAmount()).format('$0,0.0')}
+          {amount()}  */}
         </CustomText>
       </View>
-      <View style={styles.eachRow}>
+        <View style={styles.eachRow}>
         <CustomText
           isBold
           style={{
@@ -108,12 +128,12 @@ const OrderCard = ({item}) => {
           Services :{' '}
         </CustomText>
         <CustomText numberOfLines={1} style={styles.heading}>
-          {servicesText}
+          {/* {servicesText}  */}
         </CustomText>
       </View>
-      {
-       
-      <CustomButton
+        </View>
+      </View>
+      {/* <CustomButton
         bgColor={Color.themeColor}
         borderColor={'white'}
         borderWidth={1}
@@ -130,18 +150,17 @@ const OrderCard = ({item}) => {
         isBold
         alignSelf={'flex-end'}
         marginTop={moderateScale(10, 0.3)}
-      />
-      }
-    </View>
+      /> */}
+    </TouchableOpacity>
   );
 };
 
-export default OrderCard;
+export default CustomerCard;
 
 const styles = ScaledSheet.create({
   card: {
-    width: windowWidth * 0.45,
-    height: windowHeight * 0.22,
+    // width: windowWidth * 0.85,
+    // height: windowHeight * 0.15,
     borderWidth: 2,
     borderRadius: moderateScale(10, 0.3),
     backgroundColor: Color.white,

@@ -59,9 +59,7 @@ const MyAccounts = props => {
       first_name: firstName,
       last_name: lastName,
       phone : phone ,
-      email: email,
-      country: country,
-     
+      email: email,   
     };
     const formdata = new FormData();
     for (let key in params) {
@@ -268,10 +266,10 @@ const MyAccounts = props => {
             borderColor={'white'}
             borderWidth={1}
             textColor={Color.black}
-            onPress={() => {console.log('Will Update profile');}}
+            onPress={() => {EditProfile()}}
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
-            text={'Update'}
+            text={isLoading ?<ActivityIndicator color={'black'} size={'small'} /> :'Update'}
             fontSize={moderateScale(14, 0.3)}
             textTransform={'uppercase'}
             isGradient={true}

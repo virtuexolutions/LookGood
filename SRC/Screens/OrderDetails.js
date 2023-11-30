@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,13 +13,28 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import numeral from 'numeral';
 import {Icon} from 'native-base';
 import CustomButton from '../Components/CustomButton';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import {ActivityIndicator} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import ImageView from 'react-native-image-viewing';
+import ReviewModal from '../Components/ReviewModal';
 
 const OrderDetails = props => {
   const item = props?.route?.params?.item;
   console.log('🚀 ~ file: OrderDetails.js:19 ~ OrderDetails ~ item:', item);
+  const user =useSelector(state => state.commonReducer.userData)
+  const navigation = useNavigation();
+  const token = useSelector(state => state.authReducer.token);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading2, setisLoading2] = useState(false);
+  const [imageModal, setImageModal] = useState(false);
+  const [rbRef ,setRbref] =useState(null)
+  const [buttonText ,setButtonText] =useState(item?.status == 'accept' ?  'done' : '')
+  
 
   const calculateTotalAmount = () => {
-    console.log('Booking Details:', item?.booking_detail);
+    console.log('Booking Details:', item);
 
     const totalAmount = item?.booking_detail?.reduce((sum, booking) => {
       const bookingTotal =
@@ -34,6 +49,38 @@ const OrderDetails = props => {
 
     return numeral(totalAmount).format('$0,0.0');
   };
+
+  const changeStatus = async value => {
+    const url = `auth/barber/booking/status/${item?.id}`;
+    const body = {
+      status: value,
+    };
+    value == 'accept' ? setIsLoading(true) : setisLoading2(true);
+    const response = await Post(url, body, apiHeader(token));
+    value == 'accept' ? setIsLoading(false) : setisLoading2(false);
+    if (response != undefined) {
+      // console.log(
+      //   '🚀 ~ file: OrderDetails.js:51 ~ changeStatus ~ response:',
+      //   response?.data,
+      // );
+      navigation.goBack();
+    }
+};
+
+  const accept =async () => {
+    const body ={
+      status: 'complete'
+    }
+    const url =`auth/barber/booking/status/${item?.id}`
+    setisLoading2(true)
+    const response = await Post(url ,body, apiHeader(token))
+    setisLoading2(false)
+    if(response !=  undefined){
+      response?.data
+      console.log("🚀 ~ file: OrderDetails.js:73 ~ accept ~ response:", response)
+      // setButtonText('review')
+    }
+  }
 
   return (
     <ScreenBoiler
@@ -52,9 +99,7 @@ const OrderDetails = props => {
         <View style={styles.containerCard}>
           <CustomImage
             source={{
-              uri: item?.barber_info?.photo
-                ? item?.barber_info?.photo
-                : item?.member_info?.photo,
+              uri: item?.member_info?.photo,
             }}
             style={styles.image}
           />
@@ -158,45 +203,169 @@ const OrderDetails = props => {
             ) : (
               <CustomText style={{color: 'red'}}>No services chosen</CustomText>
             )}
+
+            {item?.image && (
+              <CustomText
+                onPress={() => {
+                  setImageModal(true);
+                }}
+                isBold
+                style={{
+                  marginTop: moderateScale(20, 0.3),
+                  width: windowWidth * 0.7,
+                  // width: windowWidth * 0.16,
+                  fontSize: moderateScale(14, 0.3),
+                }}>
+                Attachments{' '}
+              </CustomText>
+            )}
+            {item?.image && (
+              <CustomText
+                onPress={() => {
+                  setImageModal(true);
+                }}
+                isBold
+                style={{
+                  marginTop: moderateScale(20, 0.3),
+                  width: windowWidth * 0.7,
+                  // width: windowWidth * 0.16,
+                  fontSize: moderateScale(14, 0.3),
+                }}>
+                location :{' '}
+              </CustomText>
+            )}
+
+            {item?.location && (
+              <CustomText
+                onPress={() => {
+                  setImageModal(true);
+                }}
+                isBold
+                style={{
+                  marginTop: moderateScale(20, 0.3),
+                  width: windowWidth * 0.7,
+                  // width: windowWidth * 0.16,
+                  fontSize: moderateScale(14, 0.3),
+                }}>
+                Attachments :{' '}
+              </CustomText>
+            )}
+
             <CustomImage
               source={require('../Assets/Images/map.png')}
               style={styles.mapView}
             />
-            <CustomButton
-              bgColor={Color.themeColor}
-              borderColor={'white'}
-              borderWidth={1}
-              textColor={Color.black}
-              onPress={() => {
-                console.log('Sign up will happen');
-              }}
-              width={windowWidth * 0.75}
-              height={windowHeight * 0.06}
-              text={'Accept'}
-              fontSize={moderateScale(14, 0.3)}
-              textTransform={'uppercase'}
-              isGradient={true}
-              isBold
-              marginTop={moderateScale(30, 0.3)}
-            />
-            <CustomButton
-              bgColor={Color.themeColor}
-              borderColor={'white'}
-              borderWidth={1}
-              textColor={Color.black}
-              onPress={() => {
-                console.log('Will reject Appointment');
-              }}
-              width={windowWidth * 0.75}
-              height={windowHeight * 0.06}
-              text={'Reject'}
-              fontSize={moderateScale(14, 0.3)}
-              textTransform={'uppercase'}
-              isGradient={true}
-              isBold
-              marginTop={moderateScale(10, 0.3)}
-            />
+            {item?.status == 'pending' && user?.role != 'customer' &&  (
+              <>
+                <CustomButton
+                  bgColor={Color.themeColor}
+                  borderColor={'white'}
+                  borderWidth={1}
+                  textColor={Color.black}
+                  onPress={() => {
+                    changeStatus('accept');
+                  }}
+                  width={windowWidth * 0.75}
+                  height={windowHeight * 0.06}
+                  text={
+                    isLoading ? (
+                      <ActivityIndicator color={Color.black} size={'small'} />
+                    ) : (
+                      'Accept'
+                    )
+                  }
+                  fontSize={moderateScale(14, 0.3)}
+                  textTransform={'uppercase'}
+                  isGradient={true}
+                  isBold
+                  marginTop={moderateScale(30, 0.3)}
+                />
+                <CustomButton
+                  bgColor={Color.themeColor}
+                  borderColor={'white'}
+                  borderWidth={1}
+                  textColor={Color.black}
+                  onPress={() => {
+                    changeStatus('reject');
+                  }}
+                  width={windowWidth * 0.75}
+                  height={windowHeight * 0.06}
+                  text={
+                    isLoading2 ? (
+                      <ActivityIndicator color={Color.black} size={'small'} />
+                    ) : (
+                      'Reject'
+                    )
+                  }
+                  fontSize={moderateScale(14, 0.3)}
+                  textTransform={'uppercase'}
+                  isGradient={true}
+                  isBold
+                  marginTop={moderateScale(10, 0.3)}
+                />
+              </>
+            )}
+            {item?.status == 'accept' &&  user?.role != 'customer' &&
+               <CustomButton
+               bgColor={Color.themeColor}
+               borderColor={'white'}
+               borderWidth={1}
+               textColor={Color.black}
+               onPress={() => {
+                // buttonText == 'review' &&  rbRef.open()
+               buttonText == 'done' &&   accept()
+               }}
+               width={windowWidth * 0.75}
+               height={windowHeight * 0.06}
+               text={
+                 isLoading ? (
+                   <ActivityIndicator color={Color.black} size={'small'} />
+                 ) : (
+                  buttonText
+                 )
+               }
+               fontSize={moderateScale(14, 0.3)}
+               textTransform={'uppercase'}
+               isGradient={true}
+               isBold
+               marginTop={moderateScale(30, 0.3)}
+             />
+            }
+          {
+             user?.role == 'customer'  && item?.status == 'complete' &&
+             <CustomButton
+             bgColor={Color.themeColor}
+             borderColor={'white'}
+             borderWidth={1}
+             textColor={Color.black}
+             onPress={() => {
+              rbRef.open()
+             
+             }}
+             width={windowWidth * 0.75}
+             height={windowHeight * 0.06}
+             text={
+               isLoading ? (
+                 <ActivityIndicator color={Color.black} size={'small'} />
+               ) : (
+                'review'
+               )
+             }
+             fontSize={moderateScale(14, 0.3)}
+             textTransform={'uppercase'}
+             isGradient={true}
+             isBold
+             marginTop={moderateScale(30, 0.3)}
+           />
+          }
           </ScrollView>
+          <ImageView
+            images={[{uri: item?.image}]}
+            imageIndex={0}
+            visible={imageModal}
+            onRequestClose={() => setImageModal(false)}
+          />
+          {/* <ReviewModal setRef={setRbref} rbRef={rbRef} item={item}/> */}
         </View>
       </LinearGradient>
     </ScreenBoiler>
@@ -225,10 +394,6 @@ const styles = ScaledSheet.create({
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(16, 0.3),
-    // position : 'absolute',
-    // bottom : moderateScale(10,0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   bannerView: {
     width: windowWidth * 0.85,
@@ -243,7 +408,7 @@ const styles = ScaledSheet.create({
   containerCard: {
     marginTop: windowHeight * 0.08,
     width: windowWidth * 0.9,
-    height: windowHeight * 0.73,
+    height: windowHeight * 0.68,
     backgroundColor: Color.white,
     borderRadius: moderateScale(20, 0.3),
     alignItems: 'center',
@@ -258,22 +423,15 @@ const styles = ScaledSheet.create({
   name: {
     marginTop: moderateScale(5, 0.3),
     fontSize: moderateScale(20, 0.3),
-    // marginLeft: moderateScale(3, 0.3),
-    // width: '70%',
-    // backgroundColor : 'red',
   },
   eachRow: {
     flexDirection: 'row',
     width: '70%',
-    // backgroundColor : 'red',
-    // marginTop : moderateScale(5,0.3),
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   heading: {
     fontSize: moderateScale(13, 0.3),
-    // marginLeft: moderateScale(5, 0.3),
-    // fontStyle : 'normal'
   },
   mapView: {
     width: windowWidth * 0.7,

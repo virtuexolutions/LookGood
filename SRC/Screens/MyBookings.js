@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
+import {
+  ImageBackground,
+  View,
+  ScrollView,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -11,12 +17,20 @@ import OrderCard from '../Components/OrderCard';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
+import NoData from '../Components/NoData';
+import CustomerCard from '../Components/CustomerCard';
 
 const MyBookings = () => {
+  const user = useSelector(state => state.commonReducer.userData);
+  console.log('🚀 ~ `fil`e: MyBookings.js:24 ~ MyBookings ~ user:', user);
   const [item, setItem] = useState('');
+  // console.log("🚀 ~ file: MyBookings.js:24 ~ MyBookings ~ item:", item)
   const [Loading, setLoading] = useState(false);
-  const [bookingResponse, setBookingResponse] = useState(null);
-  console.log("🚀 ~ file: MyBookings.js:19 ~ MyBookings ~ bookingResponse:", bookingResponse)
+  const [bookingResponse, setBookingResponse] = useState([]);
+  console.log(
+    '🚀 ~ file: MyBookings.js:19 ~ MyBookings ~ bookingResponse:',
+    bookingResponse,
+  );
 
   const token = useSelector(state => state.authReducer.token);
 
@@ -28,117 +42,125 @@ const MyBookings = () => {
 
     setLoading(false);
     if (response != undefined) {
-      // return console.log(
-      //     '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000PARTY',
-      //     response?.data?.data,
-      //   );
-        setBookingResponse(response?.data?.data);
+      console.log(
+        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000PARTY',
+        response?.data,
+      );
+      setBookingResponse(response?.data?.data);
     }
   };
 
-  // Booking GET API END
+  const barberBooking = async () => {
+    const url = 'auth/barber/booking/list';
+    setLoading(true);
+    const response = await Get(url, token);
+    setLoading(false);
+    if (response != undefined) {
+      setBookingResponse(response?.data?.data);
+    }
+  };
 
   useEffect(() => {
-    GetBooking();
+    user?.role == 'customer' ? GetBooking() : barberBooking();
   }, []);
 
-  const orderArray = [
-    {
-      image: require('../Assets/Images/dummyCustomer1.png'),
-      name: 'Lorraine Lebrun',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer2.png'),
-      name: 'Benjamin Evalent',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer3.png'),
-      name: 'Jay cuttler',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer4.png'),
-      name: 'mark joe',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer1.png'),
-      name: 'Danjay joesph',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-  ];
+  // const orderArray = [
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer1.png'),
+  //     name: 'Lorraine Lebrun',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer2.png'),
+  //     name: 'Benjamin Evalent',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer3.png'),
+  //     name: 'Jay cuttler',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer4.png'),
+  //     name: 'mark joe',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer1.png'),
+  //     name: 'Danjay joesph',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  // ];
   return (
     <ScreenBoiler
       showHeader={true}
@@ -169,22 +191,51 @@ const MyBookings = () => {
           }}
         />
 
-        <FlatList
-          decelerationRate={'fast'}
-          showsVerticalScrollIndicator={false}
-          style={{
-            marginTop: moderateScale(10, 0.3),
-          }}
-          contentContainerStyle={{
-            paddingHorizontal: moderateScale(8, 0.3),
-            paddingBottom: moderateScale(30, 0.3),
-          }}
-          data={bookingResponse}
-          numColumns={2}
-          renderItem={({item, index}) => {
-            return <OrderCard item={item} />;
-          }}
-        />
+        {Loading ? (
+          <View
+            style={{
+              width: windowWidth * 0.8,
+              height: windowHeight * 0.7,
+              justifyContent: 'center',
+            }}>
+            <ActivityIndicator size={'large'} color={Color.themeColor} />
+          </View>
+        ) : (
+          <FlatList
+            decelerationRate={'fast'}
+            showsVerticalScrollIndicator={false}
+            style={{
+              marginTop: moderateScale(10, 0.3),
+            }}
+            contentContainerStyle={{
+              paddingHorizontal: moderateScale(8, 0.3),
+              paddingBottom: moderateScale(30, 0.3),
+            }}
+            data={bookingResponse}
+            numColumns={2}
+            ListEmptyComponent={() => {
+              return (
+                <NoData
+                  style={{
+                    height: windowHeight * 0.25,
+                    width: windowWidth * 0.6,
+                    alignItems: 'center',
+                    // backgroundColor:'red'
+                  }}
+                  text={'No Booking yet'}
+                />
+              );
+            }}
+            renderItem={({item, index}) => {
+              return  <OrderCard item={item} />
+              // user?.role == 'customer' ? (
+              //   <CustomerCard item={item} />
+              // ) : (
+              //   <OrderCard item={item} />
+              // );
+            }}
+          />
+        )}
       </LinearGradient>
     </ScreenBoiler>
   );

@@ -27,6 +27,7 @@ import navigationService from '../navigationService';
 const ImageScreen = props => {
   const data = props?.route?.params?.data;
   const Image = props?.route?.params?.image;
+  const barber = props?.route?.params?.barber
   // console.log('🚀 ~ file: ImageScreen.js:28 ~ ImageScreen ~ Image:', Image);
   const ref = useRef();
 
@@ -37,21 +38,13 @@ const ImageScreen = props => {
   const [showModal, setShowModal] = useState(false);
   const [selectedCat, setSelectedCat] = useState('');
   const [image, setImage] = useState([
-    {category: selectedCat, uri: Image?.uri},
+    {category: selectedCat, uri: Image?.uri, name:Image?.name, type:Image?.type},
   ]);
-  console.log('🚀 ~ file: ImageScreen.js:37 ~ ImageScreen ~ image:', image);
+  console.log("🚀 ~ file: ImageScreen.js:43 ~ ImageScreen ~ image:", image)
   const [selectedImage, setSelectedImage] = useState({});
   const [isVisible, setIsVisible] = useState(false);
   const [xPosition, setXPosition] = useState(100);
-  // console.log(
-  //   '🚀 ~ file: ImageScreen.js:39 ~ ImageScreen ~ xPosition:',
-  //   xPosition,
-  // );
   const [YPosition, setYPosition] = useState(200);
-  // console.log(
-  //   '🚀 ~ file: ImageScreen.js:41 ~ ImageScreen ~ YPosition:',
-  //   YPosition,
-  // );
   console.log(
     xPosition < 85,
     xPosition > 300,
@@ -59,17 +52,9 @@ const ImageScreen = props => {
     YPosition > 400,
   );
 
-  // console.log(
-  //   '🚀 ~ file: ImageScreen.js:35 ~ ImageScreen ~ isVisible:',
-  //   isVisible,
-  // );
   const [selectedStyle, setSelectedStyle] = useState({});
-  // console.log(
-  //   '🚀 ~ file: ImageScreen.js:25 ~ ImageScreen ~ selectedStyle:',
-  //   selectedStyle,
-  // );
   const [array, setArray] = useState([]);
-  // console.log('🚀 ~ file: ImageScreen.js:24 ~ ImageScreen ~ array:', array);
+
 
   const HairStyle = [
     {
@@ -179,14 +164,8 @@ const ImageScreen = props => {
         text: 'Confirm',
         onPress: () => {
           const imageClone = image.slice(0, 1);
-          console.log(
-            '🚀 ~ file: ImageScreen.js:127 ~ handlePrompt ~ imageClone:',
-            imageClone,
-          );
           setImage(imageClone);
-          // setSelectedCat(category)
           setSelectedStyle(item);
-          // setArray(data)
           return true;
         },
       },
@@ -197,7 +176,7 @@ const ImageScreen = props => {
     // on mount
     ref.current.capture().then(uri => {
       console.log('do something with ', uri);
-      setImage(prev => [...prev, {category: selectedCat, uri: uri}]);
+      setImage(prev => [...prev, {category: selectedCat, uri: uri, type:image[0]?.type, name:image[0]?.name}]);
       setIsVisible(!isVisible);
       setSelectedStyle({});
       setSelectedCat('');
@@ -356,7 +335,7 @@ const ImageScreen = props => {
                 isGradient={true}
                 isBold
                 onPress={() => {
-                  navigationService.navigate('ChooseDate',{data : data, image: image.slice(image.length-1)})
+                  navigationService.navigate('ChooseDate',{data : data, image: image.slice(image.length-1), barber:barber})
                 }}
                 marginTop={moderateScale(10, 0.3)}
               />

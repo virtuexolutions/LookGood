@@ -26,6 +26,7 @@ import ServiceComponent from '../Components/ServiceComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import {useNavigation} from '@react-navigation/native';
+import NoData from '../Components/NoData';
 
 const AddService = () => {
   const [Loading, setLoading] = useState(false);
@@ -34,20 +35,15 @@ const AddService = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ file: AddService.js:33 ~ AddService ~ token999888:', token);
 
-
-  // GET API START 
+  // GET API START
   const GetServices = async () => {
     const url = `auth/barber/service `;
     setLoading(true);
     const response = await Get(url, token);
-   
+
     setLoading(false);
     if (response != undefined) {
-      console.log(
-        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000',response?.data?.data,
-      );
       setService(response?.data?.data);
     }
   };
@@ -56,13 +52,20 @@ const AddService = () => {
     GetServices();
   }, []);
 
-
-// POST API START 
+  // POST API START
   const Services = async () => {
+    if (service.some(item => item?.price == '')) {
+      return Platform.OS == 'android'
+        ? ToastAndroid.show(
+            'Please add price for all the services',
+            ToastAndroid.SHORT,
+          )
+        : Alert.alert('Please add price for all the services');
+    }
     const body = {
       service_name: service,
     };
-    console.log('🚀 ~ file: AddService.js:61 ~ Services ~ body:', body);
+
 
     for (let key in body) {
       if (service.length == 0) {
@@ -78,7 +81,6 @@ const AddService = () => {
     setIsLoading(false);
 
     if (response != undefined) {
-      console.log('VERIFY=========>>>>>>', response?.data);
       Platform.OS === 'android'
         ? ToastAndroid.show('Servicess Add', ToastAndroid.SHORT)
         : Alert.alert('Servicess Add');
@@ -86,10 +88,9 @@ const AddService = () => {
     }
   };
 
- 
-  useEffect(() => {
-    console.log('changed');
-  }, [service]);
+  // useEffect(() => {
+  //   console.log('changed');
+  // }, [service]);
 
   return (
     <ScreenBoiler
@@ -183,8 +184,18 @@ const AddService = () => {
           <FlatList
             showsVerticalScrollIndicator={false}
             data={service}
+            ListEmptyComponent={()=>{
+              return(<NoData
+                style={{
+                  height: windowHeight * 0.25,
+                  width: windowWidth * 0.6,
+                  alignItems: 'center',
+                  // backgroundColor:'red'
+                }}
+                text={'No Services Added Yet'}
+              />)
+            }}
             renderItem={({item, index}) => {
-              console.log("🚀 ~ file: AddService.js:241 ~ item:", item)
               return (
                 <ServiceComponent
                   service={service}
