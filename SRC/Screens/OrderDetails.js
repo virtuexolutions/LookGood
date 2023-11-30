@@ -23,13 +23,14 @@ import ReviewModal from '../Components/ReviewModal';
 const OrderDetails = props => {
   const item = props?.route?.params?.item;
   console.log('🚀 ~ file: OrderDetails.js:19 ~ OrderDetails ~ item:', item);
+  const user =useSelector(state => state.commonReducer.userData)
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setisLoading2] = useState(false);
   const [imageModal, setImageModal] = useState(false);
   const [rbRef ,setRbref] =useState(null)
-  const [buttonText ,setButtonText] =useState(item?.status == 'accept' ?  'done' : 'review')
+  const [buttonText ,setButtonText] =useState(item?.status == 'accept' ?  'done' : '')
   
 
   const calculateTotalAmount = () => {
@@ -75,8 +76,9 @@ const OrderDetails = props => {
     const response = await Post(url ,body, apiHeader(token))
     setisLoading2(false)
     if(response !=  undefined){
-      // response?.data
+      response?.data
       console.log("🚀 ~ file: OrderDetails.js:73 ~ accept ~ response:", response)
+      // setButtonText('review')
     }
   }
 
@@ -253,7 +255,7 @@ const OrderDetails = props => {
               source={require('../Assets/Images/map.png')}
               style={styles.mapView}
             />
-            {item?.status == 'pending' && (
+            {item?.status == 'pending' && user?.role != 'customer' &&  (
               <>
                 <CustomButton
                   bgColor={Color.themeColor}
@@ -303,14 +305,14 @@ const OrderDetails = props => {
                 />
               </>
             )}
-            {item?.status != 'pending' &&
+            {item?.status == 'accept' &&  user?.role != 'customer' &&
                <CustomButton
                bgColor={Color.themeColor}
                borderColor={'white'}
                borderWidth={1}
                textColor={Color.black}
                onPress={() => {
-                buttonText == 'review' &&  rbRef.open()
+                // buttonText == 'review' &&  rbRef.open()
                buttonText == 'done' &&   accept()
                }}
                width={windowWidth * 0.75}
@@ -329,6 +331,33 @@ const OrderDetails = props => {
                marginTop={moderateScale(30, 0.3)}
              />
             }
+          {
+             user?.role == 'customer'  && item?.status == 'complete' &&
+             <CustomButton
+             bgColor={Color.themeColor}
+             borderColor={'white'}
+             borderWidth={1}
+             textColor={Color.black}
+             onPress={() => {
+              rbRef.open()
+             
+             }}
+             width={windowWidth * 0.75}
+             height={windowHeight * 0.06}
+             text={
+               isLoading ? (
+                 <ActivityIndicator color={Color.black} size={'small'} />
+               ) : (
+                'review'
+               )
+             }
+             fontSize={moderateScale(14, 0.3)}
+             textTransform={'uppercase'}
+             isGradient={true}
+             isBold
+             marginTop={moderateScale(30, 0.3)}
+           />
+          }
           </ScrollView>
           <ImageView
             images={[{uri: item?.image}]}
@@ -336,7 +365,7 @@ const OrderDetails = props => {
             visible={imageModal}
             onRequestClose={() => setImageModal(false)}
           />
-          <ReviewModal setRef={setRbref} rbRef={rbRef} item={item}/>
+          {/* <ReviewModal setRef={setRbref} rbRef={rbRef} item={item}/> */}
         </View>
       </LinearGradient>
     </ScreenBoiler>

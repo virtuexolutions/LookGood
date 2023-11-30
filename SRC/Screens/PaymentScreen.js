@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+ import React, {useEffect, useState} from 'react';
 import {
   ImageBackground,
   View,
@@ -45,7 +45,7 @@ const PaymentScreen = props => {
       barber_id: finalData?.time?.barber_id,
       booking_date: finalData?.date,
       booking_time: finalData?.time?.time,
-      image: finalData?.image[0],
+      image: finalData?.image && finalData?.image[0] ,
       custom_location:finalData?.location?.name
     };
    

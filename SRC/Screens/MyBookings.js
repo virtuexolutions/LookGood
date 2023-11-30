@@ -18,10 +18,11 @@ import DropDownSingleSelect from '../Components/DropDownSingleSelect';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
 import NoData from '../Components/NoData';
+import CustomerCard from '../Components/CustomerCard';
 
 const MyBookings = () => {
-  const user =useSelector(state => state.commonReducer.userData)
-  console.log("🚀 ~ `fil`e: MyBookings.js:24 ~ MyBookings ~ user:", user)
+  const user = useSelector(state => state.commonReducer.userData);
+  console.log('🚀 ~ `fil`e: MyBookings.js:24 ~ MyBookings ~ user:', user);
   const [item, setItem] = useState('');
   // console.log("🚀 ~ file: MyBookings.js:24 ~ MyBookings ~ item:", item)
   const [Loading, setLoading] = useState(false);
@@ -35,7 +36,6 @@ const MyBookings = () => {
 
   // Booking GET API START
   const GetBooking = async () => {
-    
     const url = `auth/booking/list`;
     setLoading(true);
     const response = await Get(url, token);
@@ -50,20 +50,18 @@ const MyBookings = () => {
     }
   };
 
-  const barberBooking =async () => {
-const url ='auth/barber/booking/list'
-setLoading(true)
-const response=await Get(url,token)
-setLoading(false)
-if(response!=undefined){
-setBookingResponse(response?.data?.data)
-  }
-}
+  const barberBooking = async () => {
+    const url = 'auth/barber/booking/list';
+    setLoading(true);
+    const response = await Get(url, token);
+    setLoading(false);
+    if (response != undefined) {
+      setBookingResponse(response?.data?.data);
+    }
+  };
 
   useEffect(() => {
-  user?.role == 'customer' ?  GetBooking() : barberBooking()
-  
-    
+    user?.role == 'customer' ? GetBooking() : barberBooking();
   }, []);
 
   // const orderArray = [
@@ -215,19 +213,26 @@ setBookingResponse(response?.data?.data)
             }}
             data={bookingResponse}
             numColumns={2}
-            ListEmptyComponent={()=>{
-              return(<NoData
-                style={{
-                  height: windowHeight * 0.25,
-                  width: windowWidth * 0.6,
-                  alignItems: 'center',
-                  // backgroundColor:'red'
-                }}
-                text={'No Booking yet'}
-              />)
+            ListEmptyComponent={() => {
+              return (
+                <NoData
+                  style={{
+                    height: windowHeight * 0.25,
+                    width: windowWidth * 0.6,
+                    alignItems: 'center',
+                    // backgroundColor:'red'
+                  }}
+                  text={'No Booking yet'}
+                />
+              );
             }}
             renderItem={({item, index}) => {
-              return <OrderCard item={item} />;
+              return  <OrderCard item={item} />
+              // user?.role == 'customer' ? (
+              //   <CustomerCard item={item} />
+              // ) : (
+              //   <OrderCard item={item} />
+              // );
             }}
           />
         )}

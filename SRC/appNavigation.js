@@ -41,6 +41,7 @@ import SearchLocation from './Screens/SearchLocation';
 import AddService from './Screens/AddService';
 import TimeScreen from './Screens/TimeScreen';
 import Vouchers from './Screens/Vouchers';
+import CustomerBookingDetails from './Screens/CustomerBookingDetails';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -77,6 +78,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="ChooseDate" component={ChooseDate} />
           <RootNav.Screen name="TimeScreen" component={TimeScreen} />
           <RootNav.Screen name="AddService" component={AddService} />
+          <RootNav.Screen name="CustomerBookingDetail" component={CustomerBookingDetails} />
           <RootNav.Screen name="TabNavigation" component={TabNavigation} />
           <RootNav.Screen name="CheckoutScreen" component={CheckoutScreen} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
