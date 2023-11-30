@@ -4,7 +4,7 @@ const initialState = {
   userData: {},
   services: [],
   cartData: [],
-  
+  selectedVoucher :{},
   financeBreakDown: [],
   notification : false
 };
@@ -39,6 +39,10 @@ const CommonSlice = createSlice({
    
     setNotification(state,action){
       state.notification = action.payload
+    },
+    setVoucherData(state,action){
+      state.selectedVoucher = action.payload
+      console.log('Selected Voucher=====>>>>', state.selectedVoucher)
     }
   },
 });
@@ -50,7 +54,8 @@ export const {
   setNotification,
   setServices,
   setRemoveCardData,
-  setWholeCart
+  setWholeCart,
+  setVoucherData
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;

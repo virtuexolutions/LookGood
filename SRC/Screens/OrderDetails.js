@@ -64,7 +64,7 @@ const OrderDetails = props => {
       // );
       navigation.goBack();
     }
-  };
+};
 
   const accept =async () => {
     const body ={

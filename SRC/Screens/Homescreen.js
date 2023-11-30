@@ -508,6 +508,7 @@ const Homescreen = () => {
                   return (
                     <NoData
                       style={{
+                      
                         height: windowHeight * 0.25,
                         width: windowWidth * 0.6,
                         alignItems: 'center',
