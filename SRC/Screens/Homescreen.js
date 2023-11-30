@@ -31,6 +31,7 @@ const Homescreen = () => {
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ file: Homescreen.js:34 ~ Homescreen ~ user:", user)
   const token = useSelector(state => state.authReducer.token);
   const [index, setIndex] = useState(0);
 
@@ -51,7 +52,7 @@ const Homescreen = () => {
 
     setLoading(false);
     if (response != undefined) {
-      setOrderData(response?.data?.barber_booking_list);
+      setOrderData(response?.data?.data);
     }
   };
 

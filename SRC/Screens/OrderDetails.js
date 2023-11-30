@@ -13,11 +13,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import numeral from 'numeral';
 import {Icon} from 'native-base';
 import CustomButton from '../Components/CustomButton';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import ImageView from 'react-native-image-viewing';
+import ReviewModal from '../Components/ReviewModal';
 
 const OrderDetails = props => {
   const item = props?.route?.params?.item;
@@ -27,6 +28,9 @@ const OrderDetails = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setisLoading2] = useState(false);
   const [imageModal, setImageModal] = useState(false);
+  const [rbRef ,setRbref] =useState(null)
+  const [buttonText ,setButtonText] =useState(item?.status == 'accept' ?  'done' : 'review')
+  
 
   const calculateTotalAmount = () => {
     console.log('Booking Details:', item);
@@ -54,13 +58,27 @@ const OrderDetails = props => {
     const response = await Post(url, body, apiHeader(token));
     value == 'accept' ? setIsLoading(false) : setisLoading2(false);
     if (response != undefined) {
-      console.log(
-        '🚀 ~ file: OrderDetails.js:51 ~ changeStatus ~ response:',
-        response?.data,
-      );
+      // console.log(
+      //   '🚀 ~ file: OrderDetails.js:51 ~ changeStatus ~ response:',
+      //   response?.data,
+      // );
       navigation.goBack();
     }
   };
+
+  const accept =async () => {
+    const body ={
+      status: 'complete'
+    }
+    const url =`auth/barber/booking/status/${item?.id}`
+    setisLoading2(true)
+    const response = await Post(url ,body, apiHeader(token))
+    setisLoading2(false)
+    if(response !=  undefined){
+      // response?.data
+      console.log("🚀 ~ file: OrderDetails.js:73 ~ accept ~ response:", response)
+    }
+  }
 
   return (
     <ScreenBoiler
@@ -79,9 +97,7 @@ const OrderDetails = props => {
         <View style={styles.containerCard}>
           <CustomImage
             source={{
-              uri: item?.barber_info?.photo
-                ? item?.barber_info?.photo
-                : item?.member_info?.photo,
+              uri: item?.member_info?.photo,
             }}
             style={styles.image}
           />
@@ -198,10 +214,10 @@ const OrderDetails = props => {
                   // width: windowWidth * 0.16,
                   fontSize: moderateScale(14, 0.3),
                 }}>
-                Attachments {' '}
+                Attachments{' '}
               </CustomText>
             )}
-              {item?.image && (
+            {item?.image && (
               <CustomText
                 onPress={() => {
                   setImageModal(true);
@@ -216,7 +232,6 @@ const OrderDetails = props => {
                 location :{' '}
               </CustomText>
             )}
-          
 
             {item?.location && (
               <CustomText
@@ -288,6 +303,32 @@ const OrderDetails = props => {
                 />
               </>
             )}
+            {item?.status != 'pending' &&
+               <CustomButton
+               bgColor={Color.themeColor}
+               borderColor={'white'}
+               borderWidth={1}
+               textColor={Color.black}
+               onPress={() => {
+                buttonText == 'review' &&  rbRef.open()
+               buttonText == 'done' &&   accept()
+               }}
+               width={windowWidth * 0.75}
+               height={windowHeight * 0.06}
+               text={
+                 isLoading ? (
+                   <ActivityIndicator color={Color.black} size={'small'} />
+                 ) : (
+                  buttonText
+                 )
+               }
+               fontSize={moderateScale(14, 0.3)}
+               textTransform={'uppercase'}
+               isGradient={true}
+               isBold
+               marginTop={moderateScale(30, 0.3)}
+             />
+            }
           </ScrollView>
           <ImageView
             images={[{uri: item?.image}]}
@@ -295,6 +336,7 @@ const OrderDetails = props => {
             visible={imageModal}
             onRequestClose={() => setImageModal(false)}
           />
+          <ReviewModal setRef={setRbref} rbRef={rbRef} item={item}/>
         </View>
       </LinearGradient>
     </ScreenBoiler>

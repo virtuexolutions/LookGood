@@ -20,7 +20,10 @@ import {useSelector} from 'react-redux';
 import NoData from '../Components/NoData';
 
 const MyBookings = () => {
+  const user =useSelector(state => state.commonReducer.userData)
+  console.log("🚀 ~ `fil`e: MyBookings.js:24 ~ MyBookings ~ user:", user)
   const [item, setItem] = useState('');
+  // console.log("🚀 ~ file: MyBookings.js:24 ~ MyBookings ~ item:", item)
   const [Loading, setLoading] = useState(false);
   const [bookingResponse, setBookingResponse] = useState([]);
   console.log(
@@ -32,6 +35,7 @@ const MyBookings = () => {
 
   // Booking GET API START
   const GetBooking = async () => {
+    
     const url = `auth/booking/list`;
     setLoading(true);
     const response = await Get(url, token);
@@ -46,107 +50,119 @@ const MyBookings = () => {
     }
   };
 
+  const barberBooking =async () => {
+const url ='auth/barber/booking/list'
+setLoading(true)
+const response=await Get(url,token)
+setLoading(false)
+if(response!=undefined){
+setBookingResponse(response?.data?.data)
+  }
+}
+
   useEffect(() => {
-    GetBooking();
+  user?.role == 'customer' ?  GetBooking() : barberBooking()
+  
+    
   }, []);
 
-  const orderArray = [
-    {
-      image: require('../Assets/Images/dummyCustomer1.png'),
-      name: 'Lorraine Lebrun',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer2.png'),
-      name: 'Benjamin Evalent',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer3.png'),
-      name: 'Jay cuttler',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer4.png'),
-      name: 'mark joe',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer1.png'),
-      name: 'Danjay joesph',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-  ];
+  // const orderArray = [
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer1.png'),
+  //     name: 'Lorraine Lebrun',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer2.png'),
+  //     name: 'Benjamin Evalent',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer3.png'),
+  //     name: 'Jay cuttler',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer4.png'),
+  //     name: 'mark joe',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  //   {
+  //     image: require('../Assets/Images/dummyCustomer1.png'),
+  //     name: 'Danjay joesph',
+  //     date: moment().format('ll'),
+  //     time: moment().format('hh : mm A'),
+  //     amount: 1000,
+  //     address: '13th Street. 47 W 13th St, New York,',
+  //     services: [
+  //       'Blow dry with curling and striaght iron',
+  //       'Blow dry',
+  //       'Hair cut with Blow dry',
+  //       'Mens haircut',
+  //       'Gloss',
+  //       'Gel Polist',
+  //       'Meni pedi',
+  //       'nail cutting',
+  //       'pink and white fill',
+  //     ],
+  //   },
+  // ];
   return (
     <ScreenBoiler
       showHeader={true}
