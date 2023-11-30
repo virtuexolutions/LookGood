@@ -51,7 +51,8 @@ const Homescreen = () => {
 
     setLoading(false);
     if (response != undefined) {
-      setOrderData(response?.data?.barber_booking_list);
+      console.log("🚀 ~ file: Homescreen.js:54 ~ GetBarberBooking ~ response:", response?.data)
+      setOrderData(response?.data?.data);
     }
   };
 
@@ -507,6 +508,7 @@ const Homescreen = () => {
                   return (
                     <NoData
                       style={{
+                      
                         height: windowHeight * 0.25,
                         width: windowWidth * 0.6,
                         alignItems: 'center',

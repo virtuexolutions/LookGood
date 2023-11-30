@@ -40,6 +40,7 @@ import ResetPassword from './Screens/ResetPassword';
 import SearchLocation from './Screens/SearchLocation';
 import AddService from './Screens/AddService';
 import TimeScreen from './Screens/TimeScreen';
+import Vouchers from './Screens/Vouchers';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -64,6 +65,7 @@ const AppNavigator = () => {
           {/* <RootNav.Screen name="Walkthrough" component={Walkthrough} /> */}
           <RootNav.Screen name="EnterPhone" component={EnterPhone} />
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
+          <RootNav.Screen name="Vouchers" component={Vouchers} />
           <RootNav.Screen name="Homescreen" component={Homescreen} />
           <RootNav.Screen name="OrderDetails" component={OrderDetails} />
           <RootNav.Screen name="Signup" component={Signup} />

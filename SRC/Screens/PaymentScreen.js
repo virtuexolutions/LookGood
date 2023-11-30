@@ -24,26 +24,25 @@ import numeral from 'numeral';
 import navigationService from '../navigationService';
 import CustomImage from '../Components/CustomImage';
 import {useDispatch, useSelector} from 'react-redux';
-import {setWholeCart} from '../Store/slices/common';
+import {setVoucherData, setWholeCart} from '../Store/slices/common';
 import { Post } from '../Axios/AxiosInterceptorFunction';
 
 const PaymentScreen = props => {
-  const dispatch = useDispatch();
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
-  console.log("🚀 ~ file: PaymentScreen.js:34 ~ PaymentScreen ~ finalData:", finalData)
-  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useDispatch();
   const token = useSelector(state=> state.authReducer.token)
+
+  const [isLoading, setIsLoading] = useState(false);
   
 
   const Booking = async () => {
-
     const selectedServiceIds = finalData?.services.map(service => service.id);
     const formData = new FormData()
 
     const body = {
       barber_id: finalData?.time?.barber_id,
-    
       booking_date: finalData?.date,
       booking_time: finalData?.time?.time,
       image: finalData?.image[0],
@@ -61,15 +60,13 @@ const PaymentScreen = props => {
     setIsLoading(false);
 
     if (response != undefined) {
-      console.log("🚀 ~ file: PaymentScreen.js:60 ~ Booking ~ response:", response?.data)
-      // setBookingResponse(response?.data);
-
       Platform.OS === 'android'
         ? ToastAndroid.show('Booking successful', ToastAndroid.SHORT)
         : Alert.alert('Booking successful');
 
       navigationService.navigate('TabNavigation');
       fromStore && dispatch(setWholeCart([]));
+      dispatch(setVoucherData({}))
     }
   };
 
@@ -105,7 +102,6 @@ const PaymentScreen = props => {
           </CustomText>
           <View style={[styles.container1, {height: windowHeight * 0.15}]}>
             <CustomImage
-              // source={{uri:finalData?.image[0]?.uri}}
               source={require('../Assets/Images/address.png')}
               resizeMode={'stretch'}
               style={{
@@ -249,25 +245,19 @@ export default PaymentScreen;
 const styles = ScaledSheet.create({
   container: {
     paddingTop: windowHeight * 0.03,
-    // justifyContent: "center",
     height: windowHeight * 0.9,
     width: windowWidth,
     alignItems: 'center',
-    // paddingLeft: moderateScale(20, 0.3),
-    // backgroundColor : Color.themeColor
   },
   text1: {
     textTransform: 'uppercase',
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(20, 0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   container1: {
     backgroundColor: Color.white,
     width: windowWidth * 0.9,
-
     marginTop: moderateScale(10, 0.3),
     paddingHorizontal: moderateScale(10, 0.3),
     paddingVertical: moderateScale(5, 0.3),

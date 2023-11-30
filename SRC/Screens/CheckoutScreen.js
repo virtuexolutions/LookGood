@@ -26,17 +26,18 @@ import {setWholeCart} from '../Store/slices/common';
 
 const CheckoutScreen = props => {
   const dispatch = useDispatch();
+
   const cartData = useSelector(state => state.commonReducer.cartData);
+  const voucher = useSelector(state => state.commonReducer.selectedVoucher);
+
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
- 
+
   const [subTotal, setSubTotal] = useState(0);
- 
   const [type, setItem] = useState('');
   const [finalStateData, setFinalStateData] = useState(
     fromStore ? cartData : finalData?.services,
   );
-
   const [arrayDropDown, setArrayDropdown] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState();
 
@@ -68,12 +69,10 @@ const CheckoutScreen = props => {
 
   useEffect(() => {
     setSubTotal(0), fromStore && dispatch(setWholeCart(finalStateData));
-    finalStateData.map((x, index) => {
+    finalStateData?.map((x, index) => {
       return setSubTotal(prev => prev + x?.price);
     });
   }, [finalStateData]);
-
- 
 
   return (
     <ScreenBoiler
@@ -90,15 +89,13 @@ const CheckoutScreen = props => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            // backgroundColor:'red',
             paddingBottom: windowHeight * 0.15,
-            // paddingTop : moderateScale(20,0.3),
             alignItems: 'center',
           }}
           style={{
             width: windowWidth,
           }}>
-          {finalStateData.map((item, index) => {
+          {finalStateData?.map((item, index) => {
             return (
               <View
                 style={{
@@ -199,20 +196,12 @@ const CheckoutScreen = props => {
                 placeholder={'Choose any category'}
                 width={windowWidth * 0.9}
                 dropdownStyle={{
-                  // backgroundColor : 'red',
                   width: windowWidth * 0.9,
                   borderBottomWidth: 0,
                 }}
               />
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: moderateScale(20, 0.3),
-                  paddingHorizontal: moderateScale(20, 0.3),
-                  width: windowWidth,
-                  justifyContent: 'space-between',
-                }}>
+              <View style={styles.row}>
                 <CustomText style={[styles.text1, {color: Color.white}]}>
                   Shipping Cost
                 </CustomText>
@@ -220,14 +209,8 @@ const CheckoutScreen = props => {
                   {numeral(selectedPrice?.price).format('$0.0')}
                 </CustomText>
               </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: moderateScale(15, 0.3),
-                  paddingHorizontal: moderateScale(20, 0.3),
-                  width: windowWidth,
-                  justifyContent: 'space-between',
-                }}>finalData
+              <View style={styles.row}>
+                finalData
                 <CustomText style={[styles.text1, {color: Color.white}]}>
                   Subtotal
                 </CustomText>
@@ -238,16 +221,7 @@ const CheckoutScreen = props => {
             </>
           )}
           <View style={styles.underline} />
-
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: moderateScale(15, 0.3),
-              paddingHorizontal: moderateScale(20, 0.3),
-              width: windowWidth,
-              justifyContent: 'space-between',
-              // backgroundColor:'purple',
-            }}>
+          <View style={styles.row}>
             <CustomText style={[styles.text1, {color: Color.white}]}>
               Location :
             </CustomText>
@@ -261,18 +235,32 @@ const CheckoutScreen = props => {
               {`${finalData?.location?.name}`}
             </CustomText>
           </View>
-
           <View style={styles.underline} />
-
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: moderateScale(15, 0.3),
-              paddingHorizontal: moderateScale(20, 0.3),
-              width: windowWidth,
-              justifyContent: 'space-between',
-              // backgroundColor:'purple',
-            }}>
+          <View style={styles.row}>
+            <CustomText style={[styles.text1, {color: Color.white}]}>
+              Apply voucher :
+            </CustomText>
+            {Object.keys(voucher).length == 0 ? (
+              <CustomButton
+                textColor={Color.black}
+                onPress={() => {
+                  navigationService.navigate('Vouchers');
+                }}
+                width={windowWidth * 0.3}
+                height={windowHeight * 0.05}
+                text={'select voucher'}
+                fontSize={moderateScale(12, 0.3)}
+                isGradient={true}
+                isBold
+              />
+            ) : (
+              <CustomText isBold style={{color: Color.white}}>
+                {voucher?.name}
+              </CustomText>
+            )}
+          </View>
+          <View style={styles.underline} />
+          <View style={styles.row}>
             <CustomText style={[styles.text1, {color: Color.white}]}>
               total
             </CustomText>
@@ -313,20 +301,22 @@ const CheckoutScreen = props => {
 export default CheckoutScreen;
 
 const styles = ScaledSheet.create({
+  row: {
+    flexDirection: 'row',
+    paddingHorizontal: moderateScale(20, 0.3),
+    width: windowWidth,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // backgroundColor: 'red',
+  },
   container: {
-    // paddingTop: windowHeight * 0.06,
-    // justifyContent: "center",
     height: windowHeight * 0.9,
     width: windowWidth,
     alignItems: 'center',
-    // paddingLeft: moderateScale(20, 0.3),
-    // backgroundColor : Color.themeColor
   },
   text1: {
     color: Color.black,
     fontSize: moderateScale(14, 0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   container1: {
     backgroundColor: Color.white,
@@ -342,6 +332,6 @@ const styles = ScaledSheet.create({
     width: windowWidth * 0.9,
     borderTopWidth: 1,
     borderColor: Color.white,
-    marginTop: moderateScale(30, 0.3),
+    marginVertical: moderateScale(20, 0.3),
   },
 });
