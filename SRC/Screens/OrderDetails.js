@@ -171,36 +171,32 @@ const OrderDetails = props => {
                 {numeral(calculateTotalAmount()).format('$0,0.0')}
               </CustomText>
             </View>
-            {item?.dis_price && (
-              <View style={styles.eachRow}>
-                <CustomText
-                  isBold
-                  style={{
-                    // width: windowWidth * 0.16,
-                    fontSize: moderateScale(14, 0.3),
-                  }}>
-                  Voucher :{' '}
-                </CustomText>
-                <CustomText style={styles.heading}>
-                  {numeral(item?.dis_price).format('$0,0.0')} OFF
-                </CustomText>
-              </View>
-            )}
-            {item?.price && (
-              <View style={styles.eachRow}>
-                <CustomText
-                  isBold
-                  style={{
-                    // width: windowWidth * 0.16,
-                    fontSize: moderateScale(14, 0.3),
-                  }}>
-                  Total :{' '}
-                </CustomText>
-                <CustomText style={styles.heading}>
-                  {numeral(item?.price).format('$0,0.0')}
-                </CustomText>
-              </View>
-            )}
+           {item?.dis_price && <View style={styles.eachRow}>
+              <CustomText
+                isBold
+                style={{
+                  // width: windowWidth * 0.16,
+                  fontSize: moderateScale(14, 0.3),
+                }}>
+                Voucher :{' '}
+              </CustomText>
+              <CustomText style={styles.heading}>
+                {numeral(item?.dis_price).format('$0,0.0')} OFF
+              </CustomText>
+            </View>}
+            {item?.dis_price && <View style={styles.eachRow}>
+              <CustomText
+                isBold
+                style={{
+                  // width: windowWidth * 0.16,
+                  fontSize: moderateScale(14, 0.3),
+                }}>
+                After discount :{' '}
+              </CustomText>
+              <CustomText style={styles.heading}>
+                {numeral(item?.price).format('$0,0.0')} 
+              </CustomText>
+            </View>}
 
             <CustomText
               isBold
@@ -259,7 +255,7 @@ const OrderDetails = props => {
                   // width: windowWidth * 0.16,
                   fontSize: moderateScale(14, 0.3),
                 }}>
-                Attachments: {' '}
+                Attachments{' '}
               </CustomText>
             )}
             {item?.image && (

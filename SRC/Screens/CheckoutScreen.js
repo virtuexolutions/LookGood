@@ -342,7 +342,7 @@ const CheckoutScreen = props => {
           textColor={Color.black}
           onPress={() => {
             navigationService.navigate('PaymentScreen', {
-              finalData: {...finalData,total:calculateDiscountedPrice(), discount:calculateDiscount()},
+              finalData: {...finalData,total:subTotal, discount:calculateDiscount()},
               fromStore: fromStore,
             });
           }}
