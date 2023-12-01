@@ -8,6 +8,7 @@ import {
   ToastAndroid,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -39,7 +40,7 @@ const Vouchers = props => {
   const token = useSelector(state => state.authReducer.token);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [voucherData, setVoucherData] = useState([])
+  const [voucherData, setVoucherData] = useState([]);
 
   const getVouchers = async () => {
     const url = 'auth/coupon';
@@ -52,12 +53,12 @@ const Vouchers = props => {
         '🚀 ~ file: Vouchers.js:47 ~ getVouchers ~ response:',
         response?.data,
       );
-      setVoucherData(response?.data?.data)
+      setVoucherData(response?.data?.data);
     }
   };
 
   const [isModal, setIsModal] = useState(false);
-  const [ selectedItem, setSelectedItem] =useState({})
+  const [selectedItem, setSelectedItem] = useState({});
 
   const voucherCardData = [
     {
@@ -121,36 +122,47 @@ const Vouchers = props => {
           <CustomText isBold style={styles.text1}>
             Select voucher
           </CustomText>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              width: windowWidth,
-              alignItems: 'center',
-            }}
-            style={{paddingBottom: moderateScale(50, 0.6)}}
-            data={voucherData}
-            renderItem={({item, index}) => {
-              return (
-                <Card
-                  item={item}
-                  onPress={() => {
-                    if (item?.minOrder > total) {
-                      return Platform.OS == 'android'
-                        ? ToastAndroid.show(
-                            'You cannot use this voucher',
-                            ToastAndroid.SHORT,
-                          )
-                        : Alert.alert('You acnnot use this voucher');
-                    }
-                    setSelectedItem(item)
-                    setIsModal(true);
-                  }}
-                />
-              );
-            }}
-          />
+          {isLoading ? (
+            <View
+              style={{justifyContent: 'center', height: windowHeight * 0.5}}>
+              <ActivityIndicator color={Color.themeColor} size={'large'} />
+            </View>
+          ) : (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                width: windowWidth,
+                alignItems: 'center',
+              }}
+              style={{paddingBottom: moderateScale(50, 0.6)}}
+              data={voucherData}
+              renderItem={({item, index}) => {
+                return (
+                  <Card
+                    item={item}
+                    onPress={() => {
+                      if (item?.min_price >= total) {
+                        return Platform.OS == 'android'
+                          ? ToastAndroid.show(
+                              'You cannot use this voucher',
+                              ToastAndroid.SHORT,
+                            )
+                          : Alert.alert('You acnnot use this voucher');
+                      }
+                      setSelectedItem(item);
+                      setIsModal(true);
+                    }}
+                  />
+                );
+              }}
+            />
+          )}
         </ScrollView>
-        <VoucherModal modal={isModal} setModal={setIsModal}  item={selectedItem}/>
+        <VoucherModal
+          modal={isModal}
+          setModal={setIsModal}
+          item={selectedItem}
+        />
       </LinearGradient>
     </ScreenBoiler>
   );

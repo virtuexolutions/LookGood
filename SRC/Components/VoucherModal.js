@@ -67,7 +67,7 @@ const VoucherModal = ({item, modal, setModal}) => {
             paddingBottom: moderateScale(5, 0.3),
           }}
           isBold>
-          you got Discount ${Voucher?.name}
+          you got Discount {item?.value}{item?.type=='fixed' ? '$' : '%'}
         </CustomText>
         <View
           style={{

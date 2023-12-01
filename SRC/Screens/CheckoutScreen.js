@@ -56,6 +56,24 @@ const CheckoutScreen = props => {
     },
   ];
 
+  const calculateDiscountedPrice = () => {
+    const finalValue =
+      voucher?.type == 'fixed'
+        ? subTotal - voucher?.value
+        : (subTotal * (100 - voucher?.value)) / 100;
+
+    return finalValue;
+  };
+  const calculateDiscount = ()=>{
+    const finalValue =
+    voucher?.type == 'fixed'
+      ? subTotal - voucher?.value
+      : (subTotal * voucher?.value) / 100;
+
+  return finalValue;
+    
+  }
+
   useEffect(() => {
     setSubTotal(0);
     setArrayDropdown([]);
@@ -244,7 +262,7 @@ const CheckoutScreen = props => {
               <CustomButton
                 textColor={Color.black}
                 onPress={() => {
-                  navigationService.navigate('Vouchers',{total:subTotal});
+                  navigationService.navigate('Vouchers', {total: subTotal});
                 }}
                 width={windowWidth * 0.3}
                 height={windowHeight * 0.05}
@@ -260,23 +278,24 @@ const CheckoutScreen = props => {
                   borderRadius: moderateScale(10, 0.6),
                   borderWidth: moderateScale(2, 0.6),
                   paddingVertical: moderateScale(10, 0.6),
-                  paddingHorizontal:moderateScale(15,.6),
-                  alignItems:'center',
+                  paddingHorizontal: moderateScale(15, 0.6),
+                  alignItems: 'center',
                   flexDirection: 'row',
                   // backgroundColor:'green'
                 }}>
                 <Icon
-                onPress={()=>{
-                  dispatch(setVoucherData({}))
-                }}
-                style={{position:'absolute', top:2, right:2}}
-                name={'cross'}
+                  onPress={() => {
+                    dispatch(setVoucherData({}));
+                  }}
+                  style={{position: 'absolute', top: 2, right: 2}}
+                  name={'cross'}
                   as={Entypo}
                   color={Color.white}
                   size={moderateScale(11, 0.6)}
                 />
                 <CustomText isBold style={{color: Color.white}}>
-                  {voucher?.name}
+                  {voucher?.value}
+                  {voucher?.type == 'fixed' ? '$' : '%'}
                 </CustomText>
               </View>
             )}
@@ -294,28 +313,28 @@ const CheckoutScreen = props => {
               ).format('$0,0.0')}
             </CustomText>
           </View>
-         {Object.keys(voucher).length>0 && <View style={styles.row}>
-            <CustomText style={[styles.text1, {color: Color.white}]}>
-              Discount
-            </CustomText>
-            <CustomText isBold style={{color: Color.white}}>
-              {numeral(
-                voucher?.maxDiscount
-              ).format('$0,0.0')}
-            </CustomText>
-          </View>}
-          {Object.keys(voucher).length>0 && <View style={styles.row}>
-            <CustomText style={[styles.text1, {color: Color.white}]}>
-              SubTotal
-            </CustomText>
-            <CustomText isBold style={{color: Color.white}}>
-              {numeral(
-                (selectedPrice?.price
-                ? selectedPrice?.price + subTotal
-                : subTotal)-voucher?.maxDiscount,
-              ).format('$0,0.0')}
-            </CustomText>
-          </View>}
+          {Object.keys(voucher).length > 0 && (
+            <View style={styles.row}>
+              <CustomText style={[styles.text1, {color: Color.white}]}>
+                Discount
+              </CustomText>
+              <CustomText isBold style={{color: Color.white}}>
+                {voucher?.type == 'fixed'
+                  ? numeral(voucher?.value).format('$0,0.0')
+                  : numeral(voucher?.value / 100).format('0%')}
+              </CustomText>
+            </View>
+          )}
+          {Object.keys(voucher).length > 0 && (
+            <View style={styles.row}>
+              <CustomText style={[styles.text1, {color: Color.white}]}>
+                SubTotal
+              </CustomText>
+              <CustomText isBold style={{color: Color.white}}>
+                {numeral(calculateDiscountedPrice()).format('$0,0.0')}
+              </CustomText>
+            </View>
+          )}
         </ScrollView>
         <CustomButton
           // borderColor={'white'}
@@ -323,7 +342,7 @@ const CheckoutScreen = props => {
           textColor={Color.black}
           onPress={() => {
             navigationService.navigate('PaymentScreen', {
-              finalData: finalData,
+              finalData: {...finalData,total:calculateDiscountedPrice(), discount:calculateDiscount()},
               fromStore: fromStore,
             });
           }}

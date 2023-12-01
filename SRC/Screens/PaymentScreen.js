@@ -48,7 +48,9 @@ const PaymentScreen = props => {
       booking_time: finalData?.time?.time,
       service_time_id : finalData?.time?.id,
       image: finalData?.image && finalData?.image[0] ,
-      custom_location:finalData?.location?.name
+      custom_location:finalData?.location?.name,
+      price: finalData?.total,
+      dis_price:finalData?.discount,
     };
    
     for(let key in body){
