@@ -28,6 +28,7 @@ import {useNavigation} from '@react-navigation/native';
 import {Card} from '../Components/Card';
 import {setVoucherData} from '../Store/slices/common';
 import Modal from 'react-native-modal';
+import VoucherModal from '../Components/VoucherModal';
 
 const Vouchers = props => {
   const dispatch = useDispatch();
@@ -54,6 +55,9 @@ const Vouchers = props => {
       setVoucherData(response?.data?.data)
     }
   };
+
+  const [isModal, setIsModal] = useState(false);
+  const [ selectedItem, setSelectedItem] =useState({})
 
   const voucherCardData = [
     {
@@ -138,17 +142,15 @@ const Vouchers = props => {
                           )
                         : Alert.alert('You acnnot use this voucher');
                     }
-                    dispatch(setVoucherData(item));
-                    navigation.goBack();
+                    setSelectedItem(item)
+                    setIsModal(true);
                   }}
                 />
               );
             }}
           />
         </ScrollView>
-        <Modal style={{}}>
-          <View></View>
-        </Modal>
+        <VoucherModal modal={isModal} setModal={setIsModal}  item={selectedItem}/>
       </LinearGradient>
     </ScreenBoiler>
   );

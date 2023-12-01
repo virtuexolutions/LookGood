@@ -229,8 +229,8 @@ const MyBookings = () => {
             renderItem={({item, index}) => {
               return  <OrderCard item={item} />
               // user?.role == 'customer' ? (
-              //   <CustomerCard item={item} />
-              // ) : (
+                //   <CustomerCard item={item} />
+                // ) : (
               //   <OrderCard item={item} />
               // );
             }}
