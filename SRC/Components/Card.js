@@ -10,18 +10,18 @@ import { StyleSheet } from "react-native";
 export const Card = ({item, onPress}) => {
     return (
       <View style={styles2.container}>
-        <CustomText style={styles2.name}>{item?.name}</CustomText>
+        <CustomText style={styles2.name}>{item?.code}</CustomText>
         <Divider
           color={Color.veryLightGray}
           style={{marginVertical: moderateScale(8, 0.3)}}
         />
         <View style={styles2.row}>
           <CustomText style={styles2.text}>minimum order</CustomText>
-          <CustomText style={styles2.text}>{item?.minOrder}</CustomText>
+          <CustomText style={styles2.text}>{item?.min_price}</CustomText>
         </View>
         <View style={styles2.row}>
           <CustomText style={styles2.text}>maximum Discount</CustomText>
-          <CustomText style={styles2.text}>{item?.maxDiscount}</CustomText>
+          <CustomText style={styles2.text}>{item?.value}{item?.type=='fixed'?'$ OFF':'% OFF' }</CustomText>
         </View>
         <CustomButton
           textColor={Color.black}

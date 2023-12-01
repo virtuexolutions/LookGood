@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -25,21 +26,45 @@ import {useSelector} from 'react-redux';
 import {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 const ChooseDate = props => {
+  const token = useSelector(state => state.authReducer.token);
+
   const selectedServices = props?.route.params?.data;
-  const [location, setLocation] = useState('');
   const barberDetails = props?.route.params?.barber;
-  // console.log("🚀 ~ file: ChooseDate.js:31 ~ ChooseDate ~ barberDetails:", barberDetails)
   const image = props?.route?.params?.image;
-  // console.log("🚀 ~ file: ChooseDate.js:32 ~ ChooseDate ~ image:", image)
+
+  const [location, setLocation] = useState('');
   const [date, setDate] = useState('');
   const [selectedTiming, setSelectedTiming] = useState({});
-  // console.log("🚀 ~ file: ChooseDate.js:34 ~ ChooseDate ~ selectedTiming:", selectedTiming)
+  console.log("🚀 ~ file: ChooseDate.js:38 ~ ChooseDate ~ selectedTiming:", selectedTiming)
   const [Loading, setLoading] = useState(false);
+  const [bookingTiming, setBookingTiming] = useState([]);
   const [bookingResponse, setBookingResponse] = useState(null);
-  const token = useSelector(state => state.authReducer.token);
+  const [selectedTimeId, setSelectedTimeId] = useState('')
+  console.log(
+    '🚀 ~ file: ChooseDate.js:40 ~ ChooseDate ~ bookingResponse:',
+    bookingResponse,
+  );
   const navigation = useNavigation();
 
- 
+  const getTimings = async () => {
+    const url = `auth/barber/available_services/${barberDetails?.id}`;
+    setLoading(true);
+    const response = await Post(url, {date: date}, apiHeader(token));
+    setLoading(false);
+    if (response != undefined) {
+      console.log(
+        '🚀 ~ file: ChooseDate.js:48 ~ getTimings ~ response:',
+        response?.data?.user_detail?.filter(item => item?.booking == null),
+      );
+      setBookingResponse(
+        response?.data?.user_detail?.filter(item => item?.booking == null),
+      );
+    }
+  };
+  useEffect(() => {
+    getTimings();
+  }, [date]);
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -123,47 +148,55 @@ const ChooseDate = props => {
             size={30}
           />
 
-          <View style={styles.timingView}>
-            {barberDetails?.service_timing.map((item, index) => {
-              return (
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={() => {
-                    setSelectedTiming(item);
-                  }}>
-                  <LinearGradient
-                    style={{
-                      flexDirection: 'row',
-                      width: windowWidth * 0.35,
-                      height: windowHeight * 0.07,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      //   marginRight: index % 2 == 0 ? moderateScale(0,0.3) : moderateScale(20, 0.3),
-                      marginBottom: moderateScale(10, 0.3),
-                      borderRadius: moderateScale(5, 0.3),
-                      // borderRadius: moderateScale(30, 0.3),
-                    }}
-                    start={{x: 0.2, y: 0.6}}
-                    end={{x: 1, y: 0}}
-                    colors={
-                      item == selectedTiming
-                        ? Color.btnColor
-                        : ['#000', 'rgba(41, 44, 53, 1)', '#000']
-                    }>
-                    <CustomText
-                      isBold
+          {Loading ? (
+            <View style={{height: windowHeight * 0.1, justifyContent:'center'}}>
+             
+              <ActivityIndicator color={Color.themeColor} size={'large'} />
+            </View>
+          ) : (
+            <View style={styles.timingView}>
+              {bookingResponse?.map((item, index) => {
+                return (
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => {
+                      // setSelectedTimeId(ite)
+                      setSelectedTiming(item);
+                    }}>
+                    <LinearGradient
                       style={{
-                        fontSize: moderateScale(11, 0.3),
-                        color:
-                          item == selectedTiming ? Color.black : Color.white,
-                      }}>
-                      {item?.time}
-                    </CustomText>
-                  </LinearGradient>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+                        flexDirection: 'row',
+                        width: windowWidth * 0.35,
+                        height: windowHeight * 0.07,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        //   marginRight: index % 2 == 0 ? moderateScale(0,0.3) : moderateScale(20, 0.3),
+                        marginBottom: moderateScale(10, 0.3),
+                        borderRadius: moderateScale(5, 0.3),
+                        // borderRadius: moderateScale(30, 0.3),
+                      }}
+                      start={{x: 0.2, y: 0.6}}
+                      end={{x: 1, y: 0}}
+                      colors={
+                        item == selectedTiming
+                          ? Color.btnColor
+                          : ['#000', 'rgba(41, 44, 53, 1)', '#000']
+                      }>
+                      <CustomText
+                        isBold
+                        style={{
+                          fontSize: moderateScale(11, 0.3),
+                          color:
+                            item == selectedTiming ? Color.black : Color.white,
+                        }}>
+                        {item?.time}
+                      </CustomText>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
 
           <CustomTextWithMask
             data={`Location`}
@@ -180,7 +213,6 @@ const ChooseDate = props => {
               <TouchableOpacity
                 onPress={() => {
                   setLocation('custom');
-                
                 }}
                 activeOpacity={0.9}
                 style={[
@@ -228,31 +260,35 @@ const ChooseDate = props => {
             // borderWidth={1}
             textColor={Color.black}
             onPress={() => {
-              if (!date || Object.keys(selectedTiming).length==0 || !selectedServices || location == '') {
+              if (
+                !date ||
+                Object.keys(selectedTiming).length == 0 ||
+                !selectedServices ||
+                location == ''
+              ) {
                 return Platform.OS === 'android'
                   ? ToastAndroid.show(
                       'Please select date, time, location and services',
                       ToastAndroid.SHORT,
                     )
                   : alert('Please select date, time, location and services');
-               
-              }else if(location=='shop'){
+              } else if (location == 'shop') {
                 navigationService.navigate('CheckoutScreen', {
                   finalData: {
                     services: selectedServices,
                     date: date,
                     time: selectedTiming,
-                    location:{name:'barber shop'},
-                    image:image
+                    location: {name: 'barber shop'},
+                    image: image,
                   },
                 });
-              }else{
+              } else {
                 navigationService.navigate('SearchLocation', {
                   finalData: {
                     services: selectedServices,
                     date: date,
                     time: selectedTiming,
-                    image:image
+                    image: image,
                   },
                 });
               }

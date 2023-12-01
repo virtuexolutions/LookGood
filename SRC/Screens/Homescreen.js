@@ -28,10 +28,11 @@ const Homescreen = () => {
   const [Loading, setLoading] = useState(false);
   const [barberData, setBarberData] = useState([]);
   const [orderData, setOrderData] = useState([]);
+  console.log("🚀 ~ file: Homescreen.js:31 ~ Homescreen ~ orderData:", orderData)
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);
-  console.log("🚀 ~ file: Homescreen.js:34 ~ Homescreen ~ user:", user)
+  // console.log("🚀 ~ file: Homescreen.js:34 ~ Homescreen ~ user:", user)
   const token = useSelector(state => state.authReducer.token);
   const [index, setIndex] = useState(0);
 
@@ -321,10 +322,10 @@ const Homescreen = () => {
                   marginTop: moderateScale(10, 0.3),
                 },
               ]}>
-              Recommended{' '}
+              Recommended
             </CustomText>
             {isLoading ? (
-            <View style={{justifyContent:'center', alignItems:'center', height:windowHeight*0.6}}>
+            <View style={{justifyContent:'center', alignItems:'center', height:windowHeight*0.2}}>
               <ActivityIndicator color={Color.themeColor} size={'large'} />
             </View>
           ) : (
@@ -467,7 +468,7 @@ const Homescreen = () => {
                 contentContainerStyle={{
                   paddingHorizontal: moderateScale(8, 0.3),
                 }}
-                data={orderData.reverse()}
+                data={orderData.filter(item=> item?.status == 'accept').reverse()}
                 horizontal
                 renderItem={({item, index}) => { 
                   return <OrderCard item={item} />;

@@ -30,6 +30,7 @@ import { Post } from '../Axios/AxiosInterceptorFunction';
 const PaymentScreen = props => {
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
+  console.log("🚀 ~ file: PaymentScreen.js:33 ~ PaymentScreen ~ finalData:", finalData)
 
   const dispatch = useDispatch();
   const token = useSelector(state=> state.authReducer.token)
@@ -45,6 +46,7 @@ const PaymentScreen = props => {
       barber_id: finalData?.time?.barber_id,
       booking_date: finalData?.date,
       booking_time: finalData?.time?.time,
+      service_time_id : finalData?.time?.id,
       image: finalData?.image && finalData?.image[0] ,
       custom_location:finalData?.location?.name
     };
@@ -53,9 +55,9 @@ const PaymentScreen = props => {
       formData.append(key, body[key])
     }
     selectedServiceIds?.map((item, index)=>formData.append(`service_id[${index}]`, item))
-     console.log('🚀 ~ file: PaymentScreen.js:50 ~ Booking ~ body:', body);
+      console.log('🚀 ~ file: PaymentScreen.js:50 ~ Booking ~ body:', body);
     const url = 'auth/booking';
-    setIsLoading(true);
+    setIsLoading(true);   
     const response = await Post(url, formData, apiHeader(token));
     setIsLoading(false);
 

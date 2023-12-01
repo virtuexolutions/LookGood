@@ -26,14 +26,34 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Card} from '../Components/Card';
-import { setVoucherData } from '../Store/slices/common';
+import {setVoucherData} from '../Store/slices/common';
 import Modal from 'react-native-modal';
 
 const Vouchers = props => {
   const dispatch = useDispatch();
-  const navigation = useNavigation()
-  const total = props?.route?.params?.total
-  console.log("🚀 ~ file: Vouchers.js:35 ~ Vouchers ~ total:", total)
+  const navigation = useNavigation();
+
+  const total = props?.route?.params?.total;
+
+  const token = useSelector(state => state.authReducer.token);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [voucherData, setVoucherData] = useState([])
+
+  const getVouchers = async () => {
+    const url = 'auth/coupon';
+    setIsLoading(true);
+    const response = await Get(url, token);
+    setIsLoading(false);
+
+    if (response != undefined) {
+      console.log(
+        '🚀 ~ file: Vouchers.js:47 ~ getVouchers ~ response:',
+        response?.data,
+      );
+      setVoucherData(response?.data?.data)
+    }
+  };
 
   const voucherCardData = [
     {
@@ -70,6 +90,10 @@ const Vouchers = props => {
     },
   ];
 
+  useEffect(() => {
+    getVouchers();
+  }, []);
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -100,17 +124,22 @@ const Vouchers = props => {
               alignItems: 'center',
             }}
             style={{paddingBottom: moderateScale(50, 0.6)}}
-            data={voucherCardData}
+            data={voucherData}
             renderItem={({item, index}) => {
               return (
                 <Card
                   item={item}
                   onPress={() => {
-                    if(item?.minOrder > total){
-                      return Platform.OS == 'android'? ToastAndroid.show('You cannot use this voucher', ToastAndroid.SHORT) : Alert.alert('You acnnot use this voucher')
+                    if (item?.minOrder > total) {
+                      return Platform.OS == 'android'
+                        ? ToastAndroid.show(
+                            'You cannot use this voucher',
+                            ToastAndroid.SHORT,
+                          )
+                        : Alert.alert('You acnnot use this voucher');
                     }
-                    dispatch(setVoucherData(item))
-                    navigation.goBack()
+                    dispatch(setVoucherData(item));
+                    navigation.goBack();
                   }}
                 />
               );
@@ -118,13 +147,11 @@ const Vouchers = props => {
           />
         </ScrollView>
         <Modal style={{}}>
-            <View></View>
+          <View></View>
         </Modal>
-
       </LinearGradient>
     </ScreenBoiler>
   );
-
 };
 
 export default Vouchers;
