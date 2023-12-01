@@ -26,14 +26,17 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Card} from '../Components/Card';
-import { setVoucherData } from '../Store/slices/common';
+import {setVoucherData} from '../Store/slices/common';
 import Modal from 'react-native-modal';
+import VoucherModal from '../Components/VoucherModal';
 
 const Vouchers = props => {
   const dispatch = useDispatch();
-  const navigation = useNavigation()
-  const total = props?.route?.params?.total
-  console.log("🚀 ~ file: Vouchers.js:35 ~ Vouchers ~ total:", total)
+  const navigation = useNavigation();
+  const total = props?.route?.params?.total;
+  console.log('🚀 ~ file: Vouchers.js:35 ~ Vouchers ~ total:', total);
+  const [isModal, setIsModal] = useState(false);
+  const [ selectedItem, setSelectedItem] =useState({})
 
   const voucherCardData = [
     {
@@ -106,25 +109,26 @@ const Vouchers = props => {
                 <Card
                   item={item}
                   onPress={() => {
-                    if(item?.minOrder > total){
-                      return Platform.OS == 'android'? ToastAndroid.show('You cannot use this voucher', ToastAndroid.SHORT) : Alert.alert('You acnnot use this voucher')
+                    if (item?.minOrder > total) {
+                      return Platform.OS == 'android'
+                        ? ToastAndroid.show(
+                            'You cannot use this voucher',
+                            ToastAndroid.SHORT,
+                          )
+                        : Alert.alert('You acnnot use this voucher');
                     }
-                    dispatch(setVoucherData(item))
-                    navigation.goBack()
+                    setSelectedItem(item)
+                    setIsModal(true);
                   }}
                 />
               );
             }}
           />
         </ScrollView>
-        <Modal style={{}}>
-            <View></View>
-        </Modal>
-
+        <VoucherModal modal={isModal} setModal={setIsModal}  item={selectedItem}/>
       </LinearGradient>
     </ScreenBoiler>
   );
-
 };
 
 export default Vouchers;
