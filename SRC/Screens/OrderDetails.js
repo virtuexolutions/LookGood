@@ -86,12 +86,14 @@ const OrderDetails = props => {
     const response = await Post(url, body, apiHeader(token));
     setisLoading2(false);
     if (response != undefined) {
-      response?.data;
+     
       console.log(
         '🚀 ~ file: OrderDetails.js:73 ~ accept ~ response:',
-        response,
+        response?.data,
       );
+      navigation.goBack()
       // setButtonText('review')
+
     }
   };
 
@@ -158,19 +160,7 @@ const OrderDetails = props => {
                 {item?.booking_time}
               </CustomText>
             </View>
-            <View style={styles.eachRow}>
-              <CustomText
-                isBold
-                style={{
-                  // width: windowWidth * 0.16,
-                  fontSize: moderateScale(14, 0.3),
-                }}>
-                Amount :{' '}
-              </CustomText>
-              <CustomText style={styles.heading}>
-                {numeral(calculateTotalAmount()).format('$0,0.0')}
-              </CustomText>
-            </View>
+           
            {item?.dis_price && <View style={styles.eachRow}>
               <CustomText
                 isBold
@@ -184,6 +174,19 @@ const OrderDetails = props => {
                 {numeral(item?.dis_price).format('$0,0.0')} OFF
               </CustomText>
             </View>}
+            <View style={styles.eachRow}>
+              <CustomText
+                isBold
+                style={{
+                  // width: windowWidth * 0.16,
+                  fontSize: moderateScale(14, 0.3),
+                }}>
+                Amount :{' '}
+              </CustomText>
+              <CustomText style={styles.heading}>
+                {numeral(calculateTotalAmount()).format('$0,0.0')}
+              </CustomText>
+            </View>
             {item?.dis_price && <View style={styles.eachRow}>
               <CustomText
                 isBold
@@ -194,7 +197,7 @@ const OrderDetails = props => {
                 After discount :{' '}
               </CustomText>
               <CustomText style={styles.heading}>
-                {numeral(item?.price).format('$0,0.0')} 
+                {numeral(item?.total_price).format('$0,0.0')} 
               </CustomText>
             </View>}
 
@@ -359,7 +362,7 @@ const OrderDetails = props => {
                   width={windowWidth * 0.75}
                   height={windowHeight * 0.06}
                   text={
-                    isLoading ? (
+                    isLoading2 ? (
                       <ActivityIndicator color={Color.black} size={'small'} />
                     ) : (
                       buttonText
@@ -404,7 +407,7 @@ const OrderDetails = props => {
             visible={imageModal}
             onRequestClose={() => setImageModal(false)}
           />
-          {/* <ReviewModal setRef={setRbref} rbRef={rbRef} item={item}/> */}
+          <ReviewModal setRef={setRbref} rbRef={rbRef} item={item}/>
         </View>
       </LinearGradient>
     </ScreenBoiler>

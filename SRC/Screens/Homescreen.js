@@ -28,12 +28,13 @@ const Homescreen = () => {
   const [Loading, setLoading] = useState(false);
   const [barberData, setBarberData] = useState([]);
   const [orderData, setOrderData] = useState([]);
-  console.log("🚀 ~ file: Homescreen.js:31 ~ Homescreen ~ orderData:", orderData)
+  console.log("🚀 ~ file: Homescreen.js:31 ~ Homescreen ~ orderData:", orderData[0])
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);
   // console.log("🚀 ~ file: Homescreen.js:34 ~ Homescreen ~ user:", user)
   const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ file: Homescreen.js:37 ~ Homescreen ~ token:", token)
   const [index, setIndex] = useState(0);
 
   const BarberList = async () => {

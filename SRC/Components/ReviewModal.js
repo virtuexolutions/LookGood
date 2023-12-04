@@ -1,17 +1,20 @@
-import {StyleSheet, Text, View, TextInput} from 'react-native';
+import {StyleSheet, Text, View, TextInput, ActivityIndicator} from 'react-native';
 import React, {useRef, useState} from 'react';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CustomText from './CustomText';
 import {AirbnbRating} from 'react-native-ratings';
 import {moderateScale} from 'react-native-size-matters';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from './CustomButton';
 import TextInputWithTitle from './TextInputWithTitle';
 import { Platform } from 'react-native';
 import { ToastAndroid } from 'react-native';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
 
 const ReviewModal = ({item, setRef, rbRef}) => {
+  const token = useSelector(state=> state.authReducer.token)
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,9 +36,10 @@ const ReviewModal = ({item, setRef, rbRef}) => {
     }
     const url ='auth/review'
     setLoading(true) 
-    const response = await post(url,body ,token)
+    const response = await Post(url,body ,apiHeader(token))
     setLoading(false)
     if (response != undefined){
+      rbRef.close()
         setReview(response?.data)
 }}
 

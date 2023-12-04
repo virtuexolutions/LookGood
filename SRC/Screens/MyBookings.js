@@ -19,6 +19,7 @@ import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
 import NoData from '../Components/NoData';
 import CustomerCard from '../Components/CustomerCard';
+import { useIsFocused } from '@react-navigation/core';
 
 const MyBookings = () => {
   const user = useSelector(state => state.commonReducer.userData);
@@ -31,6 +32,7 @@ const MyBookings = () => {
     '🚀 ~ file: MyBookings.js:19 ~ MyBookings ~ bookingResponse:',
     bookingResponse,
   );
+  const isFocused = useIsFocused()
 
   const token = useSelector(state => state.authReducer.token);
 
@@ -62,7 +64,7 @@ const MyBookings = () => {
 
   useEffect(() => {
     user?.role == 'customer' ? GetBooking() : barberBooking();
-  }, []);
+  }, [isFocused]);
 
   // const orderArray = [
   //   {

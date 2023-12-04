@@ -50,8 +50,11 @@ const PaymentScreen = props => {
       image: finalData?.image && finalData?.image[0] ,
       custom_location:finalData?.location?.name,
       price: finalData?.total,
-      dis_price:finalData?.discount,
+      // dis_price:!isNaN(finalData?.discount) ? finalData?.discount : 0 ,
     };
+    if(!isNaN(finalData?.discount)){
+      formData.append('dis_price', finalData?.discount)
+    }
    
     for(let key in body){
       formData.append(key, body[key])
