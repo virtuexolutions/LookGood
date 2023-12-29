@@ -23,6 +23,8 @@ const Wishlist = () => {
   const isFocused = useIsFocused();
   const [selected, setSelected] = useState('barber');
   const token = useSelector(state => state.authReducer.token);
+  const userData= useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ file: Wishlist.js:27 ~ Wishlist ~ userData:", userData)
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [wishListData, setWishListData] = useState([]);
@@ -103,9 +105,7 @@ const Wishlist = () => {
     },
   ];
 
-  useEffect(() => {
-    selected == 'barber' ? setData(cardArray) : setData(storeArray);
-  }, [selected]);
+
 
   useEffect(() => {
     getWishList();
@@ -130,13 +130,14 @@ const Wishlist = () => {
           style={{
             flexDirection: 'row',
             marginTop: moderateScale(10, 0.3),
-            justifyContent: 'space-between',
-            alignSelf: 'center',
+            justifyContent: 'space-evenly',
+            // backgroundColor:'red',
+            alignItems:'center',
+            // alignSelf: 'center',
             width: windowWidth * 0.48,
           }}>
-          <CustomButton
-            // borderColor={'white'}
-            // borderWidth={1}
+         {userData?.role !='barber' && <CustomButton
+            
             textColor={Color.black}
             onPress={() => {
               setSelected('barber');
@@ -145,15 +146,12 @@ const Wishlist = () => {
             height={windowHeight * 0.05}
             text={'barber'}
             fontSize={moderateScale(14, 0.3)}
-            // borderRadius={moderateScale(30, 0.3)}
             textTransform={'uppercase'}
             isGradient={true}
             isBold
             marginBottom={moderateScale(30, 0.3)}
-          />
+          />}
           <CustomButton
-            // borderColor={'white'}
-            // borderWidth={1}
             textColor={Color.black}
             onPress={() => {
               setSelected('Product');
@@ -162,7 +160,6 @@ const Wishlist = () => {
             height={windowHeight * 0.05}
             text={'Product'}
             fontSize={moderateScale(14, 0.3)}
-            // borderRadius={moderateScale(30, 0.3)}
             textTransform={'uppercase'}
             isGradient={true}
             isBold
@@ -174,7 +171,6 @@ const Wishlist = () => {
           contentContainerStyle={{
             paddingBottom: windowHeight * 0.15,
             alignItems: 'center',
-            // justifyContent:'space-between'
           }}
           style={{
             width: windowWidth,
@@ -206,7 +202,6 @@ const Wishlist = () => {
                 width: windowWidth,
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                // paddingHorizontal: moderateScale(8, 0.3),
               }}
               data={wishListData.reverse()}
               renderItem={({item, index}) => {
@@ -234,29 +229,21 @@ export default Wishlist;
 const styles = ScaledSheet.create({
   container: {
     paddingTop: windowHeight * 0.03,
-    // justifyContent: "center",
     height: windowHeight * 0.9,
     width: windowWidth,
     alignItems: 'center',
-    // backgroundColor : Color.green
   },
   text1: {
     textTransform: 'uppercase',
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(20, 0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   text1Absolute: {
     textTransform: 'uppercase',
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(16, 0.3),
-    // position : 'absolute',
-    // bottom : moderateScale(10,0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   bannerView: {
     width: windowWidth * 0.85,

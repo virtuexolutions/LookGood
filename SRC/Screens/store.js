@@ -218,8 +218,9 @@ const Store = () => {
           <View
             style={{
               paddingTop: moderateScale(10, 0.3),
-              width: windowWidth * 0.85,
+              width: windowWidth ,
               flexDirection: 'row',
+              paddingHorizontal:moderateScale(10,.6),
               justifyContent: 'space-between',
               flexWrap: 'wrap',
             }}>
