@@ -47,7 +47,7 @@ const Store = () => {
   const cardArray = [
     {
       id: 1,
-      image: require('../Assets/Images/glue.png'),
+      photo: require('../Assets/Images/glue.png'),
       name: 'Glue',
       price: 20,
       quantity: 1,
@@ -135,9 +135,12 @@ const Store = () => {
               return (
                 <View
                   style={{
+
+                    borderRadius:moderateScale(30,0.6),
+                    overflow:'hidden',
                     width: windowWidth * 0.85,
                     height: windowHeight * 0.46,
-                  }}>
+                 }}>
                   <CustomImage
                     source={item?.image}
                     resizeMode={'stretch'}
@@ -154,7 +157,9 @@ const Store = () => {
                     style={{
                       position: 'absolute',
                       bottom: 0,
-                      borderRadius: 5,
+                      borderBottomLeftRadius: moderateScale(30,0.6),
+                      borderBottomRightRadius: moderateScale(30,0.6),
+                     
                       justifyContent: 'flex-end',
                       shadowOffset: {height: 2, width: 0},
                       shadowOpacity: 1,
@@ -177,6 +182,7 @@ const Store = () => {
                       style={{
                         flexDirection: 'row',
                         alignSelf: 'center',
+                        borderRadius:moderateScale(30,0.8),
                         marginTop: moderateScale(10, 0.3),
                       }}>
                       {bannerArray.map((x, index1) => {
@@ -215,7 +221,18 @@ const Store = () => {
             ]}>
             Recommended{' '}
           </CustomText>
-          <View
+          <View style={{paddingTop: moderateScale(10, 0.3),
+            paddingHorizontal:19,
+            width: windowWidth,
+          }}>
+            <FlatList
+            data={cardArray}
+            renderItem={(itemData) => <BarberCard item={itemData.item}/>}
+            keyExtractor={item => item.id}
+            numColumns={2}
+            />
+          </View>
+          {/* <View
             style={{
               paddingTop: moderateScale(10, 0.3),
               width: windowWidth * 0.85,
@@ -226,6 +243,7 @@ const Store = () => {
             {cardArray.map((x, index) => {
               return (
                 <BarberCard
+                borderRadius
                   item={x}
                   // cartData={cartData}
                   // setCartData={setCartData}
@@ -236,7 +254,7 @@ const Store = () => {
                 />
               );
             })}
-          </View>
+          </View> */}
         </ScrollView>
       </LinearGradient>
     </ScreenBoiler>
@@ -275,7 +293,7 @@ const styles = ScaledSheet.create({
   bannerView: {
     width: windowWidth * 0.85,
     height: windowHeight * 0.46,
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
     marginTop: moderateScale(10, 0.3),
   },
   CircleContainer: {

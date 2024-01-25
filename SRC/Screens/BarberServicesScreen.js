@@ -335,6 +335,7 @@ const BarberServicesScreen = props => {
                     isGradient={true}
                     isBold
                     marginTop={moderateScale(30, 0.3)}
+                    borderRadius={moderateScale(30,.04)}
                   />
                   <CustomButton
                     // bgColor={Color.themePink}
@@ -343,7 +344,7 @@ const BarberServicesScreen = props => {
                     textColor={Color.black}
                     onPress={() => {
                       if (selectedService.length > 0) {
-                        navigationService.navigate('ChooseDate', {
+                        navigationService.navigate('', {
                           data: selectedService,
                           barber: barberDetails,
                         });
@@ -363,6 +364,7 @@ const BarberServicesScreen = props => {
                     textTransform={'uppercase'}
                     isGradient={true}
                     isBold
+                    borderRadius={moderateScale(30,.04)}
                     marginTop={moderateScale(10, 0.3)}
                   />
                 </>

@@ -212,7 +212,8 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(20, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
           <TextInputWithTitle
             titleText={'Last Name'}
@@ -226,7 +227,7 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
           />
 
           <TextInputWithTitle
@@ -241,7 +242,8 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
           <TextInputWithTitle
             titleText={'Contact'}
@@ -255,7 +257,8 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
           <View style={{
             zIndex : 1,
@@ -273,7 +276,8 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
           <TextInputWithTitle
             secureText
@@ -288,12 +292,14 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
           </View>
           <CustomButton
             bgColor={Color.themeColor}
             borderColor={'white'}
+          borderRadius={moderateScale(30, 0.4)}
             borderWidth={1}
             textColor={Color.black}
             onPress={() => {

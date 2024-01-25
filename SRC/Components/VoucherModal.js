@@ -78,6 +78,7 @@ const VoucherModal = ({item, modal, setModal}) => {
             textColor={Color.black}
             width={windowWidth * 0.2}
             height={windowHeight * 0.04}
+            borderRadius={moderateScale(30, 0.4)}
             text={'ok'}
             fontSize={moderateScale(12, 0.3)}
                onPress={() => {

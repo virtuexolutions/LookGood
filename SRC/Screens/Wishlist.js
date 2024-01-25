@@ -145,7 +145,7 @@ const Wishlist = () => {
             height={windowHeight * 0.05}
             text={'barber'}
             fontSize={moderateScale(14, 0.3)}
-            // borderRadius={moderateScale(30, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
             textTransform={'uppercase'}
             isGradient={true}
             isBold
@@ -162,7 +162,7 @@ const Wishlist = () => {
             height={windowHeight * 0.05}
             text={'Product'}
             fontSize={moderateScale(14, 0.3)}
-            // borderRadius={moderateScale(30, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
             textTransform={'uppercase'}
             isGradient={true}
             isBold

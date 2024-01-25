@@ -320,12 +320,14 @@ const OrderDetails = props => {
                   textTransform={'uppercase'}
                   isGradient={true}
                   isBold
+                  borderRadius={moderateScale(30,0.4)}
                   marginTop={moderateScale(30, 0.3)}
                 />
                 <CustomButton
                   bgColor={Color.themeColor}
                   borderColor={'white'}
                   borderWidth={1}
+                  borderRadius={moderateScale(30,0.4)}
                   textColor={Color.black}
                   onPress={() => {
                     changeStatus('reject');

@@ -121,6 +121,7 @@ const OrderCard = ({item}) => {
         onPress={() => {
           navigationService.navigate('OrderDetails', {item: item});
         }}
+        borderRadius={moderateScale(30,0.4)}
         width={windowWidth * 0.15}
         height={windowHeight * 0.02}
         text={'Details'}

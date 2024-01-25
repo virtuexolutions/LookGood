@@ -132,6 +132,7 @@ const Settings = () => {
                 width={windowWidth * 0.85}
                 height={windowHeight * 0.06}
                 text={item?.name}
+                borderRadius={moderateScale(30,0.4)}
                 fontSize={moderateScale(14, 0.3)}
                 textTransform={'uppercase'}
                 isGradient={true}

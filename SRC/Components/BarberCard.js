@@ -23,7 +23,7 @@ import { setCartData, setRemoveCardData } from '../Store/slices/common';
 import { Post } from '../Axios/AxiosInterceptorFunction';
 // import {setCartData} from '../Store/combineReducer';
 
-const BarberCard = ({item, onPress, addedInWishlist  }) => {
+const BarberCard = ({item, onPress, addedInWishlist,assetImage  }) => {
   // console.log("🚀 ~ file: BarberCard.js:27 ~ BarberCard ~ item:", item)
   const cartData = useSelector((state)=>state.commonReducer.cartData)
   const token = useSelector(state => state.authReducer.token)
@@ -87,7 +87,7 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
               paddingHorizontal: moderateScale(10, 0.3),
               paddingVertical: moderateScale(5, 0.3),
               marginHorizontal:moderateScale(10,.3),
-              borderRadius: moderateScale(20, 0.3),
+              borderRadius: moderateScale(40, 0.3),
               backgroundColor: 'rgba(0,0,0,0.7)',
               justifyContent : 'center',
               alignItems : 'center',
@@ -102,10 +102,10 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
             </View>
 }
           <CustomImage
-            source={{uri : item?.photo}}
-            resizeMode={'stretch'}
+            source={assetImage ? item?.photo : {uri : item?.photo}}
+            resizeMode={'cover'}
             style={{
-              height: windowHeight * 0.21,
+              height: "100%",
               width: '100%',
               zIndex: -1,
               // backgroundColor : '#000'
@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.26,
     backgroundColor: 'white',
     // overflow: 'hidden',
+    borderRadius:moderateScale(20,0.5),
     marginBottom: moderateScale(10, 0.3),
   },
   heart: {

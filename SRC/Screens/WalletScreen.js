@@ -53,7 +53,7 @@ const WalletScreen = () => {
                 width: windowWidth * 0.17,
                 borderWidth: moderateScale(2, 0.3),
                 borderColor: '#E3A33D',
-                borderRadius: moderateScale(5, 0.3),
+                borderRadius: moderateScale(6, 0.3),
                 justifyContent: 'space-evenly',
                 alignItems: 'center',
                 padding: moderateScale(2, 0.3),

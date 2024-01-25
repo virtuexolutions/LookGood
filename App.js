@@ -16,6 +16,7 @@ import LandingPage1 from './SRC/Screens/LandingPage1';
 import LoginScreen from './SRC/Screens/LoginScreen';
 import AppNavigator from './SRC/appNavigation';
 import { Platform } from 'react-native';
+import GetStarted from './SRC/Screens/GetStarted';
 
 
 
