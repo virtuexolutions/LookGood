@@ -128,7 +128,7 @@ const PaymentScreen = props => {
                   width: windowWidth * 0.4,
                   color: Color.black,
                 }}>
-                Home Address :
+                Home Address:
               </CustomText>
               <CustomText
                 style={{
@@ -236,7 +236,7 @@ const PaymentScreen = props => {
           height={windowHeight * 0.06}
           text={isLoading ? <ActivityIndicator color={Color.black} size={'small'}/> : 'Pay now'}
           fontSize={moderateScale(14, 0.3)}
-          // borderRadius={moderateScale(30, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
           textTransform={'uppercase'}
           isGradient={true}
           isBold
@@ -264,6 +264,7 @@ const styles = ScaledSheet.create({
   },
   container1: {
     backgroundColor: Color.white,
+    borderRadius:moderateScale(18, 0.6),
     width: windowWidth * 0.9,
     marginTop: moderateScale(10, 0.3),
     paddingHorizontal: moderateScale(10, 0.3),

@@ -149,14 +149,18 @@ const BarberServicesScreen = props => {
               readonly
               startingValue={3}
               ratingCount={5}
-              onFinishRating={() => {}}
-              // ratingColor="red"
+              
               imageSize={moderateScale(15, 0.3)}
-              style={{width: windowWidth * 0.2}}
-              starContainerStyle={{
-                backgroundColor: 'red',
-              }}
+              style={{width: windowWidth * 0.2 , backgroundColor : 'red' }}
+              // starContainerStyle={{
+              //   backgroundColor: 'red',
+              //   width: windowWidth * 0.2
+              // }}
               ratingBackgroundColor={'transparent'}
+              // ratingContainerStyle={{
+              //   backgroundColor : 'red',
+              //   width: windowWidth * 0.2
+              // }}
             />
 
             <CustomText
@@ -309,8 +313,8 @@ const BarberServicesScreen = props => {
                 <>
                   <CustomButton
                     // bgColor={Color.themePink}
-                    borderColor={'white'}
-                    borderWidth={1}
+                    // borderColor={'white'}
+                    // borderWidth={1}
                     textColor={Color.black}
                     onPress={() => {
                       if (selectedService.length > 0) {
@@ -335,15 +339,16 @@ const BarberServicesScreen = props => {
                     isGradient={true}
                     isBold
                     marginTop={moderateScale(30, 0.3)}
+                    borderRadius={moderateScale(35,0.6)}
                   />
                   <CustomButton
                     // bgColor={Color.themePink}
-                    borderColor={'white'}
-                    borderWidth={1}
+                    // borderColor={'white'}
+                    // borderWidth={1}
                     textColor={Color.black}
                     onPress={() => {
                       if (selectedService.length > 0) {
-                        navigationService.navigate('ChooseDate', {
+                        navigationService.navigate('', {
                           data: selectedService,
                           barber: barberDetails,
                         });
@@ -364,6 +369,7 @@ const BarberServicesScreen = props => {
                     isGradient={true}
                     isBold
                     marginTop={moderateScale(10, 0.3)}
+                    borderRadius={moderateScale(35,0.6)}
                   />
                 </>
               );

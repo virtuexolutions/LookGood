@@ -185,7 +185,7 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(30, 0.4)}
             />
             <TextInputWithTitle
               titleText={'Phone'}
@@ -203,7 +203,8 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(30, 0.4)}
+
             />
 
             <TextInputWithTitle
@@ -221,7 +222,8 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(30, 0.4)}
+
             />
             <TextInputWithTitle
               titleText={'Subject'}
@@ -238,7 +240,7 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(30, 0.4)}
             />
 
             <TextInputWithTitle
@@ -256,7 +258,7 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(30, 0.4)}
               multiline={true}
             />
             <CustomButton
@@ -267,6 +269,8 @@ const Support = () => {
               onPress={() => {
                 Support();
               }}
+              borderRadius={moderateScale(30, 0.4)}
+
               width={windowWidth * 0.85}
               height={windowHeight * 0.06}
               text={ submitLoading ? <ActivityIndicator color={Color.white} size={'small'} /> :'Send Question'}

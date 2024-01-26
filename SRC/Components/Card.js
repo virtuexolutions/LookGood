@@ -31,6 +31,7 @@ export const Card = ({item, onPress}) => {
           fontSize={moderateScale(11, 0.3)}
            onPress={onPress}
           isGradient={true}
+          borderRadius={moderateScale(30, 0.4)}
           isBold
           marginTop={moderateScale(5, 0.3)}
         />

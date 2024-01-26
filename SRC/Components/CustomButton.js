@@ -65,6 +65,7 @@ const CustomButton = (props) => {
         },
         borderRadius && {
           borderRadius: borderRadius,
+          overflow: 'hidden'
         },
         borderWidth && {
           borderWidth: borderWidth,
@@ -85,7 +86,7 @@ const CustomButton = (props) => {
             height: height,
             alignItems: "center",
             justifyContent: "center",
-            // borderRadius: moderateScale(30, 0.3),
+            borderRadius: borderRadius,
           }}
           start={{ x: 0.2, y: 0.6}}
           end={{ x: 1, y: 0 }}

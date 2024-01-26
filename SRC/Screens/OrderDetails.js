@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -22,7 +22,7 @@ import ReviewModal from '../Components/ReviewModal';
 
 const OrderDetails = props => {
   const item = props?.route?.params?.item;
-  console.log('🚀 ~ file: OrderDetails.js:19 ~ OrderDetails ~ item:', item);
+  // console.log('🚀 ~ file: OrderDetails.js:19 ~ OrderDetails ~ item:',  item?.booking_date , item?.booking_time);
   const user = useSelector(state => state.commonReducer.userData);
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
@@ -34,12 +34,11 @@ const OrderDetails = props => {
     item?.status == 'accept' ? 'done' : '',
   );
 
-  console.log('console log======>>>>>>>>>>>>> ');
 
   const dateDiff = (date, time) => {
     return moment(date + ' ' + moment(time, 'h:mm A').format('HH:mm:ss')).diff(
       moment(),
-      'hours',
+      'minute',
     );
   };
 
@@ -96,6 +95,11 @@ const OrderDetails = props => {
 
     }
   };
+
+  useEffect(() => {
+    console.log( 'dfasd asd asd asd a da d ',dateDiff(item?.booking_date , item?.booking_time))
+  }, [])
+  
 
   return (
     <ScreenBoiler
@@ -320,12 +324,14 @@ const OrderDetails = props => {
                   textTransform={'uppercase'}
                   isGradient={true}
                   isBold
+                  borderRadius={moderateScale(30,0.4)}
                   marginTop={moderateScale(30, 0.3)}
                 />
                 <CustomButton
                   bgColor={Color.themeColor}
                   borderColor={'white'}
                   borderWidth={1}
+                  borderRadius={moderateScale(30,0.4)}
                   textColor={Color.black}
                   onPress={() => {
                     changeStatus('reject');
@@ -348,8 +354,8 @@ const OrderDetails = props => {
               </>
             )}
             {item?.status == 'accept' &&
-              user?.role != 'customer' &&
-              dateDiff(item?.booking_date, item?.booking_time) <= -1 && (
+              // user?.role != 'customer' &&
+              dateDiff(item?.booking_date, item?.booking_time) <= 0 && (
                 <CustomButton
                   bgColor={Color.themeColor}
                   borderColor={'white'}

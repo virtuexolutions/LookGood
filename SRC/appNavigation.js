@@ -42,6 +42,7 @@ import AddService from './Screens/AddService';
 import TimeScreen from './Screens/TimeScreen';
 import Vouchers from './Screens/Vouchers';
 import CustomerBookingDetails from './Screens/CustomerBookingDetails';
+import GetStarted from './Screens/GetStarted';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -65,6 +66,7 @@ const AppNavigator = () => {
           screenOptions={{headerShown: false}}>
           {/* <RootNav.Screen name="Walkthrough" component={Walkthrough} /> */}
           <RootNav.Screen name="EnterPhone" component={EnterPhone} />
+          <RootNav.Screen name="GetStarted" component={GetStarted} />
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
           <RootNav.Screen name="Vouchers" component={Vouchers} />
           <RootNav.Screen name="Homescreen" component={Homescreen} />

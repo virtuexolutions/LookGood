@@ -39,8 +39,9 @@ const MyBookings = () => {
 
   // Booking GET API START
   const GetBooking = async () => {
-    const url = `auth/booking/list`;
+    const url = `auth/booking/list?${item == '' ? 'all' : item}`;
     setLoading(true);
+  //  return console.log("🚀 ~ GetBooking ~ url:", url)
     const response = await Get(url, token);
 
     setLoading(false);
@@ -83,7 +84,7 @@ const MyBookings = () => {
   ];
 
   const barberBooking = async () => {
-    const url = 'auth/barber/booking/list';
+    const url = `auth/barber/booking/list?${item == '' ? 'all' : item}`;
     setLoading(true);
     const response = await Get(url, token);
     setLoading(false);
@@ -95,7 +96,7 @@ const MyBookings = () => {
 
   useEffect(() => {
     user?.role == 'customer' ? GetBooking() : barberBooking();
-  }, [isFocused]);
+  }, [isFocused ,item]);
 
   // const orderArray = [
   //   {
@@ -210,7 +211,7 @@ const MyBookings = () => {
         </CustomText>
 
         <DropDownSingleSelect
-          array={['Completed', 'Upcoming', 'Pending']}
+          array={['complete', 'reject', 'pending']}
           backgroundColor={Color.white}
           item={item}
           setItem={setItem}

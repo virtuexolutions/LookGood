@@ -54,8 +54,10 @@ const Homescreen = () => {
     const response = await Get(url, token);
 
     setLoading(false);
+   console.log( "Data ==>",response?.data?.data);
+
     if (response != undefined) {
-      setOrderData(response?.data?.data);
+      setOrderData(response?.data?.barber_booking_list);
     }
   };
 
