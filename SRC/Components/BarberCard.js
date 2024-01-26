@@ -57,7 +57,10 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
   }, [start]);
 
   return (
-    <View style={{ paddingHorizontal:moderateScale(10,.6),paddingVertical:moderateScale(5,.6)
+    <View style={{
+      // backgroundColor:'red', 
+      paddingHorizontal:moderateScale(10,.6),
+       paddingVertical:moderateScale(5,.6)
     }}>
     <Pressable
       onLongPress={() => {
