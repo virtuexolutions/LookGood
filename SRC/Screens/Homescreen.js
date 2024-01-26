@@ -22,13 +22,14 @@ import OrderCard from '../Components/OrderCard';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import NoData from '../Components/NoData';
 import {useIsFocused} from '@react-navigation/native';
+import CompletedOrderCard from '../Components/CompletedOrderCard';
 
 const Homescreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [Loading, setLoading] = useState(false);
   const [barberData, setBarberData] = useState([]);
   const [orderData, setOrderData] = useState([]);
-  console.log("🚀 ~ file: Homescreen.js:31 ~ Homescreen ~ orderData:", orderData[0])
+  // console.log("🚀 ~ file: Homescreen.js:31 ~ Homescreen ~ orderData:", orderData[0])
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);
@@ -469,7 +470,7 @@ const Homescreen = () => {
                 contentContainerStyle={{
                   paddingHorizontal: moderateScale(8, 0.3),
                 }}
-                data={orderData.filter(item=> item?.status == 'accept').reverse()}
+                data={orderData?.filter(item=> item?.status == 'accept').reverse()}
                 horizontal
                 renderItem={({item, index}) => { 
                   return <OrderCard item={item} />;
@@ -505,9 +506,10 @@ const Homescreen = () => {
                 contentContainerStyle={{
                   paddingHorizontal: moderateScale(8, 0.3),
                 }}
-                data={orderData.filter(item => item?.status == 'pending')}
+                data={orderData?.filter(item => item?.status == 'pending')}
                 ListEmptyComponent={() => {
                   return (
+
                     <NoData
                       style={{
                       
@@ -522,7 +524,10 @@ const Homescreen = () => {
                 numColumns={2}
                 renderItem={({item, index}) => {
                   console.log("🚀 ~ file: Homescreen.js:520 ~ Homescreen ~ item:", item)
-                  return <OrderCard item={item} />;
+                  return  <CompletedOrderCard item={item}/>
+                 
+
+                  //  <OrderCard item={item} />;
                 }}
               />
             )}

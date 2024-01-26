@@ -19,20 +19,21 @@ import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
 import NoData from '../Components/NoData';
 import CustomerCard from '../Components/CustomerCard';
-import { useIsFocused } from '@react-navigation/core';
+import {useIsFocused} from '@react-navigation/core';
+import CompletedOrderCard from '../Components/CompletedOrderCard';
 
 const MyBookings = () => {
   const user = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ `fil`e: MyBookings.js:24 ~ MyBookings ~ user:', user);
+  // console.log('🚀 ~ `fil`e: MyBookings.js:24 ~ MyBookings ~ user:', user);
   const [item, setItem] = useState('');
-  // console.log("🚀 ~ file: MyBookings.js:24 ~ MyBookings ~ item:", item)
+  console.log('🚀 ~ file: MyBookings.js:24 ~ MyBookings ~ item:', item);
   const [Loading, setLoading] = useState(false);
   const [bookingResponse, setBookingResponse] = useState([]);
   console.log(
     '🚀 ~ file: MyBookings.js:19 ~ MyBookings ~ bookingResponse:',
     bookingResponse,
   );
-  const isFocused = useIsFocused()
+  const isFocused = useIsFocused();
 
   const token = useSelector(state => state.authReducer.token);
 
@@ -52,12 +53,42 @@ const MyBookings = () => {
     }
   };
 
+  const dummyArray = [
+    {
+      image: require('../Assets/Images/dummyCustomer1.png'),
+      name: 'jghjghf',
+      Date: 22,
+      time: 400,
+      totalAmount: 577,
+      location: 'kdhfuigdfhgjhdfjgsdjfhgjsdhf,',
+    },
+
+    {
+      image: require('../Assets/Images/dummyCustomer1.png'),
+      name: 'jghjghf',
+      Date: 22,
+      time: 400,
+      totalAmount: 577,
+      location: 'kdhfuigdfhgjhdfjgsdjfhgjsdhf,',
+    },
+
+    {
+      image: require('../Assets/Images/dummyCustomer1.png'),
+      name: 'jghjghf',
+      Date: 22,
+      time: 400,
+      totalAmount: 577,
+      location: 'kdhfuigdfhgjhdfjgsdjfhgjsdhf,',
+    },
+  ];
+
   const barberBooking = async () => {
     const url = 'auth/barber/booking/list';
     setLoading(true);
     const response = await Get(url, token);
     setLoading(false);
     if (response != undefined) {
+      console.log('🚀 ~ barberBooking ~ response:', response?.data);
       setBookingResponse(response?.data?.data);
     }
   };
@@ -213,8 +244,11 @@ const MyBookings = () => {
               paddingHorizontal: moderateScale(8, 0.3),
               paddingBottom: moderateScale(30, 0.3),
             }}
+            // data={dummyArray}
             data={bookingResponse}
-            numColumns={2}
+            // numColumns={bookingResponse?.status != 'complete' ? 2 :1}
+
+            numColumns={bookingResponse?.status == 'complete' ? 1 :2}
             ListEmptyComponent={() => {
               return (
                 <NoData
@@ -229,10 +263,17 @@ const MyBookings = () => {
               );
             }}
             renderItem={({item, index}) => {
-              return  <OrderCard item={item} />
+              return item?.status != 'complete' ? (
+                <OrderCard item={item} />
+              ) : (
+                <CompletedOrderCard item={item} />
+              );
+
+              //
+
               // user?.role == 'customer' ? (
-                //   <CustomerCard item={item} />
-                // ) : (
+              //   <CustomerCard item={item} />
+              // ) : (
               //   <OrderCard item={item} />
               // );
             }}

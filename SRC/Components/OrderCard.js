@@ -18,7 +18,7 @@ const OrderCard = ({item}) => {
  
   const amount = () => {
     let totalAmount = 0;
-    item?.booking_detail.map(data => {
+    item?.booking_detail?.map(data => {
       totalAmount += data?.service_info?.price;
     });
     // console.log('Total======>>>>>>>>>', totalAmount);
