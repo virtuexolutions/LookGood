@@ -123,7 +123,8 @@ const ChangePassword = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
+
         />
         <TextInputWithTitle
      
@@ -141,7 +142,8 @@ const ChangePassword = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
+
         />
           <TextInputWithTitle
           iconName={'lock'}
@@ -160,7 +162,8 @@ const ChangePassword = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
+
         />
         </View>
         <CustomButton

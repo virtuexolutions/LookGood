@@ -284,6 +284,7 @@ const ImageScreen = props => {
 
                 setArray(HairStyle);
               }}
+              borderRadius={moderateScale(30, 0.4)}
               marginTop={moderateScale(30, 0.3)}
             />
 
@@ -302,6 +303,8 @@ const ImageScreen = props => {
                 setSelectedCat('Beard');
                 setArray(BeardStyle);
               }}
+              borderRadius={moderateScale(30, 0.4)}
+
               marginTop={moderateScale(10, 0.3)}
             />
 
@@ -314,6 +317,7 @@ const ImageScreen = props => {
               height={windowHeight * 0.06}
               text={'Mustaches'}
               fontSize={moderateScale(14, 0.3)}
+              borderRadius={moderateScale(30, 0.4)}
               isGradient={true}
               isBold
               onPress={() => {
@@ -330,7 +334,9 @@ const ImageScreen = props => {
                 textColor={Color.black}
                 width={windowWidth * 0.8}
                 height={windowHeight * 0.06}
+                borderRadius={moderateScale(30, 0.4)}
                 text={'Proceed'}
+
                 fontSize={moderateScale(14, 0.3)}
                 isGradient={true}
                 isBold
@@ -510,6 +516,8 @@ const ImageScreen = props => {
                     height={windowHeight * 0.06}
                     text={'Save'}
                     fontSize={moderateScale(14, 0.3)}
+              borderRadius={moderateScale(30, 0.4)}
+
                     isGradient={true}
                     isBold
                     onPress={() => {

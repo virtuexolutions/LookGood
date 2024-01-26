@@ -178,7 +178,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
         />
         <TextInputWithTitle
           iconName={'user'}
@@ -197,7 +197,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
         />
         <TextInputWithTitle
           iconName={'phone'}
@@ -216,7 +216,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
           disable={true}
         />
         <TextInputWithTitle
@@ -237,7 +237,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
           disable
         />
         <TextInputWithTitle
@@ -257,7 +257,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
         
         />
        
@@ -278,7 +278,6 @@ const MyAccounts = props => {
             isGradient={true}
             isBold
             marginTop={moderateScale(30, 0.3)}
-            
           />
       </ScrollView>
       <ImagePickerModal

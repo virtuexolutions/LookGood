@@ -129,24 +129,26 @@ const OrderCard = ({item}) => {
         </CustomText>
       </View>
       {
-        <CustomButton
-          bgColor={Color.themeColor}
-          borderColor={'white'}
-          borderWidth={1}
-          textColor={Color.black}
-          onPress={() => {
-            navigationService.navigate('OrderDetails', {item: item});
-          }}
-          width={windowWidth * 0.15}
-          height={windowHeight * 0.02}
-          text={'Details'}
-          fontSize={moderateScale(8, 0.3)}
-          textTransform={'uppercase'}
-          isGradient={true}
-          isBold
-          alignSelf={'flex-end'}
-          marginTop={moderateScale(10, 0.3)}
-        />
+       
+      <CustomButton
+        bgColor={Color.themeColor}
+        borderColor={'white'}
+        borderWidth={1}
+        textColor={Color.black}
+        onPress={() => {
+          navigationService.navigate('OrderDetails', {item: item});
+        }}
+        borderRadius={moderateScale(30,0.4)}
+        width={windowWidth * 0.15}
+        height={windowHeight * 0.02}
+        text={'Details'}
+        fontSize={moderateScale(8, 0.3)}
+        textTransform={'uppercase'}
+        isGradient={true}
+        isBold
+        alignSelf={'flex-end'}
+        marginTop={moderateScale(10, 0.3)}
+      />
       }
     </View>
   );

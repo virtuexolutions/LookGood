@@ -172,7 +172,7 @@ const ChooseDate = props => {
                         justifyContent: 'center',
                         //   marginRight: index % 2 == 0 ? moderateScale(0,0.3) : moderateScale(20, 0.3),
                         marginBottom: moderateScale(10, 0.3),
-                        borderRadius: moderateScale(5, 0.3),
+                        borderRadius: moderateScale(30, 0.4),
                         // borderRadius: moderateScale(30, 0.3),
                       }}
                       start={{x: 0.2, y: 0.6}}
@@ -313,6 +313,7 @@ const ChooseDate = props => {
             // }}
             width={windowWidth * 0.8}
             height={windowHeight * 0.06}
+            borderRadius={moderateScale(30,0.4)}
             text={'Next'}
             fontSize={moderateScale(14, 0.3)}
             // borderRadius={moderateScale(30, 0.3)}

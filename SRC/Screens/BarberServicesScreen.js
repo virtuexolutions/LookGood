@@ -348,7 +348,7 @@ const BarberServicesScreen = props => {
                     textColor={Color.black}
                     onPress={() => {
                       if (selectedService.length > 0) {
-                        navigationService.navigate('ChooseDate', {
+                        navigationService.navigate('', {
                           data: selectedService,
                           barber: barberDetails,
                         });

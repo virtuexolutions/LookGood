@@ -228,7 +228,7 @@ const styles = ScaledSheet.create({
     width: Dimensions.get('window').width * 0.9,
     height: Dimensions.get('window').height * 0.06,
     backgroundColor: Color.white,
-    borderRadius: 8,
+    // borderRadius: 8,
     alignItems: 'center',
     // justifyContent: 'center',
     borderColor: Color.lightGrey,
@@ -237,8 +237,8 @@ const styles = ScaledSheet.create({
     // textTransform: 'capitalize',
   },
   inputBox: {
-    paddingLeft: moderateScale(8, 0.6),
-    borderRadius: 8,
+    paddingLeft: moderateScale(18, 0.6),
+    borderRadius:8,
     fontSize: moderateScale(12, 0.3),
     // textTransform: 'capitalize',
 

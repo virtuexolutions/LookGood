@@ -127,7 +127,7 @@ const CheckoutScreen = props => {
                   as={FontAwesome}
                   color={Color.white}
                   size={moderateScale(20, 0.3)}
-                  style={{}}
+                 
                 />
 
                 <View
@@ -137,7 +137,7 @@ const CheckoutScreen = props => {
                       justifyContent: 'space-between',
                     },
                   ]}>
-                  <View>
+                  <View >
                     <CustomText
                       style={[styles.text1, {width: windowWidth * 0.5}]}>
                       {item?.name}
@@ -229,7 +229,7 @@ const CheckoutScreen = props => {
                 </CustomText>
               </View>
               <View style={styles.row}>
-                finalData
+                {/* finalData */}
                 <CustomText style={[styles.text1, {color: Color.white}]}>
                   Subtotal
                 </CustomText>
@@ -271,6 +271,7 @@ const CheckoutScreen = props => {
                 fontSize={moderateScale(12, 0.3)}
                 isGradient={true}
                 isBold
+                borderRadius={moderateScale(30,0.4)}
               />
             ) : (
               <View
@@ -356,6 +357,7 @@ const CheckoutScreen = props => {
           isGradient={true}
           isBold
           marginBottom={windowHeight * 0.15}
+          borderRadius={moderateScale(30,0.4)}
         />
       </LinearGradient>
     </ScreenBoiler>
@@ -390,6 +392,7 @@ const styles = ScaledSheet.create({
     marginLeft: moderateScale(10, 0.3),
     paddingLeft: moderateScale(10, 0.3),
     paddingTop: moderateScale(20, 0.3),
+    borderRadius:moderateScale(18,0.6),
     flexDirection: 'row',
   },
   underline: {

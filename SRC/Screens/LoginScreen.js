@@ -90,7 +90,7 @@ const LoginScreen = () => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
         />
         <TextInputWithTitle
           secureText
@@ -107,7 +107,8 @@ const LoginScreen = () => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(25, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
+
         />
         <CustomButton
           bgColor={Color.themePink}
@@ -130,7 +131,6 @@ const LoginScreen = () => {
             )
           }
           fontSize={moderateScale(14, 0.3)}
-          // borderRadius={moderateScale(30, 0.3)}
           textTransform={'uppercase'}
           isGradient={true}
           isBold
