@@ -87,7 +87,7 @@ const BarberCard = ({item, onPress, addedInWishlist  }) => {
               paddingHorizontal: moderateScale(10, 0.3),
               paddingVertical: moderateScale(5, 0.3),
               marginHorizontal:moderateScale(10,.3),
-              borderRadius: moderateScale(20, 0.3),
+              borderRadius: moderateScale(25, 0.3),
               backgroundColor: 'rgba(0,0,0,0.7)',
               justifyContent : 'center',
               alignItems : 'center',

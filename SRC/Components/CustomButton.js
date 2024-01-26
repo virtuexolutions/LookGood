@@ -65,6 +65,7 @@ const CustomButton = (props) => {
         },
         borderRadius && {
           borderRadius: borderRadius,
+          overflow: 'hidden'
         },
         borderWidth && {
           borderWidth: borderWidth,

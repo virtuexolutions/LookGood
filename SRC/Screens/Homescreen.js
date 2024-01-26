@@ -28,7 +28,7 @@ const Homescreen = () => {
   const [Loading, setLoading] = useState(false);
   const [barberData, setBarberData] = useState([]);
   const [orderData, setOrderData] = useState([]);
-  console.log("🚀 ~ file: Homescreen.js:31 ~ Homescreen ~ orderData:", orderData[0])
+  // console.log("🚀 ~ file: Homescreen.js:31 ~ Homescreen ~ orderData:", orderData[0])
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);

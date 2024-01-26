@@ -178,7 +178,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(25, 0.3)}
         />
         <TextInputWithTitle
           iconName={'user'}
@@ -197,7 +197,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(25, 0.3)}
         />
         <TextInputWithTitle
           iconName={'phone'}
@@ -216,7 +216,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(25, 0.3)}
           disable={true}
         />
         <TextInputWithTitle
@@ -237,7 +237,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(25, 0.3)}
           disable
         />
         <TextInputWithTitle
@@ -257,7 +257,7 @@ const MyAccounts = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(25, 0.3)}
         
         />
        
@@ -266,7 +266,10 @@ const MyAccounts = props => {
             borderColor={'white'}
             borderWidth={1}
             textColor={Color.black}
-            onPress={() => {EditProfile()}}
+            borderRadius={moderateScale(20, 0.3)}
+            onPress={() => {
+              EditProfile();
+            }}
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
             text={isLoading ?<ActivityIndicator color={'black'} size={'small'} /> :'Update'}

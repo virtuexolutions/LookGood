@@ -102,7 +102,7 @@ const EnterPhone = props => {
             // marginTop={moderateScale(30, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(25, 0.3)}
             marginTopDown={moderateScale(10,0.3)}
             elevation
           />
@@ -127,7 +127,7 @@ const EnterPhone = props => {
             bgColor={Color.themeColor}
             borderColor={Color.white}
             // borderWidth={2}
-            borderRadius={moderateScale(30, 0.3)}
+            borderRadius={moderateScale(25, 0.3)}
           />
           <View
             style={{

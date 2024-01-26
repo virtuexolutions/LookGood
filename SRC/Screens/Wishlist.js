@@ -143,6 +143,7 @@ const Wishlist = () => {
             }}
             width={windowWidth * 0.22}
             height={windowHeight * 0.05}
+            borderRadius={moderateScale(25, 0.6)}
             text={'barber'}
             fontSize={moderateScale(14, 0.3)}
             // borderRadius={moderateScale(30, 0.3)}
@@ -160,6 +161,7 @@ const Wishlist = () => {
             }}
             width={windowWidth * 0.22}
             height={windowHeight * 0.05}
+            borderRadius={moderateScale(25, 0.6)}
             text={'Product'}
             fontSize={moderateScale(14, 0.3)}
             // borderRadius={moderateScale(30, 0.3)}

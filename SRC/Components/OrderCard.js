@@ -1,5 +1,5 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
@@ -10,12 +10,13 @@ import {Icon} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from './CustomButton';
 import navigationService from '../navigationService';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const OrderCard = ({item}) => {
+  console.log('🚀 ~ OrderCard ~ item:', item?.status);
   // const [buttonText ,setButtonText] =useState(user?.role == 'customer' ? 'reviwes' : 'detail')
-  const user =useSelector(state => state.commonReducer.userData)
- 
+  const user = useSelector(state => state.commonReducer.userData);
+
   const amount = () => {
     let totalAmount = 0;
     item?.booking_detail.map(data => {
@@ -48,6 +49,22 @@ const OrderCard = ({item}) => {
           flexDirection: 'row',
           alignItems: 'center',
         }}>
+        <View
+          style={[
+            styles.statusView,
+            {
+              backgroundColor:
+                item?.status.toLowerCase() == 'reject'
+                  ? 'rgba(255,0,0,0.6)'
+                  : item?.status.toLowerCase() == 'accept'
+                  ? 'rgba(0,255,0,0.6)'
+                  : item?.status.toLowerCase() == 'complete'
+                  ? 'rgba(0,255,255,0.6)'
+                  : 'rgba(233,255,0,0.6)',
+            },
+          ]}>
+            <CustomText style={styles.status}>{item?.status}</CustomText>
+          </View>
         <CustomImage
           source={{
             uri: item?.barber_info?.photo
@@ -112,25 +129,24 @@ const OrderCard = ({item}) => {
         </CustomText>
       </View>
       {
-       
-      <CustomButton
-        bgColor={Color.themeColor}
-        borderColor={'white'}
-        borderWidth={1}
-        textColor={Color.black}
-        onPress={() => {
-          navigationService.navigate('OrderDetails', {item: item});
-        }}
-        width={windowWidth * 0.15}
-        height={windowHeight * 0.02}
-        text={'Details'}
-        fontSize={moderateScale(8, 0.3)}
-        textTransform={'uppercase'}
-        isGradient={true}
-        isBold
-        alignSelf={'flex-end'}
-        marginTop={moderateScale(10, 0.3)}
-      />
+        <CustomButton
+          bgColor={Color.themeColor}
+          borderColor={'white'}
+          borderWidth={1}
+          textColor={Color.black}
+          onPress={() => {
+            navigationService.navigate('OrderDetails', {item: item});
+          }}
+          width={windowWidth * 0.15}
+          height={windowHeight * 0.02}
+          text={'Details'}
+          fontSize={moderateScale(8, 0.3)}
+          textTransform={'uppercase'}
+          isGradient={true}
+          isBold
+          alignSelf={'flex-end'}
+          marginTop={moderateScale(10, 0.3)}
+        />
       }
     </View>
   );
@@ -149,6 +165,18 @@ const styles = ScaledSheet.create({
     marginRight: moderateScale(10, 0.3),
     padding: moderateScale(5, 0.3),
     marginBottom: moderateScale(15, 0.3),
+  },
+  statusView: {
+    position: 'absolute',
+    right: 2,
+    top: 2,
+    paddingHorizontal: moderateScale(8, 0.6),
+    paddingVertical: moderateScale(3, 0.6),
+    borderRadius : moderateScale(10,0.6)
+  },
+  status:{
+    textAlign: 'center',
+    fontSize : moderateScale(9,0.6)
   },
   image: {
     width: moderateScale(40, 0.3),

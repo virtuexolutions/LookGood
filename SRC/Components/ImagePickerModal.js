@@ -303,7 +303,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-end',
     marginTop: moderateScale(10, 0.3),
-    borderRadius: moderateScale(5, 0.3),
+    borderRadius: moderateScale(25, 0.3),
   },
 });
 

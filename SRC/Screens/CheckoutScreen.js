@@ -29,6 +29,7 @@ const CheckoutScreen = props => {
 
   const cartData = useSelector(state => state.commonReducer.cartData);
   const voucher = useSelector(state => state.commonReducer.selectedVoucher);
+ console.log("🚀 ~ CheckoutScreen ~ voucher:", voucher)
 
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
@@ -298,7 +299,7 @@ const CheckoutScreen = props => {
                   {voucher?.type == 'fixed' ? '$' : '%'}
                 </CustomText>
               </View>
-            )}
+            )} 
           </View>
           <View style={styles.underline} />
           <View style={styles.row}>

@@ -185,7 +185,7 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(25, 0.3)}
             />
             <TextInputWithTitle
               titleText={'Phone'}
@@ -203,7 +203,7 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(25, 0.3)}
             />
 
             <TextInputWithTitle
@@ -221,7 +221,7 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(25, 0.3)}
             />
             <TextInputWithTitle
               titleText={'Subject'}
@@ -238,7 +238,7 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(25, 0.3)}
             />
 
             <TextInputWithTitle
@@ -256,7 +256,7 @@ const Support = () => {
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
-              borderRadius={moderateScale(1, 0.3)}
+              borderRadius={moderateScale(25, 0.3)}
               multiline={true}
             />
             <CustomButton
@@ -269,6 +269,7 @@ const Support = () => {
               }}
               width={windowWidth * 0.85}
               height={windowHeight * 0.06}
+              borderRadius={moderateScale(25, 0.6)}
               text={ submitLoading ? <ActivityIndicator color={Color.white} size={'small'} /> :'Send Question'}
               fontSize={moderateScale(14, 0.3)}
               textTransform={'uppercase'}

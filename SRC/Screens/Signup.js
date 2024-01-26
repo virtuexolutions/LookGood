@@ -212,7 +212,7 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(20, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(25, 0.3)}
           />
           <TextInputWithTitle
             titleText={'Last Name'}
@@ -226,7 +226,7 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(25, 0.3)}
           />
 
           <TextInputWithTitle
@@ -241,7 +241,7 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(25, 0.3)}
           />
           <TextInputWithTitle
             titleText={'Contact'}
@@ -255,7 +255,7 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(25, 0.3)}
           />
           <View style={{
             zIndex : 1,
@@ -273,7 +273,7 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(25, 0.3)}
           />
           <TextInputWithTitle
             secureText
@@ -288,7 +288,7 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(25, 0.3)}
           />
           </View>
           <CustomButton
@@ -310,6 +310,7 @@ const Signup = ({navigation}) => {
             }}
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
+            borderRadius={moderateScale(25, 0.6)}
             text={ isLoading ? <ActivityIndicator color={Color.black} size={'small'} /> : 'Sign Up'}
             fontSize={moderateScale(14, 0.3)}
             textTransform={'uppercase'}

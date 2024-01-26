@@ -90,7 +90,7 @@ const LoginScreen = () => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(25, 0.3)}
         />
         <TextInputWithTitle
           secureText
@@ -107,7 +107,7 @@ const LoginScreen = () => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(25, 0.3)}
         />
         <CustomButton
           bgColor={Color.themePink}
@@ -121,6 +121,7 @@ const LoginScreen = () => {
           }}
           width={windowWidth * 0.75}
           height={windowHeight * 0.06}
+          borderRadius={moderateScale(25, 0.6)}
           text={
             loading ? (
               <ActivityIndicator size={'small'} color={'black'} />
