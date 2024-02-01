@@ -13,7 +13,7 @@ import navigationService from '../navigationService';
 import {useSelector} from 'react-redux';
 
 const OrderCard = ({item}) => {
-  console.log('🚀 ~ OrderCard ~ item:', item?.status);
+  // console.log('🚀 ~ OrderCard ~ item:', item?.status);
   // const [buttonText ,setButtonText] =useState(user?.role == 'customer' ? 'reviwes' : 'detail')
   const user = useSelector(state => state.commonReducer.userData);
 

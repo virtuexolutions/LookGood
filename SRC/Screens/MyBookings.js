@@ -25,34 +25,50 @@ import CompletedOrderCard from '../Components/CompletedOrderCard';
 const MyBookings = () => {
   const user = useSelector(state => state.commonReducer.userData);
   // console.log('🚀 ~ `fil`e: MyBookings.js:24 ~ MyBookings ~ user:', user);
+  // console.log('🚀 ~ file: MyBookings.js:24 ~ MyBookings ~ item:', item);
   const [item, setItem] = useState('');
-  console.log('🚀 ~ file: MyBookings.js:24 ~ MyBookings ~ item:', item);
   const [Loading, setLoading] = useState(false);
   const [bookingResponse, setBookingResponse] = useState([]);
-  console.log(
-    '🚀 ~ file: MyBookings.js:19 ~ MyBookings ~ bookingResponse:',
-    bookingResponse,
-  );
+  // console.log(
+  //   '🚀 ~ file: MyBookings.js:19 ~ MyBookings ~ bookingResponse:',
+  //   bookingResponse,
+  // );
   const isFocused = useIsFocused();
 
   const token = useSelector(state => state.authReducer.token);
 
   // Booking GET API START
   const GetBooking = async () => {
-    const url = `auth/booking/list?${item == '' ? 'all' : item}`;
+    const url = `auth/booking/list?status=${item == '' ? 'all' : item}`;
     setLoading(true);
-  //  return console.log("🚀 ~ GetBooking ~ url:", url)
+     console.log("🚀 ~ GetBooking ~ url:", url)
+
     const response = await Get(url, token);
 
     setLoading(false);
     if (response != undefined) {
       console.log(
         '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000PARTY',
-        response?.data,
+        response?.data?.data,
       );
       setBookingResponse(response?.data?.data);
     }
   };
+
+  const barberBooking = async () => {
+    const url = `auth/barber/booking/list?status=${item == '' ? 'all' : item}`;
+    setLoading(true);
+    const response = await Get(url, token);
+    setLoading(false);
+    if (response != undefined) {
+      console.log('🚀 ~ barberBooking ~ response:', response?.data);
+      setBookingResponse(response?.data?.data);
+    }
+  };
+
+  useEffect(() => {
+    user?.role == 'customer' ? GetBooking() : barberBooking();
+  }, [isFocused, item]);
 
   const dummyArray = [
     {
@@ -82,22 +98,6 @@ const MyBookings = () => {
       location: 'kdhfuigdfhgjhdfjgsdjfhgjsdhf,',
     },
   ];
-
-  const barberBooking = async () => {
-    const url = `auth/barber/booking/list?${item == '' ? 'all' : item}`;
-    setLoading(true);
-    const response = await Get(url, token);
-    setLoading(false);
-    if (response != undefined) {
-      console.log('🚀 ~ barberBooking ~ response:', response?.data);
-      setBookingResponse(response?.data?.data);
-    }
-  };
-
-  useEffect(() => {
-    user?.role == 'customer' ? GetBooking() : barberBooking();
-  }, [isFocused ,item]);
-
   // const orderArray = [
   //   {
   //     image: require('../Assets/Images/dummyCustomer1.png'),
@@ -218,8 +218,7 @@ const MyBookings = () => {
           placeholder={'Choose any category'}
           width={windowWidth * 0.95}
           dropdownStyle={{
-            // backgroundColor : 'red',
-            width: windowWidth * 0.95,
+               width: windowWidth * 0.95,
             borderBottomWidth: 0,
             marginTop: moderateScale(30, 0.3),
           }}
@@ -236,6 +235,7 @@ const MyBookings = () => {
           </View>
         ) : (
           <FlatList
+            numOfColumns={1}
             decelerationRate={'fast'}
             showsVerticalScrollIndicator={false}
             style={{
@@ -245,11 +245,9 @@ const MyBookings = () => {
               paddingHorizontal: moderateScale(8, 0.3),
               paddingBottom: moderateScale(30, 0.3),
             }}
-            // data={dummyArray}
             data={bookingResponse}
-            // numColumns={bookingResponse?.status != 'complete' ? 2 :1}
-
-            numColumns={bookingResponse?.status == 'complete' ? 1 :2}
+            numColumns={1}
+            // numColumns={item != 'complete' ? 2 :1}
             ListEmptyComponent={() => {
               return (
                 <NoData
@@ -257,26 +255,17 @@ const MyBookings = () => {
                     height: windowHeight * 0.25,
                     width: windowWidth * 0.6,
                     alignItems: 'center',
-                    // backgroundColor:'red'
                   }}
                   text={'No Booking yet'}
                 />
               );
             }}
             renderItem={({item, index}) => {
-              return item?.status != 'complete' ? (
-                <OrderCard item={item} />
-              ) : (
+              return item?.status == 'complete' ? (
                 <CompletedOrderCard item={item} />
+              ) : (
+                <OrderCard item={item} />
               );
-
-              //
-
-              // user?.role == 'customer' ? (
-              //   <CustomerCard item={item} />
-              // ) : (
-              //   <OrderCard item={item} />
-              // );
             }}
           />
         )}

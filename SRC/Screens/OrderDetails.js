@@ -34,6 +34,7 @@ const OrderDetails = props => {
     item?.status == 'accept' ? 'done' : '',
   );
 
+  console.log("🚀 ~ OrderDetails ~ buttonText:", buttonText)
 
   const dateDiff = (date, time) => {
     return moment(date + ' ' + moment(time, 'h:mm A').format('HH:mm:ss')).diff(
@@ -355,15 +356,16 @@ const OrderDetails = props => {
             )}
             {item?.status == 'accept' &&
               // user?.role != 'customer' &&
-              dateDiff(item?.booking_date, item?.booking_time) <= 0 && (
+              // dateDiff(item?.booking_date, item?.booking_time) <= 0 && 
+              (
                 <CustomButton
                   bgColor={Color.themeColor}
                   borderColor={'white'}
                   borderWidth={1}
                   textColor={Color.black}
                   onPress={() => {
-                    // buttonText == 'review' &&  rbRef.open()
                     buttonText == 'done' && accept();
+                    // buttonText == 'review' &&  rbRef.open()
                   }}
                   width={windowWidth * 0.75}
                   height={windowHeight * 0.06}

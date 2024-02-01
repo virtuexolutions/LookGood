@@ -75,7 +75,9 @@ elevation: 9,
         props.viewHeight && {
           height: windowHeight * props.viewHeight,
         },
-
+        props.borderBottomWidth && {
+          borderBottomWidth :props.borderBottomWidth
+        },
         // props.marginTop >= 0 && {
         //   marginTop: props.marginTop,
         // },

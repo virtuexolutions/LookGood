@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -9,8 +9,53 @@ import LinearGradient from 'react-native-linear-gradient';
 import Color from '../Assets/Utilities/Color';
 import {Icon} from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
+import NoData from '../Components/NoData';
+import TransactionhistoryCard from '../Components/TransactionhistoryCard';
+import { Get } from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
 
 const WalletScreen = () => {
+
+  const token = useSelector(state => state.authReducer.token);
+
+
+const [loading,setLoading] =useState(false)
+const [Transactionhistory ,setTransactionHistory]=useState([])
+
+const userTransactionList = async () =>{
+const url ='auth/transaction'
+setLoading(true)
+const response = await Get(url,token)
+// console.log("🚀 ~ userTransactionList ~ response:", response?.data)
+setLoading(false)
+if(response != undefined){
+  console.log("🚀 ~ userTransactionList ~ response:", response?.data)
+  // setTransactionHistory(response?.data)
+}
+
+}
+useEffect(() => {
+  
+  userTransactionList()
+}, []);
+  const dummyArray = [
+    {
+      name: 'haircut',
+      amount: 1500,
+    },
+    {
+      name: 'nail poslish',
+      amount: 200,
+    },
+    {
+      name: 'skin poslish',
+      amount: 1000,
+    },
+    {
+      name: 'hydra facial',
+      amount: 2000,
+    },
+  ];
   return (
     <ScreenBoiler
       showHeader={true}
@@ -122,6 +167,39 @@ const WalletScreen = () => {
             </CustomText>
           </View>
         </View>
+        <FlatList
+                showsVerticalScrollIndicator={false}
+
+          // decelerationRate={'fast'}
+          numColumns={1}
+          ListEmptyComponent={() => {
+            return (
+              <NoData
+                style={{
+                  height: windowHeight * 0.25,
+                  width: windowWidth * 0.6,
+                  alignItems: 'center',
+                }}
+                text={'No Upcoming Orders'}
+              />
+            );
+          }}
+          style={{
+            marginTop: moderateScale(10, 0.3),
+          }}
+          contentContainerStyle={{
+            width: windowWidth,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingBottom:moderateScale(100,.6)
+            // paddingHorizontal: moderateScale(8, 0.3),
+          }}
+          data={dummyArray}
+          renderItem={({item, index}) => {
+            // console.log("🚀 ~ file: Homescreen.js:356 ~ Homescreen ~ item:", item)
+            return <TransactionhistoryCard item={item} />;
+          }}
+        />
 
         <View
           style={{

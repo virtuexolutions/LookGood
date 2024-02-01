@@ -8,6 +8,7 @@ import {
   ToastAndroid,
   Alert,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -26,13 +27,17 @@ import navigationService from '../navigationService';
 import numeral from 'numeral';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
+import ReviewCard from '../Components/ReviewCard';
+import ShowReview from '../Components/ShowReview';
 
 const BarberServicesScreen = props => {
   const [selectedService, setSelectedService] = useState([]);
   const [barberDetails, setBarberDetails] = useState([]);
   const [Loading, setLoading] = useState(false);
   const token = useSelector(state => state.authReducer.token);
+  const [modal, setModal] = useState(false);
   const detail = props?.route?.params?.detail;
+  // console.log("🚀 ~ BarberServicesScreen ~ detail:", detail)
 
   const BarberDetals = async () => {
     const url = `auth/barber/detail/${detail?.id}`;
@@ -43,7 +48,7 @@ const BarberServicesScreen = props => {
     if (response != undefined) {
       console.log(
         '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000Alpha High Command',
-        response?.data?.user_detail,
+        response?.data?.user_detail?.review[0],
       );
       setBarberDetails(response?.data?.user_detail);
     }
@@ -144,24 +149,26 @@ const BarberServicesScreen = props => {
                 textTransform: 'uppercase',
               }}
             />
-            <Rating
-              type="custom"
-              readonly
-              startingValue={3}
-              ratingCount={5}
-              
-              imageSize={moderateScale(15, 0.3)}
-              style={{width: windowWidth * 0.2 , backgroundColor : 'red' }}
-              // starContainerStyle={{
-              //   backgroundColor: 'red',
-              //   width: windowWidth * 0.2
-              // }}
-              ratingBackgroundColor={'transparent'}
-              // ratingContainerStyle={{
-              //   backgroundColor : 'red',
-              //   width: windowWidth * 0.2
-              // }}
-            />
+            <TouchableOpacity
+              onPress={() => {
+                console.log('hye review here');
+                setModal(true);
+              }}
+              style={{
+                width: windowWidth * 0.25,
+              }}>
+              <Rating
+                type="custom"
+                readonly
+                startingValue={3}
+                ratingCount={5}
+                imageSize={moderateScale(18, 0.3)}
+                style={{
+                  width: windowWidth * 0.24,
+                }}
+                ratingBackgroundColor={'transparent'}
+              />
+            </TouchableOpacity>
 
             <CustomText
               style={{
@@ -339,7 +346,7 @@ const BarberServicesScreen = props => {
                     isGradient={true}
                     isBold
                     marginTop={moderateScale(30, 0.3)}
-                    borderRadius={moderateScale(35,0.6)}
+                    borderRadius={moderateScale(35, 0.6)}
                   />
                   <CustomButton
                     // bgColor={Color.themePink}
@@ -348,7 +355,7 @@ const BarberServicesScreen = props => {
                     textColor={Color.black}
                     onPress={() => {
                       if (selectedService.length > 0) {
-                        navigationService.navigate('', {
+                        navigationService.navigate('ChooseDate', {
                           data: selectedService,
                           barber: barberDetails,
                         });
@@ -369,13 +376,18 @@ const BarberServicesScreen = props => {
                     isGradient={true}
                     isBold
                     marginTop={moderateScale(10, 0.3)}
-                    borderRadius={moderateScale(35,0.6)}
+                    borderRadius={moderateScale(35, 0.6)}
                   />
                 </>
               );
             }}
           />
         )}
+        <ShowReview
+          barberDetails={barberDetails?.review}
+          modal={modal}
+          setModal={setModal}
+        />
       </LinearGradient>
     </ScreenBoiler>
   );

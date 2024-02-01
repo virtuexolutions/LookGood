@@ -29,7 +29,7 @@ const CheckoutScreen = props => {
 
   const cartData = useSelector(state => state.commonReducer.cartData);
   const voucher = useSelector(state => state.commonReducer.selectedVoucher);
- console.log("🚀 ~ CheckoutScreen ~ voucher:", voucher)
+  console.log('🚀 ~ CheckoutScreen ~ voucher:', voucher);
 
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
@@ -65,15 +65,14 @@ const CheckoutScreen = props => {
 
     return finalValue;
   };
-  const calculateDiscount = ()=>{
+  const calculateDiscount = () => {
     const finalValue =
-    voucher?.type == 'fixed'
-      ? subTotal - voucher?.value
-      : (subTotal * voucher?.value) / 100;
+      voucher?.type == 'fixed'
+        ? subTotal - voucher?.value
+        : (subTotal * voucher?.value) / 100;
 
-  return finalValue;
-    
-  }
+    return finalValue;
+  };
 
   useEffect(() => {
     setSubTotal(0);
@@ -127,7 +126,6 @@ const CheckoutScreen = props => {
                   as={FontAwesome}
                   color={Color.white}
                   size={moderateScale(20, 0.3)}
-                 
                 />
 
                 <View
@@ -137,7 +135,7 @@ const CheckoutScreen = props => {
                       justifyContent: 'space-between',
                     },
                   ]}>
-                  <View >
+                  <View>
                     <CustomText
                       style={[styles.text1, {width: windowWidth * 0.5}]}>
                       {item?.name}
@@ -271,7 +269,7 @@ const CheckoutScreen = props => {
                 fontSize={moderateScale(12, 0.3)}
                 isGradient={true}
                 isBold
-                borderRadius={moderateScale(30,0.4)}
+                borderRadius={moderateScale(30, 0.4)}
               />
             ) : (
               <View
@@ -300,7 +298,7 @@ const CheckoutScreen = props => {
                   {voucher?.type == 'fixed' ? '$' : '%'}
                 </CustomText>
               </View>
-            )} 
+            )}
           </View>
           <View style={styles.underline} />
           <View style={styles.row}>
@@ -344,7 +342,11 @@ const CheckoutScreen = props => {
           textColor={Color.black}
           onPress={() => {
             navigationService.navigate('PaymentScreen', {
-              finalData: {...finalData,total:subTotal, discount:calculateDiscount()},
+              finalData: {
+                ...finalData,
+                total: subTotal,
+                discount: calculateDiscount(),
+              },
               fromStore: fromStore,
             });
           }}
@@ -356,8 +358,9 @@ const CheckoutScreen = props => {
           textTransform={'uppercase'}
           isGradient={true}
           isBold
+          // marginTop={moderateScale(10,.3)}
           marginBottom={windowHeight * 0.15}
-          borderRadius={moderateScale(30,0.4)}
+          borderRadius={moderateScale(30, 0.4)}
         />
       </LinearGradient>
     </ScreenBoiler>
@@ -392,7 +395,7 @@ const styles = ScaledSheet.create({
     marginLeft: moderateScale(10, 0.3),
     paddingLeft: moderateScale(10, 0.3),
     paddingTop: moderateScale(20, 0.3),
-    borderRadius:moderateScale(18,0.6),
+    borderRadius: moderateScale(18, 0.6),
     flexDirection: 'row',
   },
   underline: {

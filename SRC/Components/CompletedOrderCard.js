@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import CustomImage from './CustomImage';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -8,13 +8,22 @@ import Color from '../Assets/Utilities/Color';
 import {Icon} from 'native-base';
 import FontAwesone5 from 'react-native-vector-icons/FontAwesome5';
 import CustomButton from './CustomButton';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import navigationService from '../navigationService';
 
-const CompletedOrderCard = ({item}) => {
-
-const user =useSelector(state => state.commonReducer.userData)
-
-
+const CompletedOrderCard = ({
+  item,
+  fromModal,
+  selectedItem,
+  setSelectedItem,
+  setIsVisible,
+  isVisible,
+  fromSupportScreen,
+}) => {
+  // console.log('🚀 ~ CompletedOrderCard ~ item:', item);
+const navigationService =useNavigation()
+  const user = useSelector(state => state.commonReducer.userData);
 
   const amount = () => {
     let totalAmount = 0;
@@ -42,9 +51,37 @@ const user =useSelector(state => state.commonReducer.userData)
   const servicesText = calculateTotalAmount();
 
   return (
-    <View style={styles.mainContainer}>
+    <TouchableOpacity
+      onPress={() => {
+        // fromSupportScreen == true &&
+        setSelectedItem(item);
+        setIsVisible(false);
+      }}
+      disabled={fromModal == true ? false : true}
+      style={styles.mainContainer}>
+      <View
+        style={[
+          styles.statusView,
+          {
+            backgroundColor:
+              item?.status.toLowerCase() == 'reject'
+                ? 'rgba(255,0,0,0.6)'
+                : item?.status.toLowerCase() == 'accept'
+                ? 'rgba(0,255,0,0.6)'
+                : item?.status.toLowerCase() == 'complete'
+                ? 'rgba(0,255,255,0.6)'
+                : 'rgba(233,255,0,0.6)',
+          },
+        ]}>
+        <CustomText isBold style={styles.status}>{item?.status}</CustomText>
+      </View>
       <View style={styles.imageView}>
         <CustomImage
+          onPress={() => {
+            // fromSupportScreen == true &&
+            setSelectedItem(item);
+            setIsVisible(false);
+          }}
           style={{
             height: '100%',
             width: '100%',
@@ -54,8 +91,7 @@ const user =useSelector(state => state.commonReducer.userData)
       </View>
       <View>
         <CustomText isBold style={styles.heading1}>
-          {/* name */}
-          {item?.first_name}
+          {item?.barber_info?.first_name}
         </CustomText>
         <View style={styles.row}>
           <CustomText isBold style={styles.heading}>
@@ -109,15 +145,16 @@ const user =useSelector(state => state.commonReducer.userData)
         borderWidth={1}
         borderRadius={moderateScale(15, 0.6)}
         borderColor={Color.white}
-        width={windowWidth * 0.27}
+        width={windowWidth * 0.2}
         height={windowHeight * 0.04}
         text={'details'}
         fontSize={moderateScale(13, 0.3)}
-        //    onPress={onPress}
+        // onPress={navigationService.navigate('OrderDetails', {item: item})}
         isBold
+        marginHorizontal={moderateScale(20, 0.3)}
         marginTop={moderateScale(5, 0.3)}
       />
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -129,9 +166,10 @@ const styles = StyleSheet.create({
     borderColor: Color.white,
     flexDirection: 'row',
     // backgroundColor: 'red',
-    // justifyContent:'space-between',
-    width: windowWidth * 0.95,
-    paddingBottom: moderateScale(8, 0.6),
+    // justifyContent:'center',
+    width: windowWidth * 0.85,
+    // marginHorizontal:moderateScale(10,.3),
+    paddingBottom: moderateScale(10, 0.6),
     marginBottom: moderateScale(15, 0.3),
   },
   row: {
@@ -139,11 +177,25 @@ const styles = StyleSheet.create({
     padding: moderateScale(1, 0.6),
     paddingHorizontal: moderateScale(8, 0.6),
   },
+  statusView: {
+    position: 'absolute',
+    right: 2,
+    top: 2,
+    paddingHorizontal: moderateScale(6, 0.6),
+    paddingVertical: moderateScale(2, 0.6),
+    borderRadius: moderateScale(10, 0.6),
+  },
+  status: {
+    textAlign: 'center',
+    color:Color.white,
+    fontSize: moderateScale(9, 0.6),
+  },
   Text: {
     // backgroundColor:'orange',
     marginHorizontal: moderateScale(10, 0.3),
     color: Color.white,
     fontSize: moderateScale(13, 0.6),
+    paddingRight: moderateScale(25, 0.6),
   },
   heading: {
     fontSize: moderateScale(12, 0.6),
@@ -151,8 +203,10 @@ const styles = StyleSheet.create({
   },
   heading1: {
     color: Color.white,
+    // backgroundColor:'red',
+    width: windowWidth * 0.45,
     paddingHorizontal: moderateScale(8, 0.6),
-    fontSize: moderateScale(16, 0.6),
+    fontSize: moderateScale(15, 0.6),
   },
   imageView: {
     height: windowHeight * 0.08,
@@ -168,8 +222,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: moderateScale((windowHeight * 0.03) / 2),
-  marginHorizontal: moderateScale(5, 0.6),
+    marginHorizontal: moderateScale(5, 0.6),
     // marginTop:moderateScale(1,.6)
-
   },
 });

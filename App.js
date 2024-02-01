@@ -17,6 +17,7 @@ import LoginScreen from './SRC/Screens/LoginScreen';
 import AppNavigator from './SRC/appNavigation';
 import { Platform } from 'react-native';
 import GetStarted from './SRC/Screens/GetStarted';
+import Purchase from './SRC/Screens/Purchase';
 
 
 
@@ -73,6 +74,7 @@ const MainContainer =()=>{
   if (isloading == true) {
     return <SplashScreen />;
   }
+  // return <Purchase/>
   return <AppNavigator />;
 
 }
