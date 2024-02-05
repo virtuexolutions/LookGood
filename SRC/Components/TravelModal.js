@@ -20,13 +20,11 @@ import Feather from 'react-native-vector-icons/Feather';
 
 const HolidayModal = ({
   item,
-  isTravelMode,
-  setIsTravelMode,
+ 
   setLocation,
   Location,
   setIsVisibleModal,
   isVisibleModal,
-  displayText,
   setDisplayText
 }) => {
   const navigation = useNavigation();
@@ -63,7 +61,8 @@ const HolidayModal = ({
           value={Location}
           viewHeight={0.06}
           viewWidth={0.75}
-          inputWidth={0.74}
+          inputWidth={0.6}
+          multiline={true}
           borderBottomWidth={2}
           borderColor={Color.themeColor}
           backgroundColor={'#FFFFFF'}

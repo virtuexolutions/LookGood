@@ -9,7 +9,7 @@ import {Icon} from 'native-base';
 import FontAwesone5 from 'react-native-vector-icons/FontAwesome5';
 import CustomButton from './CustomButton';
 import {useSelector} from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import navigationService from '../navigationService';
 
 const CompletedOrderCard = ({
@@ -21,8 +21,7 @@ const CompletedOrderCard = ({
   isVisible,
   fromSupportScreen,
 }) => {
-  // console.log('🚀 ~ CompletedOrderCard ~ item:', item);
-const navigationService =useNavigation()
+  const navigationService = useNavigation();
   const user = useSelector(state => state.commonReducer.userData);
 
   const amount = () => {
@@ -59,6 +58,7 @@ const navigationService =useNavigation()
       }}
       disabled={fromModal == true ? false : true}
       style={styles.mainContainer}>
+     {  fromModal == true &&
       <View
         style={[
           styles.statusView,
@@ -73,8 +73,10 @@ const navigationService =useNavigation()
                 : 'rgba(233,255,0,0.6)',
           },
         ]}>
-        <CustomText isBold style={styles.status}>{item?.status}</CustomText>
-      </View>
+        <CustomText isBold style={styles.status}>
+          {item?.status}
+        </CustomText>
+      </View>}
       <View style={styles.imageView}>
         <CustomImage
           onPress={() => {
@@ -91,14 +93,18 @@ const navigationService =useNavigation()
       </View>
       <View>
         <CustomText isBold style={styles.heading1}>
-          {item?.barber_info?.first_name}
+          {selectedItem?.barber_info?.first_name
+            ? selectedItem?.barber_info?.first_name
+            : item?.barber_info?.first_name}
         </CustomText>
         <View style={styles.row}>
           <CustomText isBold style={styles.heading}>
             Date :
           </CustomText>
           <CustomText style={styles.Text}>
-            {item?.booking_date}
+            {selectedItem?.booking_date
+              ? selectedItem?.booking_date
+              : item?.booking_date}
             {/* aug 12,2023 */}
           </CustomText>
         </View>
@@ -106,7 +112,11 @@ const navigationService =useNavigation()
           <CustomText isBold style={styles.heading}>
             Time :
           </CustomText>
-          <CustomText style={styles.Text}>{item?.booking_time}</CustomText>
+          <CustomText style={styles.Text}>
+            {selectedItem?.booking_time
+              ? selectedItem?.booking_time
+              : item?.booking_time}
+          </CustomText>
         </View>
         <View style={styles.row}>
           <CustomText isBold style={styles.heading}>
@@ -136,7 +146,9 @@ const navigationService =useNavigation()
               fontSize: moderateScale(12, 0.6),
               paddingHorizontal: moderateScale(5, 0.6),
             }}>
-            {item?.custom_location}
+            {selectedItem?.custom_location
+              ? selectedItem?.custom_location
+              : item?.custom_location}
           </CustomText>
         </View>
       </View>
@@ -165,10 +177,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: moderateScale(1, 0.6),
     borderColor: Color.white,
     flexDirection: 'row',
-    // backgroundColor: 'red',
-    // justifyContent:'center',
     width: windowWidth * 0.85,
-    // marginHorizontal:moderateScale(10,.3),
     paddingBottom: moderateScale(10, 0.6),
     marginBottom: moderateScale(15, 0.3),
   },
@@ -187,7 +196,7 @@ const styles = StyleSheet.create({
   },
   status: {
     textAlign: 'center',
-    color:Color.white,
+    color: Color.white,
     fontSize: moderateScale(9, 0.6),
   },
   Text: {

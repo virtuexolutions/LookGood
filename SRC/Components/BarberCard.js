@@ -21,9 +21,10 @@ import numeral from 'numeral';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCartData, setRemoveCardData } from '../Store/slices/common';
 import { Post } from '../Axios/AxiosInterceptorFunction';
+import HolidayModal from './HolidayModal';
 // import {setCartData} from '../Store/combineReducer';
 
-const BarberCard = ({item, onPress, addedInWishlist,assetImage  }) => {
+const BarberCard = ({item, onPress, addedInWishlist,assetImage,setIsHolidayMode,isHolidayMode  }) => {
   // console.log("🚀 ~ file: BarberCard.js:27 ~ BarberCard ~ item:", item)
   const cartData = useSelector((state)=>state.commonReducer.cartData)
   const token = useSelector(state => state.authReducer.token)
@@ -114,6 +115,25 @@ const BarberCard = ({item, onPress, addedInWishlist,assetImage  }) => {
               // backgroundColor : '#000'
             }}
           />
+     {  item?.holiday_mode == true &&
+        <View style={{
+          height:windowHeight*0.07,
+          width:windowWidth*0.15,
+          position:'absolute',
+          top:10,
+          right:5
+          }}>
+            
+          < CustomImage style={{
+            height:'100%',
+            width:'100%',
+          }} source={require('../Assets/Images/holidaybatch.png')}/>
+          </View>}
+
+          <HolidayModal setIsHolidayMode={setIsHolidayMode} isHolidayMode={isHolidayMode}/>
+
+
+
 
           <CustomText
             isBold

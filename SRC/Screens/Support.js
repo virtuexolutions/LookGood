@@ -105,7 +105,7 @@ const Support = () => {
     const response = await Post(url, body, apiHeader(token));
     setSubmitLoading(false);
     if (response != undefined) {
-      //  console.log('🚀 ~ file: Support.js:80 ~ Support ~ response:',response?.data?.data,);
+       console.log('🚀 ~ file: Support.js:80 ~ Support ~ response:',response?.data?.data,);
       Platform.OS == 'android'
         ? ToastAndroid.show('Sent Successfully', ToastAndroid.SHORT)
         : alert('Sent Successfully');
@@ -270,7 +270,7 @@ const Support = () => {
               value={message}
               viewHeight={0.06}
               viewWidth={0.85}
-              inputWidth={0.84}
+              inputWidth={0.75}
               // border={1}
               // borderColor={'#1B5CFB45'}
               backgroundColor={'#FFFFFF'}

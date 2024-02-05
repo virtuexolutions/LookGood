@@ -10,7 +10,7 @@ import {
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -20,7 +20,7 @@ import CustomTextWithMask from '../Components/CustomTextWithMask';
 import BarberCard from '../Components/BarberCard';
 import {useSelector} from 'react-redux';
 import OrderCard from '../Components/OrderCard';
-import {Get} from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import NoData from '../Components/NoData';
 import {useIsFocused} from '@react-navigation/native';
 import CompletedOrderCard from '../Components/CompletedOrderCard';
@@ -34,12 +34,15 @@ const Homescreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [Loading, setLoading] = useState(false);
   const [barberData, setBarberData] = useState([]);
+  // console.log('🚀 ~ Homescreen ~ barberData:', barberData);
   const [orderData, setOrderData] = useState([]);
-  console.log('🚀 ~ Homescreen ~ orderData:', orderData);
+  // console.log('🚀 ~ Homescreen ~ orderData:', orderData);
   const [isVisible, setIsVisible] = useState(false);
   console.log('🚀 ~ Homescreen ~ isVisible:', isVisible);
   const [selectedItem, setSelectedItem] = useState([]);
-
+  const [isHolidayMode, setIsHolidayMode] = useState(false);
+  const [barberFilters, setBarberFilters] = useState([]);
+  // console.log('🚀 ~ Homescreen ~ barberFilters:', barberFilters);
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);
@@ -75,6 +78,26 @@ const Homescreen = () => {
     BarberList();
     GetBarberBooking();
   }, [focused]);
+
+  const barberFilter = async () => {
+    const body = {
+      featured: selectedItem,
+      near: selectedItem,
+      earlier: selectedItem,
+    };
+    const url = 'auth/barber/filter';
+    setIsLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setIsLoading(false);
+    if (response != undefined) {
+     console.log('🚀 ~ barberFilter ~ response:', response?.data);
+      setBarberFilters(response?.data);
+    }
+  };
+
+  useEffect(() => {
+    // barberFilter();
+  }, [barberFilters]);
 
   const bannerArray = [
     {
@@ -324,6 +347,7 @@ const Homescreen = () => {
             </View>
 
             <FilteringModal
+              barberFilter={barberFilter}
               selectedItem={selectedItem}
               setSelectedItem={setSelectedItem}
               isVisible={isVisible}
@@ -470,10 +494,16 @@ const Homescreen = () => {
                   return (
                     <BarberCard
                       item={item}
+                      setIsHolidayMode={setIsHolidayMode}
+                      isHolidayMode={isHolidayMode}
                       onPress={() => {
-                        navigationService.navigate('BarberServicesScreen', {
-                          detail: item,
-                        });
+                        if (barberData?.holiday_mode == true) {
+                          setIsHolidayMode(true);
+                        } else {
+                          navigationService.navigate('BarberServicesScreen', {
+                            detail: item,
+                          });
+                        }
                       }}
                     />
                   );

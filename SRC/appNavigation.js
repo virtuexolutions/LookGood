@@ -41,6 +41,7 @@ import SearchLocation from './Screens/SearchLocation';
 import AddService from './Screens/AddService';
 import TimeScreen from './Screens/TimeScreen';
 import Vouchers from './Screens/Vouchers';
+import Purchase from './Screens/Purchase';
 import CustomerBookingDetails from './Screens/CustomerBookingDetails';
 import GetStarted from './Screens/GetStarted';
 
@@ -99,6 +100,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="WalletScreen" component={WalletScreen} />
           <RootNav.Screen name="ImageUpload" component={ImageUpload} />
           <RootNav.Screen name="ImageScreen" component={ImageScreen} />
+          <RootNav.Screen name="Purchase" component={Purchase} />
         </RootNav.Navigator>
       </NavigationContainer>
     );

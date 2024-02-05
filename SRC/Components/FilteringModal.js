@@ -15,6 +15,7 @@ const FilteringModal = ({
   setIsVisible,
   selectedItem,
   setSelectedItem,
+  barberFilter,
 }) => {
   const dummyArray = [
     'featured barber',
@@ -27,34 +28,16 @@ const FilteringModal = ({
       isVisible={isVisible}
       swipeDirection="up"
       style={{
-        // borderRadius: moderateScale(20, 0.6),
-        // paddingHorizontal: moderateScale(15, 0.6),
         alignItems: 'center',
         justifyContent: 'center',
-        // backgroundColor: Color.white,
-        // height: windowHeight * 0.4,
-        // zIndex:1
       }}
       onBackdropPress={() => {
         setIsVisible(false);
       }}>
-      <View
-        style={{
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          //   height: windowHeight * 0.2,
-          width: windowWidth * 0.8,
-          flexWrap: 'wrap',
-          flexDirection: 'row',
-          paddingBottom: moderateScale(10, 0.6),
-          borderRadius: moderateScale(10, 0.6),
-          overflow: 'hidden',
-        }}>   
+      <View style={styles.container}>
         <View style={styles.Header}>
           <CustomText
-            style={{
-              fontSize: moderateScale(15, 0.6),
-              fontStyle: 'italic',
-            }}>
+            style={styles.heading}>
             Barber Filters
           </CustomText>
         </View>
@@ -71,32 +54,23 @@ const FilteringModal = ({
                   setSelectedItem(prev => [...prev, item]);
                 }
               }}
-              style={{
-                padding: moderateScale(8, 0.6),
-                borderRadius: moderateScale(25, 0.6),
-                borderColor: Color.themeColor,
-                borderWidth: 1,
-                marginHorizontal: moderateScale(5, 0.3),
-                marginVertical: moderateScale(2, 0.3),
-                backgroundColor: selectedItem.includes(item)
-                  ? Color.themeColor
-                  : Color.white,
-              }}>
+              style={[
+                styles.button,
+                {
+                  backgroundColor: selectedItem.includes(item)
+                    ? Color.themeColor
+                    : Color.white,
+                },
+              ]}>
               <CustomText
                 //   isBold
-                style={{
-                  fontSize: moderateScale(13, 0.6),
-                  paddingHorizontal: moderateScale(8, 0.6),
-
-                  // backgroundColor: 'red',
-                  color: Color.black,
-                }}>
+                style={styles.text}>
                 {item}
               </CustomText>
             </TouchableOpacity>
           );
         })}
-        {selectedItem.length >0  && (
+        {selectedItem.length > 0 && (
           <CustomButton
             textColor={Color.white}
             borderWidth={1}
@@ -107,7 +81,7 @@ const FilteringModal = ({
             text={'ok'}
             fontSize={moderateScale(13, 0.3)}
             onPress={() => {
-                setIsVisible(false )
+              barberFilter(), setIsVisible(false);
             }}
             isBold
             marginHorizontal={moderateScale(20, 0.3)}
@@ -130,4 +104,31 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  container: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    //   height: windowHeight * 0.2,
+    width: windowWidth * 0.8,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    paddingBottom: moderateScale(10, 0.6),
+    borderRadius: moderateScale(10, 0.6),
+    overflow: 'hidden',
+  },
+  button: {
+    padding: moderateScale(8, 0.6),
+    borderRadius: moderateScale(25, 0.6),
+    borderColor: Color.themeColor,
+    borderWidth: 1,
+    marginHorizontal: moderateScale(5, 0.3),
+    marginVertical: moderateScale(2, 0.3),
+  },
+  text:{
+    fontSize: moderateScale(13, 0.6),
+    paddingHorizontal: moderateScale(8, 0.6),
+    color: Color.black,
+  },
+  heading:{
+    fontSize: moderateScale(15, 0.6),
+    fontStyle: 'italic',
+  }
 });
