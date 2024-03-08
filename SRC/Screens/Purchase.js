@@ -20,9 +20,13 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import CustomImage from '../Components/CustomImage';
 import {CardField, createToken} from '@stripe/stripe-react-native';
 import {Post} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import { setUserData } from '../Store/slices/common';
+import { useNavigation } from '@react-navigation/native';
 
 const Purchase = () => {
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
   const token = useSelector(state => state.authReducer.token);
   const [amount, setAmount] = useState();
   const [transactionAdd, setTransactionAdd] = useState([]);
@@ -69,7 +73,10 @@ const Purchase = () => {
       const response = await Post(url, body, apiHeader(token));
       setIsLoading(false);
       if (response != undefined) {
-        console.log('🚀 ~ addTransaction ~ response:', response?.data);
+        console.log('🚀 ~ addTransaction ~ response:', response?.data?.user_info);
+        dispatch(setUserData(response?.data?.user_info));
+        setIsVisible(false)
+        navigation.goBack()
       }
     }
   };

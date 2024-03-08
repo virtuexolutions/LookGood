@@ -57,7 +57,9 @@ const SearchLocation = props => {
             });
           }}
           query={{
-            key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
+            key: 'AIzaSyAqNK7IfM16zi79N0u7qX4Ncm5QgGvBqmg',
+            // key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
+
             language: 'en',
           }}
           isRowScrollable={true}

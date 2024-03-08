@@ -50,14 +50,12 @@ const Support = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  // console.log("🚀 ~ Support ~ selectedItem:", selectedItem)
-
-
+  console.log('🚀 ~ Support ~ selectedItem:', selectedItem);
 
   const GetSupportData = async () => {
     const url = 'auth/admin/info';
     setLoading(true);
-    const response = await Get(url,token);
+    const response = await Get(url, token);
     setLoading(false);
     if (response != undefined) {
       console.log(response?.data);
@@ -81,7 +79,9 @@ const Support = () => {
       email: email,
       subject: subject,
       description: message,
+      job_id : selectedItem?.id
     };
+  //  return console.log("🚀 ~ Support ~ body:", body)
     for (let key in body) {
       if (body[key] === '') {
         return Platform.OS == 'android'
@@ -105,19 +105,16 @@ const Support = () => {
     const response = await Post(url, body, apiHeader(token));
     setSubmitLoading(false);
     if (response != undefined) {
-       console.log('🚀 ~ file: Support.js:80 ~ Support ~ response:',response?.data?.data,);
+      console.log(
+        '🚀 ~ file: Support.js:80 ~ Support ~ response:',
+        response?.data?.data,
+      );
       Platform.OS == 'android'
         ? ToastAndroid.show('Sent Successfully', ToastAndroid.SHORT)
         : alert('Sent Successfully');
       navigationService.navigate('TabNavigation');
     }
   };
-
-  
-
-
-
- 
 
   return (
     <ScreenBoiler
@@ -268,93 +265,86 @@ const Support = () => {
               placeholder={'Enter Description'}
               setText={setMessage}
               value={message}
-              viewHeight={0.06}
+              viewHeight={0.2}
               viewWidth={0.85}
               inputWidth={0.75}
-              // border={1}
-              // borderColor={'#1B5CFB45'}
-              backgroundColor={'#FFFFFF'}
+             backgroundColor={'#FFFFFF'}
               marginTop={moderateScale(12, 0.3)}
               color={Color.themeColor}
               placeholderColor={Color.themeLightGray}
               borderRadius={moderateScale(30, 0.4)}
               multiline={true}
             />
-           
-              <View
-                style={{
-                  // backgroundColor: 'red',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  width: windowWidth * 0.8,
-                  marginVertical: moderateScale(20, 0.3),
-                }}>
-                <CustomText
-                  isBold
-                  style={{
-                    fontSize: moderateScale(14, 0.6),
-                    color: Color.white,
-                    width: windowWidth * 0.65,
-                    // backgroundColor: Color.red,
-                  }}>
-                  select booking you want to disput
-                </CustomText>
 
-                <TouchableOpacity
+            <View
+              style={{
+                // backgroundColor: 'red',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: windowWidth * 0.8,
+                marginVertical: moderateScale(20, 0.3),
+              }}>
+              <CustomText
+                isBold
+                style={{
+                  fontSize: moderateScale(14, 0.6),
+                  color: Color.white,
+                  width: windowWidth * 0.65,
+                  // backgroundColor: Color.red,
+                }}>
+                select booking you want to dispute on
+              </CustomText>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setIsVisible(true);
+                }}
+                style={{
+                  height: windowHeight * 0.03,
+                  width: windowHeight * 0.03,
+                  borderRadius: (windowHeight * 0.03) / 2,
+                  backgroundColor: Colors.white,
+                  overflow: 'hidden',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Icon
                   onPress={() => {
                     setIsVisible(true);
                   }}
+                  name={'plus'}
+                  as={Entypo}
+                  size={22}
+                  color={Colors.black}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {selectedItem != null && (
+              <View
+                style={{
+                  // backgroundColor:'red',
+                  width: windowWidth * 0.88,
+                }}>
+                <CompletedOrderCard
+                  item={selectedItem}
+                  fromSupportScreen={true}
+                />
+                <Icon
                   style={{
-                    height: windowHeight * 0.03,
-                    width: windowHeight * 0.03,
-                    borderRadius: (windowHeight * 0.03) / 2,
-                    backgroundColor: Colors.white,
-                    overflow: 'hidden',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Icon
-                    onPress={() => {
-                      setIsVisible(true);
-                    }}
-                    name={'plus'}
-                    as={Entypo}
-                    size={22}
-                    color={Colors.black}
-                  />
-                </TouchableOpacity>
+                    position: 'absolute',
+                    right: 2,
+                  }}
+                  onPress={() => {
+                    setSelectedItem(null);
+                  }}
+                  name="circle-with-cross"
+                  as={Entypo}
+                  size={17}
+                  color={Color.lightGrey}
+                />
               </View>
-            
-            <BookingHistoryModal
-              setSelectedItem={setSelectedItem}
-              selectedItem={selectedItem}
-              setIsVisible={setIsVisible}
-              isVisible={isVisible}
-            />
-            {
-              selectedItem != null && (
-                <View
-                  style={{
-                    // backgroundColor:'red',
-                    width: windowWidth * 0.88,
-                  }}>
-                  <CompletedOrderCard  selectedItem={selectedItem}/>
-                  <Icon
-                    style={{
-                      position: 'absolute',
-                      right: 2,
-                    }}
-                    onPress={() => {
-                      setSelectedItem(null);
-                    }}
-                    name="circle-with-cross"
-                    as={Entypo}
-                    size={17}
-                    color={Color.lightGrey}
-                  />
-                </View>
-              )
-            }
+            )}
             <CustomButton
               bgColor={Color.themeColor}
               borderColor={'white'}
@@ -380,9 +370,12 @@ const Support = () => {
               // marginTop={moderateScale(1s0, 0.3)}
             />
           </View>
-          {/* {userData?.role != 'barber' && (
-            
-          )} */}
+          <BookingHistoryModal
+            setSelectedItem={setSelectedItem}
+            selectedItem={selectedItem}
+            setIsVisible={setIsVisible}
+            isVisible={isVisible}
+          />
         </ScrollView>
       </LinearGradient>
     </ScreenBoiler>

@@ -352,7 +352,7 @@ const CheckoutScreen = props => {
           }}
           width={windowWidth * 0.9}
           height={windowHeight * 0.06}
-          text={'Payment'}
+          text={'Book your slot'}
           fontSize={moderateScale(14, 0.3)}
           // borderRadius={moderateScale(30, 0.3)}
           textTransform={'uppercase'}

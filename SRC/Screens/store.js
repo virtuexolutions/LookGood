@@ -15,6 +15,7 @@ import {Icon} from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {setCartData} from '../Store/slices/common';
+import ProductCard from '../Components/ProductCard';
 
 const Store = () => {
   const cartData = useSelector(state => state.commonReducer.cartData);
@@ -219,7 +220,7 @@ const Store = () => {
                 marginTop: moderateScale(10, 0.3),
               },
             ]}>
-            Recommended{' '}
+           Products
           </CustomText>
           <View style={{paddingTop: moderateScale(10, 0.3),
             paddingHorizontal:19,
@@ -227,35 +228,12 @@ const Store = () => {
           }}>
             <FlatList
             data={cardArray}
-            renderItem={(itemData) => <BarberCard item={itemData.item}/>}
+            renderItem={(itemData) => <ProductCard item={itemData.item}/>}
             keyExtractor={item => item.id}
             numColumns={2}
             />
           </View>
-          {/* <View
-            style={{
-              paddingTop: moderateScale(10, 0.3),
-              width: windowWidth ,
-              flexDirection: 'row',
-              paddingHorizontal:moderateScale(10,.6),
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-            }}>
-            {cardArray.map((x, index) => {
-              return (
-                <BarberCard
-                borderRadius
-                  item={x}
-                  // cartData={cartData}
-                  // setCartData={setCartData}
-                  onPress={() => {
-                    !cartData?.some(data => data.id == x?.id) &&
-                      dispatch(setCartData(x));
-                  }}
-                />
-              );
-            })}
-          </View> */}
+         
         </ScrollView>
       </LinearGradient>
     </ScreenBoiler>

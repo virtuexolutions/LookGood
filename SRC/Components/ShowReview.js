@@ -6,8 +6,9 @@ import CustomText from './CustomText';
 import Modal from 'react-native-modal';
 import ReviewCard from './ReviewCard';
 import {moderateScale} from 'react-native-size-matters';
+import NoData from './NoData';
 
-const ShowReview = ({modal, setModal, barberDetails}) => {
+const ShowReview = ({modal, setModal, barberDetails }) => {
   // console.log('🚀 ~ ShowReview ~ barberDetails:', barberDetails);
   const reviewArray = [
     {
@@ -98,12 +99,28 @@ const ShowReview = ({modal, setModal, barberDetails}) => {
           contentContainerStyle={{
             paddingBottom: moderateScale(40, 0.3),
           }}
+          ListEmptyComponent={() => {
+            return (
+              <View style={{
+                // backgroundColor:'red',
+                height:windowHeight*0.7,
+                justifyContent:'center'
+              }}>
+                <CustomText  style={[styles.heading ,{
+                  fontSize:moderateScale(15,.6)
+                }]}>
+                  barber have no review yet
+                </CustomText>
+              </View>
+            );
+          }}
           renderItem={({item, index}) => {
             return (
               <ReviewCard
                 modal={modal}
                 setModal={setModal}
                 item={item}
+                fromDetail={true}
                 // barberDetails={barberDetails}
               />
             );

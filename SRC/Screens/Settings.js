@@ -58,6 +58,12 @@ const Settings = () => {
         ]
       : []),
 
+      {
+        name: 'compare barber',
+        onPress: () => {
+          navigationService.navigate('CompareBaberScreen');
+        },
+      },
     {
       name: 'Payment Method',
       onPress: () => {

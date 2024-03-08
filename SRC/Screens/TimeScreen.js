@@ -30,12 +30,15 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 const TimeScreen = () => {
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
   const [selectedTimes, setSelectedTimes] = useState([]);
-  console.log("🚀 ~ file: TimeScreen.js:33 ~ TimeScreen ~ selectedTimes:", selectedTimes)
+  console.log(
+    '🚀 ~ file: TimeScreen.js:33 ~ TimeScreen ~ selectedTimes:',
+    selectedTimes,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [Loading, setLoading] = useState(false);
   const token = useSelector(state => state.authReducer.token);
   const navigation = useNavigation();
-  
+
   const showTimePicker = () => {
     setTimePickerVisible(true);
   };
@@ -59,14 +62,12 @@ const TimeScreen = () => {
     setSelectedTimes(updatedTimes);
   };
 
-
-
   // TIME POST API START
   const TimeAdd = async () => {
     const body = {
       time: selectedTimes,
     };
-    console.log("🚀 ~ file: TimeScreen.js:69 ~ TimeAdd ~ body:", body)
+    console.log('🚀 ~ file: TimeScreen.js:69 ~ TimeAdd ~ body:', body);
 
     for (let key in body) {
       if (body[key] === '') {
@@ -82,10 +83,10 @@ const TimeScreen = () => {
     setIsLoading(false);
 
     if (response != undefined) {
-       console.log('VERIFY=========>>>>>> ALPHA55', response?.data);
+      console.log('VERIFY=========>>>>>> ALPHA55', response?.data);
       Platform.OS === 'android'
-        ? ToastAndroid.show('Servicess Add', ToastAndroid.SHORT)
-        : Alert.alert('Servicess Add');
+        ? ToastAndroid.show('Added sucessfully', ToastAndroid.SHORT)
+        : Alert.alert('Added sucessfully');
       navigation.goBack();
     }
   };
@@ -99,8 +100,11 @@ const TimeScreen = () => {
 
     setLoading(false);
     if (response != undefined) {
-        console.log('🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000PARTY',response?.data?.info?.time);
-      setSelectedTimes(response?.data?.info?.time.map(item=> item?.time));
+      console.log(
+        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000PARTY',
+        response?.data?.info?.time,
+      );
+      setSelectedTimes(response?.data?.info?.time.map(item => item?.time));
     }
   };
   // TIME GET API END

@@ -23,22 +23,20 @@ const Wishlist = () => {
   const isFocused = useIsFocused();
   const [selected, setSelected] = useState('barber');
   const token = useSelector(state => state.authReducer.token);
-  const userData= useSelector(state => state.commonReducer.userData);
-  console.log("🚀 ~ file: Wishlist.js:27 ~ Wishlist ~ userData:", userData)
+  const userData = useSelector(state => state.commonReducer.userData);
+  // console.log('🚀 ~ file: Wishlist.js:27 ~ Wishlist ~ userData:', userData);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [wishListData, setWishListData] = useState([]);
+  // console.log('🚀 ~ Wishlist ~ wishListData:', wishListData);
 
   const getWishList = async () => {
-    const url = 'auth/wishlist';
+    const url = `auth/wishlist?type=${selected}`;
     setIsLoading(true);
     const response = await Get(url, token);
     setIsLoading(false);
     if (response != undefined) {
-      console.log(
-        '🚀 ~ file: Wishlist.js:31 ~ getWishList ~ response:',
-        response?.data,
-      );
+      console.log(JSON.stringify(response?.data?.Wishlist_list, null, 2));
       setWishListData(response?.data?.Wishlist_list);
     }
   };
@@ -105,11 +103,9 @@ const Wishlist = () => {
     },
   ];
 
-
-
   useEffect(() => {
     getWishList();
-  }, [isFocused]);
+  }, [isFocused, selected]);
 
   return (
     <ScreenBoiler
@@ -126,36 +122,37 @@ const Wishlist = () => {
         <CustomText isBold style={styles.text1}>
           Wishlist
         </CustomText>
-        <View
+        {/* <View
           style={{
             flexDirection: 'row',
             marginTop: moderateScale(10, 0.3),
             justifyContent: 'space-evenly',
             // backgroundColor:'red',
-            alignItems:'center',
+            alignItems: 'center',
             // alignSelf: 'center',
             width: windowWidth * 0.48,
           }}>
-         {userData?.role !='barber' && <CustomButton
-            
-            textColor={Color.black}
-            onPress={() => {
-              setSelected('barber');
-            }}
-            width={windowWidth * 0.22}
-            height={windowHeight * 0.05}
-            borderRadius={moderateScale(25, 0.6)}
-            text={'barber'}
-            fontSize={moderateScale(14, 0.3)}
-            textTransform={'uppercase'}
-            isGradient={true}
-            isBold
-            marginBottom={moderateScale(30, 0.3)}
-          />}
+          {userData?.role != 'barber' && (
+            <CustomButton
+              textColor={Color.black}
+              onPress={() => {
+                setSelected('barber');
+              }}
+              width={windowWidth * 0.22}
+              height={windowHeight * 0.05}
+              borderRadius={moderateScale(25, 0.6)}
+              text={'barber'}
+              fontSize={moderateScale(14, 0.3)}
+              textTransform={'uppercase'}
+              isGradient={true}
+              isBold
+              marginBottom={moderateScale(30, 0.3)}
+            />
+          )}
           <CustomButton
             textColor={Color.black}
             onPress={() => {
-              setSelected('Product');
+              setSelected('product');
             }}
             width={windowWidth * 0.22}
             height={windowHeight * 0.05}
@@ -167,7 +164,7 @@ const Wishlist = () => {
             isBold
             marginBottom={moderateScale(30, 0.3)}
           />
-        </View>
+        </View> */}
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
@@ -178,7 +175,12 @@ const Wishlist = () => {
             width: windowWidth,
           }}>
           {isLoading ? (
-            <View style={{justifyContent:'center', alignItems:'center', height:windowHeight*0.6}}>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: windowHeight * 0.6,
+              }}>
               <ActivityIndicator color={Color.themeColor} size={'large'} />
             </View>
           ) : (
@@ -208,7 +210,7 @@ const Wishlist = () => {
               data={wishListData.reverse()}
               renderItem={({item, index}) => {
                 return (
-                  <BarberCard
+                   <BarberCard
                     item={item?.barber_info}
                     onPress={() => {
                       navigationService.navigate('BarberServicesScreen', {
@@ -216,6 +218,10 @@ const Wishlist = () => {
                       });
                     }}
                     addedInWishlist={true}
+                    data={wishListData}
+                    setData={setWishListData}
+                    fromWishList={true}
+
                   />
                 );
               }}

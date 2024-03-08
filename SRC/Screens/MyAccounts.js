@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Image,
@@ -29,30 +29,44 @@ import CustomText from '../Components/CustomText';
 import Feather from 'react-native-vector-icons/Feather';
 import HolidayModal from '../Components/HolidayModal';
 import TravelModal from '../Components/TravelModal';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import SelectLocationModal from '../Components/SelectLocationModal';
 
 const MyAccounts = props => {
   const dispatch = useDispatch();
 
   const user = useSelector(state => state.commonReducer.userData);
-  // console.log('🚀 ~ MyAccounts ~ user:', user);
+  console.log('🚀 ~ MyAccounts ~ user:', user?.temporary_address);
   // console.log(user?.photo);
   const token = useSelector(state => state.authReducer.token);
+  // console.log('🚀 ~ MyAccounts ~ token:', token);
   const [showModal, setShowModal] = useState(false);
   const [imageObject, setImageObject] = useState({});
   const [firstName, setFirstName] = useState(user?.first_name);
   const [lastName, setLastName] = useState(user?.last_name);
   const [phone, setPhone] = useState(user?.phone);
   const [email, setEmail] = useState(user?.email);
+  const [address, setAddress] = useState(
+    user?.location == null
+      ? {}
+      : {name: user?.location, lng: user?.lng, lat: user?.lat},
+  );
+  const [selectLocationModal, setselectLocationModal] = useState(false);
   const [country, setCountry] = useState(user?.country);
-  // const [description, setDescription] = useState(user?.description);
   const [isLoading, setIsLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
-  const [isTravelMode, setIsTravelMode] = useState(false);
-  const [isHolidayMode, setIsHolidayMode] = useState(false);
-  const [Location, setLocation] = useState('');
-  const [rushService, setRushService] = useState(false);
-  const [displayText, setDisplayText] = useState('');
+  const [travelDateFrom, setTravelDateFrom] = useState(user?.travel_date_from ? user?.travel_date_from :'');
+  const [travelDateTo, setTravelDateTo] = useState(user?.travel_date_to ? user?.travel_date_to :'');
+  const [isHolidayMode, setIsHolidayMode] = useState(
+    user?.holiday_mode ? user?.holiday_mode : false,
+  );
+  const [temproaryAddress, setTemproaryAddress] = useState(
+    user?.temporary_address == null ? {} : user?.temporary_address,
+  );
+  const [rushService, setRushService] = useState(
+    user?.rush_service ? user?.rush_service : false,
+  );
 
   const imageArray =
     Object.keys(imageObject).length > 0
@@ -73,33 +87,81 @@ const MyAccounts = props => {
       last_name: lastName,
       phone: phone,
       email: email,
-      rush_service:rushService,
-      holiday_mode:isHolidayMode,
-      travel_mode: isTravelMode,
-      location:Location,
+      address_name: address?.name,
+      address_lat: address?.lat,
+      address_lng: address?.lng,
+      rush_service: rushService == true ? 1 : 0,
+      holiday_mode: isHolidayMode == true ? 1 : 0,
     };
     const formdata = new FormData();
     for (let key in params) {
       if ([undefined, '', null].includes(params[key])) {
         return Platform.OS == 'android'
-          ? ToastAndroid.show(
-              `${key.replace(formRegEx, formRegExReplacer)} is empty`,
-              ToastAndroid.SHORT,
-            )
-          : Alert.alert(
-              `${key.replace(formRegEx, formRegExReplacer)} is empty`,
-            );
+          ? ToastAndroid.show(`Required field is empty`, ToastAndroid.SHORT)
+          : Alert.alert(`Required field is empty`);
       }
       formdata.append(key, params[key]);
     }
     if (Object.keys(imageObject).length > 0) {
       formdata.append('photo', imageObject);
     }
-    console.log(formdata);
+    if (Object.keys(temproaryAddress).length > 0) {
+      formdata.append('temporary_address_name', temproaryAddress?.name);
+      formdata.append('temporary_address_lat', temproaryAddress?.lat);
+      formdata.append('temporary_address_lng', temproaryAddress?.lng);
+      formdata.append('travel_date_from', travelDateFrom);
+      formdata.append('travel_date_to', travelDateTo);
+      formdata.append('travel_mode', 1);
+    } else {
+      formdata.append('travel_mode', 0);
+    }
+    console.log(JSON.stringify(formdata, null, 2));
 
     const url = 'auth/profile';
     setIsLoading(true);
-    const response = await Post(url, formdata, apiHeader(token, true));
+    // return  console.log(travelDateFrom);
+    const response = await Post(url, formdata, apiHeader(token));
+    setIsLoading(false);
+    if (response !== undefined) {
+      console.log('response?.data?.data?.user', response?.data);
+      dispatch(setUserData(response?.data?.user_info));
+
+      Platform.OS == 'android'
+        ? ToastAndroid.show('Profile Updated Succesfully', ToastAndroid.SHORT)
+        : Alert.alert('Profile Updated Succesfully');
+      props.navigation.goBack();
+    }
+  };
+
+  const CustomerEditProfile = async () => {
+    console.log('customer runs');
+    const params = {
+      first_name: firstName,
+      last_name: lastName,
+      phone: phone,
+      email: email,
+      address_name: address?.name,
+      address_lat: address?.lat,
+      address_lng: address?.lng,
+    };
+    const formdata = new FormData();
+    for (let key in params) {
+      if ([undefined, '', null].includes(params[key])) {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(`Required field is empty`, ToastAndroid.SHORT)
+          : Alert.alert(`Required field is empty`);
+      }
+      formdata.append(key, params[key]);
+    }
+    if (Object.keys(imageObject).length > 0) {
+      formdata.append('photo', imageObject);
+    }
+
+    console.log(JSON.stringify(formdata, null, 2));
+
+    const url = 'auth/profile';
+    setIsLoading(true);
+    const response = await Post(url, formdata, apiHeader(token));
     setIsLoading(false);
 
     if (response !== undefined) {
@@ -112,6 +174,7 @@ const MyAccounts = props => {
       props.navigation.goBack();
     }
   };
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -257,7 +320,34 @@ const MyAccounts = props => {
             borderRadius={moderateScale(30, 0.4)}
             disable
           />
-          <TextInputWithTitle
+          <TouchableOpacity
+            onPress={() => {
+              setselectLocationModal(true);
+            }}>
+            <TextInputWithTitle
+              iconName={'map-pin'}
+              iconType={Feather}
+              // disable
+              titleText={'address'}
+              secureText={false}
+              placeholder={'Address'}
+              setText={setAddress}
+              value={address?.name}
+              viewHeight={0.06}
+              viewWidth={0.75}
+              inputWidth={0.6}
+              // border={1}
+              // borderColor={'#1B5CFB45'}
+              backgroundColor={'#FFFFFF'}
+              marginTop={moderateScale(12, 0.3)}
+              color={Color.themeColor}
+              placeholderColor={Color.themeLightGray}
+              borderRadius={moderateScale(30, 0.4)}
+              disable
+            />
+          </TouchableOpacity>
+
+          {/* <TextInputWithTitle
             iconName={'globe'}
             iconType={FontAwesome}
             titleText={'Country'}
@@ -267,7 +357,7 @@ const MyAccounts = props => {
             value={country}
             viewHeight={0.06}
             viewWidth={0.75}
-            inputWidth={0.74}
+            inputWidth={0.6}
             // border={1}
             // borderColor={'#1B5CFB45'}
             backgroundColor={'#FFFFFF'}
@@ -275,19 +365,24 @@ const MyAccounts = props => {
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
             borderRadius={moderateScale(30, 0.4)}
-          />
+          /> */}
           {user?.role != 'customer' && (
-            <>
-              <View
+            <View
+              style={{
+                width: windowWidth * 0.7,
+                // backgroundColor:'pink'
+              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  setRushService(!rushService);
+                  console.log('first=======>');
+                }}
                 style={{
-                  // backgroundColor:'red',
-                  width: windowWidth * 0.7,
+                  // backgroundColor:'blue',
+                  width: windowWidth * 0.3,
                   flexDirection: 'row',
                   alignItems: 'center',
                   paddingTop: moderateScale(15, 0.6),
-                  // position:'absolute',
-                  // left:10,
-                  // bottom:10
                 }}>
                 <TouchableOpacity
                   onPress={() => {
@@ -295,10 +390,10 @@ const MyAccounts = props => {
                     console.log('first=======>');
                   }}
                   style={{
-                    height: windowHeight * 0.016,
-                    width: windowHeight * 0.016,
-                    // backgroundColor:'red',
-                    borderRadius: moderateScale((windowHeight * 0.016) / 2),
+                    height: windowHeight * 0.02,
+                    width: windowHeight * 0.02,
+                    // backgroundColor:'green',
+                    borderRadius: moderateScale((windowHeight * 0.02) / 2),
                     borderWidth: moderateScale(1, 0.6),
                     borderColor: Color.themeColor,
                   }}>
@@ -311,7 +406,7 @@ const MyAccounts = props => {
                       name="check"
                       as={FontAwesome}
                       color={Color.themeColor}
-                      size={11}
+                      size={13}
                     />
                   )}
                 </TouchableOpacity>
@@ -325,110 +420,93 @@ const MyAccounts = props => {
                   style={{
                     marginHorizontal: moderateScale(8, 0.6),
                     color: Color.white,
+                    fontSize: moderateScale(14, 0.6),
                   }}>
                   rush service
                 </CustomText>
-              </View>
+              </TouchableOpacity>
               <View
                 style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  // backgroundColor:'red',
-                  width: windowWidth * 0.7,
+                  // backgroundColor: 'red',
+                  width: windowWidth * 0.3,
                   paddingVertical: moderateScale(10, 0.6),
                 }}>
-                <View
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsVisibleModal(!isVisibleModal);
+                  }}
                   style={{
+                    // backgroundColor: 'green',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <View
-                    style={{
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                    }}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        if (isTravelMode == true) {
-                          setIsTravelMode(prevState => !prevState);
-                          setIsVisibleModal(false);
-                        } else {
-                          setIsVisibleModal(true);
-                          setIsTravelMode(prevState => !prevState);
-                        }
-                        // if (isHolidayMode) {
-                        //   setIsHolidayMode(false);
-                        // }
-                        // setIsVisibleModal(true);
-                        // setIsTravelMode(prevState => !prevState);
-                        // console.log('hello =====>');
-                      }}
-                      style={{
-                        height: windowHeight * 0.016,
-                        width: windowHeight * 0.016,
-                        // backgroundColor:'red',
-                        borderRadius: moderateScale((windowHeight * 0.016) / 2),
-                        borderWidth: moderateScale(1, 0.6),
-                        borderColor: Color.themeColor,
-                      }}>
-                      {isTravelMode && (
-                        <Icon
-                          style={{
-                            textAlign: 'center',
-                            // backgroundColor:'red'
-                          }}
-                          name="check"
-                          as={FontAwesome}
-                          color={Color.themeColor}
-                          size={11}
-                        />
-                      )}
-                    </TouchableOpacity>
-
-                    <CustomText
-                      onPress={() => {
-                        if (isTravelMode == true) {
-                          setIsTravelMode(prevState => !prevState);
-                          setIsVisibleModal(false);
-                        } else {
-                          setIsVisibleModal(true);
-                          setIsTravelMode(prevState => !prevState);
-                        }
-                        // if (isHolidayMode) {
-                        //   setIsHolidayMode(false);
-                        // }
-                        // setIsVisibleModal(true);
-                        // setIsTravelMode(prevState => !prevState);
-                        // console.log('travel mode ===========>');
-                      }}
-                      isBold
-                      style={{
-                        marginHorizontal: moderateScale(8, 0.6),
-                        color: Color.white,
-                      }}>
-                      Travel mode
-                    </CustomText>
-                  </View>
-                </View>
-
-                <View
-                  style={{
                     flexDirection: 'row',
-                    alignItems: 'center',
+                    paddingBottom: moderateScale(10, 0.6),
                   }}>
                   <TouchableOpacity
                     onPress={() => {
-                      if (isTravelMode) {
-                        setIsTravelMode(false);
+                      if (Object.keys(temproaryAddress).length == 0) {
+                        setIsVisibleModal(!isVisibleModal);
+                      } else {
+                        setTemproaryAddress({});
                       }
-                      // setIsVisibleModal(true);
+                    }}
+                    style={{
+                      height: windowHeight * 0.02,
+                      width: windowHeight * 0.02,
+                      // backgroundColor:'red',
+                      borderRadius: moderateScale((windowHeight * 0.02) / 2),
+                      borderWidth: moderateScale(1, 0.6),
+                      borderColor: Color.themeColor,
+                    }}>
+                    {Object.keys(temproaryAddress).length > 0 && (
+                      <Icon
+                        style={{
+                          textAlign: 'center',
+                          // backgroundColor:'red'
+                        }}
+                        name="check"
+                        as={FontAwesome}
+                        color={Color.themeColor}
+                        size={13}
+                      />
+                    )}
+                  </TouchableOpacity>
+
+                  <CustomText
+                    onPress={() => {
+                      if (Object.keys(temproaryAddress).length == 0) {
+                        setIsVisibleModal(!isVisibleModal);
+                      } else {
+                        setTemproaryAddress({});
+                      }
+                    }}
+                    isBold
+                    style={{
+                      marginHorizontal: moderateScale(8, 0.6),
+                      color: Color.white,
+                      fontSize: moderateScale(14, 0.6),
+                    }}>
+                    Travel mode
+                  </CustomText>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsHolidayMode(prevState => !prevState);
+                  }}
+                  style={{
+                    // backgroundColor: Color.lightGrey,
+                    flexDirection: 'row',
+                    // alignItems: 'center',
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
                       setIsHolidayMode(prevState => !prevState);
                     }}
                     style={{
-                      height: windowHeight * 0.016,
-                      width: windowHeight * 0.016,
+                      height: windowHeight * 0.02,
+                      width: windowHeight * 0.02,
                       // backgroundColor:'red',
-                      borderRadius: moderateScale((windowHeight * 0.016) / 2),
+                      borderRadius: moderateScale((windowHeight * 0.02) / 2),
                       borderWidth: moderateScale(1, 0.6),
                       borderColor: Color.themeColor,
                     }}>
@@ -441,17 +519,13 @@ const MyAccounts = props => {
                         name="check"
                         as={FontAwesome}
                         color={Color.themeColor}
-                        size={11}
+                        size={13}
                       />
                     )}
                   </TouchableOpacity>
 
                   <CustomText
                     onPress={() => {
-                      if (isTravelMode) {
-                        setIsTravelMode(false);
-                      }
-
                       setIsHolidayMode(!isHolidayMode);
                       console.log('hello mode here ');
                     }}
@@ -459,23 +533,66 @@ const MyAccounts = props => {
                     style={{
                       marginHorizontal: moderateScale(8, 0.6),
                       color: Color.white,
+                      fontSize: moderateScale(14, 0.6),
                     }}>
                     Holiday mode
                   </CustomText>
-                </View>
+                </TouchableOpacity>
               </View>
-              {isTravelMode && (
-                <CustomText
-                  style={{
-                    color: Color.white,
-                    // backgroundColor:'red',s/
-                    width: windowWidth * 0.6,
-                    // marginBottom: moderateScale(5, 0.6),
-                  }}>
-                  {Location}
-                </CustomText>
+              {Object.keys(temproaryAddress).length > 0 && (
+                <>
+                  <CustomText
+                    isBold
+                    style={{
+                      color: Color.white,
+                      fontSize: moderateScale(20, 0.6),
+                      marginTop: moderateScale(20, 0.6),
+                      marginBottom: moderateScale(5, 0.6),
+                    }}>
+                    Holiday Location
+                  </CustomText>
+                  <View>
+                    <Icon
+                      name="close"
+                      as={FontAwesome}
+                      size={moderateScale(14, 0.6)}
+                      color={Color.themeColor}
+                      style={{
+                        position: 'absolute',
+                        right: 5,
+                        top: 0,
+                        zIndex: 1,
+                      }}
+                      onPress={() => {
+                        console.log('ggsfsdfasf');
+                        setTravelDateFrom('');
+                        setTravelDateTo('');
+                        setTemproaryAddress({});
+                      }}
+                    />
+                    <CustomText
+                      style={{
+                        color: Color.white,
+                        // backgroundColor:'red',s/
+                        width: windowWidth * 0.6,
+                        // marginBottom: moderateScale(5, 0.6),
+                      }}>
+                      {temproaryAddress?.name}
+                    </CustomText>
+                    <CustomText
+                    isBold
+                    style={{
+                      color: Color.white,
+                      fontSize: moderateScale(14, 0.6),
+                      marginTop: moderateScale(20, 0.6),
+                      marginBottom: moderateScale(5, 0.6),
+                    }}>
+                     { `from: ${travelDateFrom} \nTo: ${travelDateTo}`}  
+                  </CustomText>
+                  </View>
+                </>
               )}
-            </>
+            </View>
           )}
           <CustomButton
             bgColor={Color.themeColor}
@@ -484,7 +601,7 @@ const MyAccounts = props => {
             textColor={Color.black}
             borderRadius={moderateScale(20, 0.3)}
             onPress={() => {
-              EditProfile();
+              user?.role == 'customer' ? CustomerEditProfile() : EditProfile();
             }}
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
@@ -517,14 +634,19 @@ const MyAccounts = props => {
         />
 
         <TravelModal
-          Location={Location}
-          setLocation={setLocation}
-          isTravelMode={isTravelMode}
-          setIsTravelMode={setIsTravelMode}
+          setLocation={setTemproaryAddress}
           isVisibleModal={isVisibleModal}
           setIsVisibleModal={setIsVisibleModal}
-          displayText={displayText}
-          setDisplayText={setDisplayText}
+          travelDateFrom={travelDateFrom}
+          setDateFrom={setTravelDateFrom}
+          travelDateTo={travelDateTo}
+          setDateTo={setTravelDateTo}
+          location={temproaryAddress}
+        />
+        <SelectLocationModal
+          isVisible={selectLocationModal}
+          setIsVisibleModal={setselectLocationModal}
+          setLocation={setAddress}
         />
       </LinearGradient>
     </ScreenBoiler>

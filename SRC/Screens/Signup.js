@@ -3,6 +3,7 @@ import {
   Alert,
   ImageBackground,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   ToastAndroid,
@@ -31,6 +32,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import navigationService from '../navigationService';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import Header from '../Components/Header';
+import Feather from 'react-native-vector-icons/Feather'
+import SelectLocationModal from '../Components/SelectLocationModal';
+
+
+
 
 const Signup = ({navigation}) => {
   const dispatch = useDispatch();
@@ -48,6 +54,11 @@ const Signup = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
   const [contact, setContact] = useState('');
   const [email, setEmail] = useState('');
+  const [address ,setAddress] =useState({})
+  console.log("🚀 ~ Signup ~ address:", address)
+  const [isVisibleModal ,setIsVisibleModal]=useState(false)
+  const [selectLocationModal,setselectLocationModal]=useState(false)
+  console.log("🚀 ~ Signup ~ selectLocationModal:", selectLocationModal)
 
   const formData = new FormData();
 
@@ -61,7 +72,11 @@ const Signup = ({navigation}) => {
       phone: contact,
       password: password,
       confirm_password: confirmPassword,
+      address_name: address?.name,
+      address_lat: address?.lat,
+      address_lng: address?.lng,
     };
+  //  return console.log("🚀 ~ SignUp ~ params:", params)
 
     for (let key in params) {
       if (params[key] === '') {
@@ -120,15 +135,11 @@ const Signup = ({navigation}) => {
   };
 
   return (
-    // <ScreenBoiler
-    //   // showBack={true}
-    //   showHeader={true}
-    //   statusBarBackgroundColor={Color.black}
-    //   statusBarContentStyle={'light-content'}>
+   
     <>
       <CustomStatusBar backgroundColor={'black'} barStyle={'light-content'} />
       <Header />
-      <KeyboardAwareScrollView
+      <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           alignItems: 'center',
@@ -260,6 +271,32 @@ const Signup = ({navigation}) => {
             borderRadius={moderateScale(30, 0.4)}
 
           />
+          <TouchableOpacity
+            onPress={() => {
+              setselectLocationModal(true);
+            }}>
+            <TextInputWithTitle
+              iconName={'map-pin'}
+              iconType={Feather}
+              // disable
+              titleText={'address'}
+              secureText={false}
+              placeholder={'Address'}
+              setText={setAddress}
+              value={address?.name}
+              viewHeight={0.06}
+              viewWidth={0.75}
+              inputWidth={0.6}
+              // border={1}
+              // borderColor={'#1B5CFB45'}
+              backgroundColor={'#FFFFFF'}
+              marginTop={moderateScale(12, 0.3)}
+              color={Color.themeColor}
+              placeholderColor={Color.themeLightGray}
+              borderRadius={moderateScale(30, 0.4)}
+              disable
+            />
+          </TouchableOpacity>
           <View style={{
             zIndex : 1,
           }}>
@@ -360,7 +397,12 @@ const Signup = ({navigation}) => {
           setFileObject={setImage}
         />
         
-      </KeyboardAwareScrollView>
+      </ScrollView>
+        <SelectLocationModal
+         isVisible={selectLocationModal}
+         setIsVisibleModal={setselectLocationModal}
+         setLocation={setAddress}
+       />
       {/* // </ScreenBoiler> */}
     </>
   );

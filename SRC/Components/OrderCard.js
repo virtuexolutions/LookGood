@@ -13,6 +13,7 @@ import navigationService from '../navigationService';
 import {useSelector} from 'react-redux';
 
 const OrderCard = ({item}) => {
+  console.log('🚀 ~ OrderCard ~ item:', item);
   // console.log('🚀 ~ OrderCard ~ item:', item?.status);
   // const [buttonText ,setButtonText] =useState(user?.role == 'customer' ? 'reviwes' : 'detail')
   const user = useSelector(state => state.commonReducer.userData);
@@ -43,7 +44,7 @@ const OrderCard = ({item}) => {
   const servicesText = calculateTotalAmount();
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card]}>
       <View
         style={{
           flexDirection: 'row',
@@ -54,29 +55,30 @@ const OrderCard = ({item}) => {
             styles.statusView,
             {
               backgroundColor:
-                item?.status.toLowerCase() == 'reject'
-                  ? 'rgba(255,0,0,0.6)'
-                  : item?.status.toLowerCase() == 'accept'
-                  ? 'rgba(0,255,0,0.6)'
-                  : item?.status.toLowerCase() == 'complete'
-                  ? 'rgba(0,255,255,0.6)'
-                  : 'rgba(233,255,0,0.6)',
+                item?.review == null
+                  ? item?.status.toLowerCase() == 'reject'
+                    ? 'rgba(255,0,0,0.6)'
+                    : item?.status.toLowerCase() == 'accept'
+                    ? 'rgba(0,255,0,0.6)'
+                    : item?.status.toLowerCase() == 'complete'
+                    ? 'rgba(0,255,255,0.6)'
+                    : 'rgba(233,255,0,0.6)'
+                  : 'rgba(4, 7, 166, 0.8)',
             },
           ]}>
-            <CustomText style={styles.status}>{item?.status}</CustomText>
-          </View>
+          <CustomText isBold style={styles.status}>
+            {' '}
+            {item?.review == null ? item?.status : 'Reviewed'}
+          </CustomText>
+        </View>
         <CustomImage
           source={{
-            uri: item?.barber_info?.photo
-              ? item?.barber_info?.photo
-              : item?.member_info?.photo,
+            uri: item?.member_info?.photo,
           }}
           style={styles.image}
         />
-        <CustomText isBold numberOfLines={2} style={styles.name}>
-          {item?.barber_info?.first_name
-            ? item?.barber_info?.first_name
-            : item?.member_info?.first_name}
+        <CustomText isBold numberOfLines={1} style={styles.name}>
+          {`${item?.member_info?.first_name} ${item?.member_info?.last_name}`}
         </CustomText>
       </View>
       <View style={styles.eachRow}>
@@ -112,7 +114,7 @@ const OrderCard = ({item}) => {
         </CustomText>
         <CustomText style={styles.heading}>
           {/* {numeral(calculateTotalAmount()).format('$0,0.0')} */}
-          {amount()}
+          {numeral(item?.total_price).format('$0,0.00')}
         </CustomText>
       </View>
       <View style={styles.eachRow}>
@@ -129,26 +131,25 @@ const OrderCard = ({item}) => {
         </CustomText>
       </View>
       {
-       
-      <CustomButton
-        bgColor={Color.themeColor}
-        borderColor={'white'}
-        borderWidth={1}
-        textColor={Color.black}
-        onPress={() => {
-          navigationService.navigate('OrderDetails', {item: item});
-        }}
-        borderRadius={moderateScale(30,0.4)}
-        width={windowWidth * 0.15}
-        height={windowHeight * 0.02}
-        text={'Details'}
-        fontSize={moderateScale(8, 0.3)}
-        textTransform={'uppercase'}
-        isGradient={true}
-        isBold
-        alignSelf={'flex-end'}
-        marginTop={moderateScale(10, 0.3)}
-      />
+        <CustomButton
+          bgColor={Color.themeColor}
+          borderColor={'white'}
+          borderWidth={1}
+          textColor={Color.black}
+          onPress={() => {
+            navigationService.navigate('OrderDetails', {item: item});
+          }}
+          borderRadius={moderateScale(30, 0.4)}
+          width={windowWidth * 0.15}
+          height={windowHeight * 0.02}
+          text={'Details'}
+          fontSize={moderateScale(8, 0.3)}
+          textTransform={'uppercase'}
+          isGradient={true}
+          isBold
+          alignSelf={'flex-end'}
+          marginTop={moderateScale(10, 0.3)}
+        />
       }
     </View>
   );
@@ -174,11 +175,12 @@ const styles = ScaledSheet.create({
     top: 2,
     paddingHorizontal: moderateScale(8, 0.6),
     paddingVertical: moderateScale(3, 0.6),
-    borderRadius : moderateScale(10,0.6)
+    borderRadius: moderateScale(10, 0.6),
   },
-  status:{
+  status: {
     textAlign: 'center',
-    fontSize : moderateScale(9,0.6)
+    fontSize: moderateScale(10, 0.6),
+    color : Color.white
   },
   image: {
     width: moderateScale(40, 0.3),
@@ -189,7 +191,7 @@ const styles = ScaledSheet.create({
   name: {
     fontSize: moderateScale(14, 0.3),
     marginLeft: moderateScale(3, 0.3),
-    width: '70%',
+    width: '28%',
     // backgroundColor : 'red',
   },
   eachRow: {

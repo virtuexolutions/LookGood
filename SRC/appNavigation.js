@@ -44,6 +44,8 @@ import Vouchers from './Screens/Vouchers';
 import Purchase from './Screens/Purchase';
 import CustomerBookingDetails from './Screens/CustomerBookingDetails';
 import GetStarted from './Screens/GetStarted';
+import CompareBaberScreen from './Screens/CompareBaberScreen';
+import BarberCompersion from './Screens/BarberCompersion';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -81,7 +83,10 @@ const AppNavigator = () => {
           <RootNav.Screen name="ChooseDate" component={ChooseDate} />
           <RootNav.Screen name="TimeScreen" component={TimeScreen} />
           <RootNav.Screen name="AddService" component={AddService} />
-          <RootNav.Screen name="CustomerBookingDetail" component={CustomerBookingDetails} />
+          <RootNav.Screen
+            name="CustomerBookingDetail"
+            component={CustomerBookingDetails}
+          />
           <RootNav.Screen name="TabNavigation" component={TabNavigation} />
           <RootNav.Screen name="CheckoutScreen" component={CheckoutScreen} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
@@ -101,6 +106,9 @@ const AppNavigator = () => {
           <RootNav.Screen name="ImageUpload" component={ImageUpload} />
           <RootNav.Screen name="ImageScreen" component={ImageScreen} />
           <RootNav.Screen name="Purchase" component={Purchase} />
+          <RootNav.Screen name="CompareBaberScreen" component={CompareBaberScreen} />
+          <RootNav.Screen name="BarberCompersion" component={BarberCompersion} />
+
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -111,6 +119,9 @@ const AppNavigator = () => {
 
 export const TabNavigation = props => {
   const Tabs = createBottomTabNavigator();
+  const userData = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ TabNavigation ~ userData:", userData?.role)
+
   return (
     <Tabs.Navigator
       screenOptions={({route}) => ({
@@ -133,6 +144,11 @@ export const TabNavigation = props => {
             color = focused ? Color.themeColor : Color.themeLightGray;
             size = focused ? moderateScale(30, 0.3) : moderateScale(20, 0.3);
             type = AntDesign;
+          } else if (route.name === 'WalletScreen') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
+            color = focused ? Color.themeColor : Color.themeLightGray;
+            size = focused ? moderateScale(30, 0.3) : moderateScale(20, 0.3);
+            type = Ionicons;
           } else if (route.name === 'Store') {
             iconName = focused ? 'briefcase' : 'briefcase-outline';
             color = focused ? Color.themeColor : Color.themeLightGray;
@@ -167,7 +183,13 @@ export const TabNavigation = props => {
         tabBarShowLabel: false,
       })}>
       <Tabs.Screen name={'HomeScreen'} component={Homescreen} />
-      <Tabs.Screen name={'Wishlist'} component={Wishlist} />
+      {userData?.role == 'customer' ? (
+        <Tabs.Screen name={'Wishlist'} component={Wishlist} />
+      ) : (
+        <Tabs.Screen name="WalletScreen" component={WalletScreen} />
+
+      )}
+
       <Tabs.Screen name={'Store'} component={Store} />
       <Tabs.Screen name={'Settings'} component={Settings} />
     </Tabs.Navigator>

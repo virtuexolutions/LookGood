@@ -1,4 +1,10 @@
-import {StyleSheet, Text, View, TextInput, ActivityIndicator} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useRef, useState} from 'react';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CustomText from './CustomText';
@@ -8,42 +14,52 @@ import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from './CustomButton';
 import TextInputWithTitle from './TextInputWithTitle';
-import { Platform } from 'react-native';
-import { ToastAndroid } from 'react-native';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { useSelector } from 'react-redux';
+import {Platform} from 'react-native';
+import {ToastAndroid} from 'react-native';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import moment from 'moment';
 
-const ReviewModal = ({item, setRef, rbRef}) => {
-  const token = useSelector(state=> state.authReducer.token)
+const ReviewModal = ({item, setRef, rbRef, setClientReview}) => {
+  console.log('🚀 ~ ReviewModal ~ item:', item);
+  const token = useSelector(state => state.authReducer.token);
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const sendReview =async () => {
-    const body ={
-        rating: rating,
-        description:review
+  const sendReview = async () => {
+    const body = {
+      rating: rating,
+      description: review,
+      booking_id: item?.id,
+    };
+    console.log('🚀 ~ sendReview ~ body:', body);
+    if (rating == 0) {
+      return Platform.OS == 'android'
+        ? ToastAndroid.show('Please give a review', ToastAndroid.SHORT)
+        : alert('Please give a review');
     }
-    if(rating == 0){
-        return Platform.OS == 'android'?
-        ToastAndroid.show("Please give a review",ToastAndroid.SHORT):
-        alert('Please give a review')
+    if (review == '') {
+      return Platform.OS == 'android'
+        ? ToastAndroid.show('Please give some feedback', ToastAndroid.SHORT)
+        : alert('Please give some feedback');
     }
-    if(review == ''){
-        return Platform.OS == 'android' ?
-        ToastAndroid.show("Please give some feedback",ToastAndroid.SHORT):
-        alert('Please give some feedback')
+    const url = 'auth/review';
+    setLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setLoading(false);
+    if (response != undefined) {
+      console.log(response?.data);
+      rbRef.close();
+      setClientReview({
+        
+          rating: rating,
+          description: review,
+          created_at: moment().format(),
+        
+      });
     }
-    const url ='auth/review'
-    setLoading(true) 
-    const response = await Post(url,body ,apiHeader(token))
-    setLoading(false)
-    if (response != undefined){
-      rbRef.close()
-        setReview(response?.data)
-}}
-
-  
+  };
 
   return (
     <RBSheet
@@ -72,8 +88,7 @@ const ReviewModal = ({item, setRef, rbRef}) => {
             color: Color.themeColor1,
             // color:Color.black
             // paddingVertical:moderateScale(10,0.3)
-          }}
-          >
+          }}>
           Please share your experience
         </CustomText>
         <AirbnbRating
@@ -87,15 +102,13 @@ const ReviewModal = ({item, setRef, rbRef}) => {
             setRating(rating);
           }}
         />
+        <View
+          style={{
+            marginTop: 10,
+          }}
+        />
 
         <TextInputWithTitle
-        onPress={()=> 
-            // if()
-       { Platform.OS == 'android' ?
-        ToastAndroid.show('reviews is empty' , ToastAndroid.SHORT)
-        :alert('reviews')
-        }
-        }
           multiline={true}
           secureText={false}
           placeholder={'Your review'}
@@ -107,7 +120,7 @@ const ReviewModal = ({item, setRef, rbRef}) => {
           border={1}
           borderColor={Color.themeColor1}
           backgroundColor={'#FFFFFF'}
-          marginTop={moderateScale(50, 0.6)}
+          // marginTop={moderateScale(50, 0.6)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
           borderRadius={moderateScale(25, 0.3)}
@@ -129,9 +142,9 @@ const ReviewModal = ({item, setRef, rbRef}) => {
             sendReview();
           }}
           bgColor={Color.themeColor1}
-          //   borderRadius={moderateScale(30, 0.3)}
+          borderRadius={moderateScale(30, 0.3)}
           fontSize={moderateScale(15, 0.3)}
-        //   bgColor={Color.themeColor}
+          //   bgColor={Color.themeColor}
           isGradient={true}
           borderColor={'white'}
           borderWidth={1}
@@ -140,7 +153,6 @@ const ReviewModal = ({item, setRef, rbRef}) => {
     </RBSheet>
   );
 };
-
 
 export default ReviewModal;
 

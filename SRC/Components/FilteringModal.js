@@ -21,7 +21,7 @@ const FilteringModal = ({
     'featured barber',
     'nearest to me',
     'earliest',
-    'categorize',
+   
   ];
   return (
     <Modal
@@ -41,6 +41,11 @@ const FilteringModal = ({
             Barber Filters
           </CustomText>
         </View>
+        <View style={{
+           flexWrap: 'wrap',
+    flexDirection: 'row',
+        }}>
+
         {dummyArray.map((item, index) => {
           return (
             <TouchableOpacity
@@ -70,24 +75,26 @@ const FilteringModal = ({
             </TouchableOpacity>
           );
         })}
-        {selectedItem.length > 0 && (
-          <CustomButton
+        </View>
+        
+      {/* {selectedItem.length > 0 && ( */}
+          {/* <CustomButton
             textColor={Color.white}
             borderWidth={1}
             borderRadius={moderateScale(15, 0.6)}
             borderColor={Color.white}
-            width={windowWidth * 0.15}
+            width={windowWidth * 0.25}
             height={windowHeight * 0.04}
-            text={'ok'}
+            text={'apply filter'}
             fontSize={moderateScale(13, 0.3)}
             onPress={() => {
-              barberFilter(), setIsVisible(false);
+              barberFilter() 
             }}
             isBold
             marginHorizontal={moderateScale(20, 0.3)}
-            marginTop={moderateScale(5, 0.3)}
-          />
-        )}
+            // marginTop={moderateScale(15, 0.3)}
+          /> */}
+        {/* )} */}
       </View>
     </Modal>
   );
@@ -108,8 +115,7 @@ const styles = ScaledSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     //   height: windowHeight * 0.2,
     width: windowWidth * 0.8,
-    flexWrap: 'wrap',
-    flexDirection: 'row',
+   
     paddingBottom: moderateScale(10, 0.6),
     borderRadius: moderateScale(10, 0.6),
     overflow: 'hidden',

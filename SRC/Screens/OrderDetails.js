@@ -10,6 +10,8 @@ import moment from 'moment/moment';
 import OrderCard from '../Components/OrderCard';
 import CustomImage from '../Components/CustomImage';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import numeral from 'numeral';
 import {Icon} from 'native-base';
 import CustomButton from '../Components/CustomButton';
@@ -19,22 +21,21 @@ import {ActivityIndicator} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import ImageView from 'react-native-image-viewing';
 import ReviewModal from '../Components/ReviewModal';
+import ReviewCard from '../Components/ReviewCard';
 
 const OrderDetails = props => {
   const item = props?.route?.params?.item;
-  // console.log('🚀 ~ file: OrderDetails.js:19 ~ OrderDetails ~ item:',  item?.booking_date , item?.booking_time);
+  console.log('🚀 ~ OrderDetails ~ item:', item?.review);
   const user = useSelector(state => state.commonReducer.userData);
-  const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
+  const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setisLoading2] = useState(false);
   const [imageModal, setImageModal] = useState(false);
   const [rbRef, setRbref] = useState(null);
-  const [buttonText, setButtonText] = useState(
-    item?.status == 'accept' ? 'done' : '',
+  const [review, setReview] = useState(
+    item?.review == null ? {} : item?.review,
   );
-
-  console.log("🚀 ~ OrderDetails ~ buttonText:", buttonText)
 
   const dateDiff = (date, time) => {
     return moment(date + ' ' + moment(time, 'h:mm A').format('HH:mm:ss')).diff(
@@ -79,28 +80,21 @@ const OrderDetails = props => {
 
   const accept = async () => {
     const body = {
-      status: 'complete',
+      status: item?.status == 'accept' ? 'waiting for approval' : 'complete',
     };
     const url = `auth/barber/booking/status/${item?.id}`;
     setisLoading2(true);
     const response = await Post(url, body, apiHeader(token));
     setisLoading2(false);
     if (response != undefined) {
-     
       console.log(
         '🚀 ~ file: OrderDetails.js:73 ~ accept ~ response:',
         response?.data,
       );
-      navigation.goBack()
+      navigation.goBack();
       // setButtonText('review')
-
     }
   };
-
-  useEffect(() => {
-    console.log( 'dfasd asd asd asd a da d ',dateDiff(item?.booking_date , item?.booking_time))
-  }, [])
-  
 
   return (
     <ScreenBoiler
@@ -134,9 +128,9 @@ const OrderDetails = props => {
               width: windowWidth,
             }}>
             <CustomText isBold numberOfLines={1} style={styles.name}>
-              {item?.barber_info?.first_name
-                ? item?.barber_info?.first_name
-                : item?.member_info?.first_name}
+              {user?.role == 'customer'
+                ? `${item?.barber_info?.first_name}${item?.barber_info?.last_name}`
+                : `${item?.member_info?.first_name}${item?.member_info?.last_name}`}
             </CustomText>
             <View style={[styles.eachRow, {marginTop: moderateScale(30, 0.3)}]}>
               <CustomText
@@ -165,20 +159,22 @@ const OrderDetails = props => {
                 {item?.booking_time}
               </CustomText>
             </View>
-           
-           {item?.dis_price && <View style={styles.eachRow}>
-              <CustomText
-                isBold
-                style={{
-                  // width: windowWidth * 0.16,
-                  fontSize: moderateScale(14, 0.3),
-                }}>
-                Voucher :{' '}
-              </CustomText>
-              <CustomText style={styles.heading}>
-                {numeral(item?.dis_price).format('$0,0.0')} OFF
-              </CustomText>
-            </View>}
+
+            {item?.dis_price && (
+              <View style={styles.eachRow}>
+                <CustomText
+                  isBold
+                  style={{
+                    // width: windowWidth * 0.16,
+                    fontSize: moderateScale(14, 0.3),
+                  }}>
+                  Voucher :{' '}
+                </CustomText>
+                <CustomText style={styles.heading}>
+                  {numeral(item?.dis_price).format('$0,0.0')} OFF
+                </CustomText>
+              </View>
+            )}
             <View style={styles.eachRow}>
               <CustomText
                 isBold
@@ -192,19 +188,21 @@ const OrderDetails = props => {
                 {numeral(calculateTotalAmount()).format('$0,0.0')}
               </CustomText>
             </View>
-            {item?.dis_price && <View style={styles.eachRow}>
-              <CustomText
-                isBold
-                style={{
-                  // width: windowWidth * 0.16,
-                  fontSize: moderateScale(14, 0.3),
-                }}>
-                After discount :{' '}
-              </CustomText>
-              <CustomText style={styles.heading}>
-                {numeral(item?.total_price).format('$0,0.0')} 
-              </CustomText>
-            </View>}
+            {item?.dis_price && (
+              <View style={styles.eachRow}>
+                <CustomText
+                  isBold
+                  style={{
+                    // width: windowWidth * 0.16,
+                    fontSize: moderateScale(14, 0.3),
+                  }}>
+                  After discount :{' '}
+                </CustomText>
+                <CustomText style={styles.heading}>
+                  {numeral(item?.total_price).format('$0,0.0')}
+                </CustomText>
+              </View>
+            )}
 
             <CustomText
               isBold
@@ -252,19 +250,32 @@ const OrderDetails = props => {
             )}
 
             {item?.image && (
-              <CustomText
-                onPress={() => {
-                  setImageModal(true);
-                }}
-                isBold
+              <View
                 style={{
-                  marginTop: moderateScale(20, 0.3),
+                  flexDirection: 'row',
                   width: windowWidth * 0.7,
-                  // width: windowWidth * 0.16,
-                  fontSize: moderateScale(14, 0.3),
+                  alignItems: 'center',
                 }}>
-                Attachments{' '}
-              </CustomText>
+                <CustomText
+                  onPress={() => {
+                    setImageModal(true);
+                  }}
+                  isBold
+                  style={{
+                    // marginTop: moderateScale(20, 0.3),
+                    // width: windowWidth * 0.7,
+                    // width: windowWidth * 0.16,
+                    fontSize: moderateScale(14, 0.3),
+                  }}>
+                  Attachments{' '}
+                </CustomText>
+                <Icon
+                  name="document-attach-sharp"
+                  as={Ionicons}
+                  size={moderateScale(15, 0.6)}
+                  color={Color.themeColor}
+                />
+              </View>
             )}
             {item?.image && (
               <CustomText
@@ -325,14 +336,14 @@ const OrderDetails = props => {
                   textTransform={'uppercase'}
                   isGradient={true}
                   isBold
-                  borderRadius={moderateScale(30,0.4)}
+                  borderRadius={moderateScale(30, 0.4)}
                   marginTop={moderateScale(30, 0.3)}
                 />
                 <CustomButton
                   bgColor={Color.themeColor}
                   borderColor={'white'}
                   borderWidth={1}
-                  borderRadius={moderateScale(30,0.4)}
+                  borderRadius={moderateScale(30, 0.4)}
                   textColor={Color.black}
                   onPress={() => {
                     changeStatus('reject');
@@ -355,8 +366,8 @@ const OrderDetails = props => {
               </>
             )}
             {item?.status == 'accept' &&
-              // user?.role != 'customer' &&
-              // dateDiff(item?.booking_date, item?.booking_time) <= 0 && 
+              user?.role == 'barber' &&
+              dateDiff(item?.booking_date, item?.booking_time) <= 0 && 
               (
                 <CustomButton
                   bgColor={Color.themeColor}
@@ -364,7 +375,7 @@ const OrderDetails = props => {
                   borderWidth={1}
                   textColor={Color.black}
                   onPress={() => {
-                    buttonText == 'done' && accept();
+                    accept();
                     // buttonText == 'review' &&  rbRef.open()
                   }}
                   width={windowWidth * 0.75}
@@ -373,7 +384,7 @@ const OrderDetails = props => {
                     isLoading2 ? (
                       <ActivityIndicator color={Color.black} size={'small'} />
                     ) : (
-                      buttonText
+                      'done the job'
                     )
                   }
                   fontSize={moderateScale(14, 0.3)}
@@ -383,31 +394,87 @@ const OrderDetails = props => {
                   marginTop={moderateScale(30, 0.3)}
                 />
               )}
-            {user?.role == 'customer' && item?.status == 'complete' && (
-              <CustomButton
-                bgColor={Color.themeColor}
-                borderColor={'white'}
-                borderWidth={1}
-                textColor={Color.black}
-                onPress={() => {
-                  rbRef.open();
-                }}
-                width={windowWidth * 0.75}
-                height={windowHeight * 0.06}
-                text={
-                  isLoading ? (
-                    <ActivityIndicator color={Color.black} size={'small'} />
-                  ) : (
-                    'review'
-                  )
-                }
-                fontSize={moderateScale(14, 0.3)}
-                textTransform={'uppercase'}
-                isGradient={true}
-                isBold
-                marginTop={moderateScale(30, 0.3)}
-              />
-            )}
+            {item?.status == 'waiting for approval' &&
+              user?.role == 'customer' &&
+              dateDiff(item?.booking_date, item?.booking_time) <= 0 && 
+              (
+                <CustomButton
+                  bgColor={Color.themeColor}
+                  borderColor={'white'}
+                  borderWidth={1}
+                  textColor={Color.black}
+                  onPress={() => {
+                    accept();
+                    // buttonText == 'review' &&  rbRef.open()
+                  }}
+                  width={windowWidth * 0.75}
+                  height={windowHeight * 0.06}
+                  text={
+                    isLoading2 ? (
+                      <ActivityIndicator color={Color.black} size={'small'} />
+                    ) : (
+                      'Approve complete Request'
+                    )
+                  }
+                  fontSize={moderateScale(14, 0.3)}
+                  textTransform={'uppercase'}
+                  isGradient={true}
+                  isBold
+                  marginTop={moderateScale(30, 0.3)}
+                />
+              )}
+            {item?.status == 'complete' &&
+              (user?.role == 'customer' &&
+              item?.review == null &&
+              Object.keys(review).length == 0 ? (
+                <CustomButton
+                  bgColor={Color.themeColor}
+                  borderColor={'white'}
+                  borderWidth={1}
+                  textColor={Color.black}
+                  onPress={() => {
+                    rbRef.open();
+                  }}
+                  width={windowWidth * 0.75}
+                  height={windowHeight * 0.06}
+                  text={
+                    isLoading ? (
+                      <ActivityIndicator color={Color.black} size={'small'} />
+                    ) : (
+                      'review'
+                    )
+                  }
+                  fontSize={moderateScale(14, 0.3)}
+                  textTransform={'uppercase'}
+                  isGradient={true}
+                  isBold
+                  marginTop={moderateScale(30, 0.3)}
+                  borderRadius={moderateScale(20, 0.6)}
+                />
+              ) : Object.keys(review).length > 0 ? (
+                <>
+                  <CustomText
+                    isBold
+                    style={{
+                      fontSize: moderateScale(16, 0.6),
+                      color: Color.black,
+                      marginTop: moderateScale(10, 0.6),
+                    }}>
+                    Customer Review
+                  </CustomText>
+                  <ReviewCard item={item} review={review} />
+                </>
+              ) : (
+                <CustomText
+                  isBold
+                  style={{
+                    fontSize: moderateScale(16, 0.6),
+                    color: Color.black,
+                    marginTop: moderateScale(40, 0.6),
+                  }}>
+                  No review from customer yet !!
+                </CustomText>
+              ))}
           </ScrollView>
           <ImageView
             images={[{uri: item?.image}]}
@@ -415,7 +482,12 @@ const OrderDetails = props => {
             visible={imageModal}
             onRequestClose={() => setImageModal(false)}
           />
-          <ReviewModal setRef={setRbref} rbRef={rbRef} item={item}/>
+          <ReviewModal
+            setRef={setRbref}
+            rbRef={rbRef}
+            item={item}
+            setClientReview={setReview}
+          />
         </View>
       </LinearGradient>
     </ScreenBoiler>

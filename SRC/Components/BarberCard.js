@@ -18,169 +18,234 @@ import Lottie from 'lottie-react-native';
 import {Icon} from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import numeral from 'numeral';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCartData, setRemoveCardData } from '../Store/slices/common';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {useDispatch, useSelector} from 'react-redux';
+import {setCartData, setRemoveCardData} from '../Store/slices/common';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import HolidayModal from './HolidayModal';
+import Entypo from 'react-native-vector-icons/Entypo';
+
 // import {setCartData} from '../Store/combineReducer';
 
-const BarberCard = ({item, onPress, addedInWishlist,assetImage,setIsHolidayMode,isHolidayMode  }) => {
-  // console.log("🚀 ~ file: BarberCard.js:27 ~ BarberCard ~ item:", item)
-  const cartData = useSelector((state)=>state.commonReducer.cartData)
-  const token = useSelector(state => state.authReducer.token)
+const BarberCard = ({
+  item,
+  onPress,
+  addedInWishlist,
+  setIsHolidayMode,
+  isHolidayMode,
+  data,
+  setData,
+  fromWishList,
+  selectedBarber,
+  fromComparebarber,
+  setSelectedBarber
+}) => {
+  console.log("🚀 ~ onPress:", onPress)
+  // console.log("🚀 ~ selectedBarber:", selectedBarber)
+  console.log('🚀 ~ data:', item);
+  const cartData = useSelector(state => state.commonReducer.cartData);
+  const token = useSelector(state => state.authReducer.token);
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [start, setStart] = useState(false);
   const [added, setAdded] = useState(addedInWishlist ? addedInWishlist : false);
   const animationRef = useRef();
 
-  const addToWishList = async () => {
+  const addToWishList = async action => {
+    //  return console.log("🚀 ~ addToWishList ~ action:", action)
     const url = 'auth/wishlist';
     const body = {
       barber_id: item?.id,
+      type: 'barber',
+      action: action,
     };
+    console.log('🚀 ~ addToWishList ~ body:', body);
 
     setIsLoading(true);
-    const response = await  Post(url, body, apiHeader(token));
+    const response = await Post(url, body, apiHeader(token));
     setIsLoading(true);
     if (response != undefined) {
-      Platform.OS == 'android' ? ToastAndroid.show('Added to wishList', ToastAndroid.SHORT) : Alert.alert('Added to wishList')
-     
+      action == 'remove' &&
+        setData(data?.filter(item1 => item1?.barber_id != item?.id));
+      action == 'remove' ? setAdded(false) : setAdded(true);
+      Platform.OS == 'android'
+        ? ToastAndroid.show(
+            action == 'remove' ? 'removed from wishlist' : 'Added to wishList',
+            ToastAndroid.SHORT,
+          )
+        : Alert.alert(
+            action == 'remove' ? 'removed from wishlist' : 'Added to wishList',
+          );
     }
   };
-  
+
   useEffect(() => {
     if (start) {
       setTimeout(() => {
-        animationRef.current.reset(), setStart(false), setAdded(true);
+        animationRef.current.reset(), setStart(false);
       }, 4000);
     }
   }, [start]);
 
   return (
-    <View style={{
-      // backgroundColor:'red', 
-      paddingHorizontal:moderateScale(10,.6),
-       paddingVertical:moderateScale(5,.6)
-    }}>
-    <Pressable
-      onLongPress={() => {
-        added == false && (setStart(true), animationRef.current?.play(), addToWishList()) ;
-      }}
-      onPress={onPress}>
-      {({pressed}) => (
-        <View style={[styles.cardContainer,cartData?.some(data => data.id == item?.id) && {borderWidth : 2 , borderColor : '#0000FF'}]}>
-          <Lottie
-            ref={animationRef}
-            style={{zIndex: 1}}
-            source={require('../Assets/Images/heart.json')}
-            speed={1}
-            // duration={1000}
-            loop
-            //   onAnimationFinish={()=>{ console.log('fdsfsdfsdf'), animationRef.current?.pause();}}
-            onAnimationLoop={() => {
-      
-              // setSpeed(0)
-            }}
-          />
-                  {item?.price &&
-          <View
-            style={{
-              alignSelf : 'flex-end',
-              minWidth: moderateScale(50,0.3),
-              paddingHorizontal: moderateScale(10, 0.3),
-              paddingVertical: moderateScale(5, 0.3),
-              marginHorizontal:moderateScale(10,.3),
-              borderRadius: moderateScale(25, 0.3),
-              backgroundColor: 'rgba(0,0,0,0.7)',
-              justifyContent : 'center',
-              alignItems : 'center',
-              position : 'absolute',
-              top :moderateScale(10,0.3),
-              left : moderateScale(4,0.3),
-              zIndex : 1,
-              // marginTop : moderateScale(-5,0.3)
-              
-            }}>
-              <CustomText isBold style={{color : Color.white}}>{numeral(item?.price).format('$0,0.0')}</CustomText>
-            </View>
-}
-          <CustomImage
-            source={assetImage ? item?.photo : {uri : item?.photo}}
-            resizeMode={'cover'}
-            style={{
-              height: "100%",
-              width: '100%',
-              zIndex: -1,
-              // backgroundColor : '#000'
-            }}
-          />
-     {  item?.holiday_mode == true &&
-        <View style={{
-          height:windowHeight*0.07,
-          width:windowWidth*0.15,
-          position:'absolute',
-          top:10,
-          right:5
-          }}>
-            
-          < CustomImage style={{
-            height:'100%',
-            width:'100%',
-          }} source={require('../Assets/Images/holidaybatch.png')}/>
-          </View>}
+    <View
+      style={{
+        // backgroundColor:'red',
+        paddingHorizontal: moderateScale(10, 0.6),
+        paddingVertical: moderateScale(15, 0.6),
+      }}>
+      <Pressable
+        onLongPress={() => {
+          added == false &&
+            (setStart(true),
+            animationRef.current?.play(),
+            addToWishList('add'));
+        }}
+        onPress={() => {
+          if(fromComparebarber == true){
+            if (
+              selectedBarber?.length == 4 ||
+              selectedBarber.some(item1 => item1?.id == item?.id)
+            ) {
+              selectedBarber.some(item1 => item1?.id == item?.id) &&
+              setSelectedBarber(
+                selectedBarber?.filter(
+                  (value, index) => value?.id !== item?.id,
+                ),
+              );
+            } else {
+              setSelectedBarber(prev => [...prev, item]);
+            }
+          }else{
+            console.log('i want to navigate ')
+            onPress()
+          }
 
-          <HolidayModal setIsHolidayMode={setIsHolidayMode} isHolidayMode={isHolidayMode}/>
-
-
-
-
-          <CustomText
-            isBold
-            style={{
-              color: Color.black,
-              textAlign: 'center',
-              marginTop: moderateScale(5, 0.3),
-            }}>
-            {item?.first_name }
-          </CustomText>
-          {added && (
-            <TouchableOpacity
-              onPress={() => {
-                setAdded(false);
+        }
+          }>
+        {({pressed}) => (
+          <View style={[styles.cardContainer]}>
+            <Lottie
+              ref={animationRef}
+              style={{zIndex: 1}}
+              source={require('../Assets/Images/heart.json')}
+              speed={1}
+              // duration={1000}
+              loop
+              //   onAnimationFinish={()=>{ console.log('fdsfsdfsdf'), animationRef.current?.pause();}}
+              onAnimationLoop={() => {
+                // setSpeed(0)
               }}
-              activeOpacity={0.9}
-              style={styles.heart}>
-              <Icon
-                name="heart"
-                as={AntDesign}
-                color={Color.white}
-                size={moderateScale(19, 0.3)}
-                onPress={() => {
-                  setAdded(false);
-                }}
-              />
-            </TouchableOpacity>
-          )}
+            />
+            {item?.price && (
+              <View
+                style={{
+                  alignSelf: 'flex-end',
+                  minWidth: moderateScale(50, 0.3),
+                  paddingHorizontal: moderateScale(10, 0.3),
+                  paddingVertical: moderateScale(5, 0.3),
+                  marginHorizontal: moderateScale(10, 0.3),
+                  borderRadius: moderateScale(25, 0.3),
+                  backgroundColor: 'rgba(0,0,0,0.7)',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'absolute',
+                  top: moderateScale(10, 0.3),
+                  left: moderateScale(4, 0.3),
+                  zIndex: 1,
+                  // marginTop : moderateScale(-5,0.3)
+                }}>
+                <CustomText isBold style={{color: Color.white}}>
+                  {numeral(item?.price).format('$0,0.0')}
+                </CustomText>
+              </View>
+            )}
+            <CustomImage
+              source={{uri: item?.photo}}
+              resizeMode={'cover'}
+              style={{
+                height: '100%',
+                width: '100%',
+                zIndex: -1,
+                // backgroundColor : '#000'
+              }}
+            />
+            { selectedBarber?.some((item1,index) => item1?.id == item?.id )  &&
+              <View
+                style={{
+                  // backgroundColor : 'red',
+                  height: windowHeight * 0.022,
+                  width: windowHeight * 0.022,
+                  borderRadius: (windowHeight * 0.022) / 2,
+                  position: 'absolute',
+                  top: 10,
+                  right: 10,
+                  borderWidth: 1,
+                  borderColor: Color.green,
+                }}>
+                <Icon
+                  name="check"
+                  as={AntDesign}
+                  size={15}
+                  color={Color.green}
+                />
+              </View>
+            }
 
-        </View>
-      )}
-    </Pressable>
-      {cartData?.some(data => data.id == item?.id) &&
-      <TouchableOpacity activeOpacity={0.9} onPress={()=>{
-        // let data=[];
-        // data = [...cartData],
-       let index1 = cartData.findIndex(x=>x?.id==item?.id);
-       dispatch(setRemoveCardData(index1))
-        // data.splice(index1,1),
-      }} style={styles.remove}>
-        <CustomText isBold style={{
-          color : Color.white,
-          fontSize : moderateScale(14,0.3)
-        }}>Remove</CustomText>
-      </TouchableOpacity>
-      } 
-      </View>
+            {item?.holiday_mode == true && (
+              <View
+                style={{
+                  height: windowHeight * 0.07,
+                  width: windowWidth * 0.15,
+                  position: 'absolute',
+                  top: 10,
+                  right: 5,
+                }}>
+                <CustomImage
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                  }}
+                  source={require('../Assets/Images/holidaybatch.png')}
+                />
+              </View>
+            )}
+
+            <HolidayModal
+              setIsHolidayMode={setIsHolidayMode}
+              isHolidayMode={isHolidayMode}
+            />
+
+            <CustomText
+              isBold
+              style={{
+                color: Color.black,
+                textAlign: 'center',
+                marginTop: moderateScale(5, 0.3),
+              }}>
+              {item?.first_name}
+            </CustomText>
+            {added && (
+              <TouchableOpacity
+                onPress={() => {
+                  fromWishList && addToWishList('remove');
+                }}
+                activeOpacity={0.9}
+                style={styles.heart}>
+                <Icon
+                  name="heart"
+                  as={AntDesign}
+                  color={Color.white}
+                  size={moderateScale(19, 0.3)}
+                  onPress={() => {
+                    fromWishList && addToWishList('remove');
+                  }}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </Pressable>
+    </View>
   );
 };
 
@@ -192,7 +257,7 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.26,
     backgroundColor: 'white',
     // overflow: 'hidden',
-    borderRadius:moderateScale(20,0.5),
+    borderRadius: moderateScale(20, 0.5),
     marginBottom: moderateScale(10, 0.3),
   },
   heart: {
@@ -207,12 +272,12 @@ const styles = StyleSheet.create({
     top: moderateScale(10, 0.3),
     zIndex: 1,
   },
-  remove : {
-marginBottom : moderateScale(10,0.3),
-    width : windowWidth * 0.4,
-    height : windowHeight * 0.05,
-    backgroundColor : 'rgb(175, 4, 60)',
-    justifyContent : 'center',
-    alignItems : 'center'
+  remove: {
+    marginBottom: moderateScale(10, 0.3),
+    width: windowWidth * 0.4,
+    height: windowHeight * 0.05,
+    backgroundColor: 'rgb(175, 4, 60)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -43,39 +43,19 @@ const ChangePassword = props => {
       new_password: password,
       confirm_password: confirmPassword,
     };
-    for (let key in params) {
-      if (params[key] === '') {
-        return (Platform.OS = 'android'
-          ? ToastAndroid.show('Required field is empty', ToastAndroid.SHORT)
-          : Alert.alert('Required field is empty'));
-      }
-    }
-
-    // Password Length
-    if (password.length < 8) {
-      return Platform.OS == 'android'
-        ? ToastAndroid.show(
-            'Password should atleast 8 character long',
-            ToastAndroid.SHORT,
-          )
-        : Alert.alert('Password should atleast 8 character long');
-    }
-    if (password != confirmPassword) {
-      return (Platform.OS = 'android'
-        ? ToastAndroid.show('passwords MissMatched !', ToastAndroid.SHORT)
-        : Alert.alert('passwords MissMatched !'));
-    }
+   
 
     const url = 'auth/change_password';
     setIsLoading(true);
     const response = await Post(url, params, apiHeader(token));
     setIsLoading(false);
-    if (response !== undefined) {
-      Platform.OS == 'android'
-        ? ToastAndroid.show('Password changed successfully', ToastAndroid.SHORT)
-        : alert('Password changed successfully');
+    if (response != undefined) {
+      console.log(response?.data)
+      // Platform.OS == 'android'
+      //   ? ToastAndroid.show('Password changed successfully', ToastAndroid.SHORT)
+      //   : alert('Password changed successfully');
    
-      navigationService.navigate('HomeScreen')
+      // navigationService.navigate('HomeScreen')
     }
   };
  

@@ -9,25 +9,27 @@ import moment from 'moment';
 import {Rating} from 'react-native-ratings';
 
 
-const ReviewCard = ({item, photo, title, date, message, barberDetails}) => {
+const ReviewCard = ({item ,review , fromDetail}) => {
+  console.log("🚀 ~ ReviewCard ~ review:", review)
+  console.log("🚀 ~ ReviewCard ~ item:", item)
   // console.log('🚀 ~ ReviewCard ~ barberDetails:', barberDetails);
 
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row'}}>
         <Image 
-        source={{uri :item?.customer_info?.photo}} 
+        source={{uri :item?.member_info?.photo}} 
         style={styles.image} />
 
         <View style={{marginLeft: moderateScale(10, 0.3)}}>
           <CustomText numberOfLines={2} style={styles.name}>
-            {item?.customer_info?.first_name}
+            {`${item?.member_info?.first_name} ${item?.member_info?.last_name}`}
           </CustomText>
           <Rating
             type="custom"
             readonly
             // startingValue={1}
-            startingValue={item?.rating}
+            startingValue={fromDetail ? item?.rating : review?.rating}
             ratingCount={5}
             imageSize={moderateScale(12, 0.3)}
             style={{
@@ -37,13 +39,13 @@ const ReviewCard = ({item, photo, title, date, message, barberDetails}) => {
           />
 
           <CustomText numberOfLines={4} style={styles.description}>
-            {item?.description}
+            {fromDetail ? item?.description: review?.description}
           </CustomText>
         </View>
       </View>
 
       <CustomText numberOfLines={1} style={styles.moment}>
-        {moment().format('ll')}
+        {moment(review?.created_at).format('ll')}
       </CustomText>
     </View>
   );

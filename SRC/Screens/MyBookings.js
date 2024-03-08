@@ -24,7 +24,7 @@ import CompletedOrderCard from '../Components/CompletedOrderCard';
 
 const MyBookings = () => {
   const user = useSelector(state => state.commonReducer.userData);
-  // console.log('🚀 ~ `fil`e: MyBookings.js:24 ~ MyBookings ~ user:', user);
+  console.log('🚀 ~ `fil`e: MyBookings.js:24 ~ MyBookings ~ user:', user?.id);
   // console.log('🚀 ~ file: MyBookings.js:24 ~ MyBookings ~ item:', item);
   const [item, setItem] = useState('');
   const [Loading, setLoading] = useState(false);
@@ -36,21 +36,20 @@ const MyBookings = () => {
   const isFocused = useIsFocused();
 
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ MyBookings ~ token:', token);
 
   // Booking GET API START
   const GetBooking = async () => {
     const url = `auth/booking/list?status=${item == '' ? 'all' : item}`;
     setLoading(true);
-     console.log("🚀 ~ GetBooking ~ url:", url)
+    setBookingResponse([]);
+    console.log('🚀 ~ GetBooking ~ url:', url);
 
     const response = await Get(url, token);
 
     setLoading(false);
     if (response != undefined) {
-      console.log(
-        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000PARTY',
-        response?.data?.data,
-      );
+      console.log(response?.data?.data);
       setBookingResponse(response?.data?.data);
     }
   };
@@ -58,11 +57,12 @@ const MyBookings = () => {
   const barberBooking = async () => {
     const url = `auth/barber/booking/list?status=${item == '' ? 'all' : item}`;
     setLoading(true);
+    setBookingResponse([]);
     const response = await Get(url, token);
     setLoading(false);
     if (response != undefined) {
-      console.log('🚀 ~ barberBooking ~ response:', response?.data);
-      setBookingResponse(response?.data?.data);
+      console.log(response?.data?.barber_booking_list);
+      setBookingResponse(response?.data?.barber_booking_list);
     }
   };
 
@@ -211,14 +211,23 @@ const MyBookings = () => {
         </CustomText>
 
         <DropDownSingleSelect
-          array={['complete', 'reject', 'pending']}
+          array={
+            [
+                  'complete',
+                  'reject',
+                  'pending',
+                  'accept',
+                  'waiting for approval',
+                ]
+           
+          }
           backgroundColor={Color.white}
           item={item}
           setItem={setItem}
           placeholder={'Choose any category'}
           width={windowWidth * 0.95}
           dropdownStyle={{
-               width: windowWidth * 0.95,
+            width: windowWidth * 0.95,
             borderBottomWidth: 0,
             marginTop: moderateScale(30, 0.3),
           }}
@@ -246,7 +255,7 @@ const MyBookings = () => {
               paddingBottom: moderateScale(30, 0.3),
             }}
             data={bookingResponse}
-            numColumns={1}
+            numColumns={user?.role == 'customer' ? 1 : 2}
             // numColumns={item != 'complete' ? 2 :1}
             ListEmptyComponent={() => {
               return (
@@ -261,7 +270,7 @@ const MyBookings = () => {
               );
             }}
             renderItem={({item, index}) => {
-              return item?.status == 'complete' ? (
+              return user?.role == 'customer' ? (
                 <CompletedOrderCard item={item} />
               ) : (
                 <OrderCard item={item} />

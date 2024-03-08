@@ -11,6 +11,7 @@ import CustomButton from './CustomButton';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import navigationService from '../navigationService';
+import numeral from 'numeral';
 
 const CompletedOrderCard = ({
   item,
@@ -24,31 +25,6 @@ const CompletedOrderCard = ({
   const navigationService = useNavigation();
   const user = useSelector(state => state.commonReducer.userData);
 
-  const amount = () => {
-    let totalAmount = 0;
-    item?.booking_detail?.map(data => {
-      totalAmount += data?.service_info?.price;
-    });
-    // console.log('Total======>>>>>>>>>', totalAmount);
-    return totalAmount;
-  };
-
-  const calculateTotalAmount = () => {
-    const bookingDetail = item?.booking_detail;
-    // const amount = item?.booking_detail.reduce((a,b)=> a+b)
-
-    if (!Array.isArray(bookingDetail) || bookingDetail.length === 0) {
-      return 0;
-    }
-
-    const serviceNames = bookingDetail
-      .map(service => service?.service_info?.name)
-      .filter(Boolean);
-
-    return serviceNames.join(', ');
-  };
-  const servicesText = calculateTotalAmount();
-
   return (
     <TouchableOpacity
       onPress={() => {
@@ -58,53 +34,66 @@ const CompletedOrderCard = ({
       }}
       disabled={fromModal == true ? false : true}
       style={styles.mainContainer}>
-     {  fromModal == true &&
       <View
         style={[
           styles.statusView,
           {
             backgroundColor:
-              item?.status.toLowerCase() == 'reject'
-                ? 'rgba(255,0,0,0.6)'
-                : item?.status.toLowerCase() == 'accept'
-                ? 'rgba(0,255,0,0.6)'
-                : item?.status.toLowerCase() == 'complete'
-                ? 'rgba(0,255,255,0.6)'
-                : 'rgba(233,255,0,0.6)',
+              item?.review == null
+                ? item?.status.toLowerCase() == 'reject'
+                  ? 'rgba(255,0,0,0.6)'
+                  : item?.status.toLowerCase() == 'accept'
+                  ? 'rgba(0,255,0,0.6)'
+                  : item?.status.toLowerCase() == 'complete'
+                  ? 'rgba(0,255,255,0.6)'
+                  : 'rgba(233,255,0,0.6)'
+                : 'rgba(4, 7, 166, 0.8)',
           },
         ]}>
         <CustomText isBold style={styles.status}>
-          {item?.status}
+          {item?.review == null ? item?.status : 'Reviewed'}
         </CustomText>
-      </View>}
+      </View>
+
       <View style={styles.imageView}>
         <CustomImage
-          onPress={() => {
-            // fromSupportScreen == true &&
-            setSelectedItem(item);
-            setIsVisible(false);
-          }}
+          // onPress={() => {
+          //   if (fromSupportScreen == true) {
+          //     setSelectedItem(item);
+          //     setIsVisible(false);
+          //   }
+          // }}
           style={{
             height: '100%',
             width: '100%',
           }}
-          source={require('../Assets/Images/dummyCustomer1.png')}
+          source={
+            item?.barber_info?.photo
+              ? {uri: item?.barber_info?.photo}
+              : require('../Assets/Images/dummyCustomer1.png')
+          }
         />
       </View>
       <View>
-        <CustomText isBold style={styles.heading1}>
-          {selectedItem?.barber_info?.first_name
-            ? selectedItem?.barber_info?.first_name
-            : item?.barber_info?.first_name}
-        </CustomText>
+        <View style={styles.row}>
+          <CustomText isBold style={styles.heading}>
+            {user?.role == 'customer' ? 'Barber name' : 'Customer name'} :
+          </CustomText>
+          <CustomText
+            numberOfLines={1}
+            isBold
+            style={[styles.Text, {width: windowWidth * 0.2}]}>
+            {user?.role == 'customer'
+              ? `${item?.barber_info?.first_name} ${item?.barber_info?.last_name}`
+              : `${item?.member_info?.first_name} ${item?.member_info?.last_name}`}
+          </CustomText>
+        </View>
         <View style={styles.row}>
           <CustomText isBold style={styles.heading}>
             Date :
           </CustomText>
-          <CustomText style={styles.Text}>
-            {selectedItem?.booking_date
-              ? selectedItem?.booking_date
-              : item?.booking_date}
+          <CustomText numberOfLines={1} style={styles.Text}>
+            {item?.booking_date}
             {/* aug 12,2023 */}
           </CustomText>
         </View>
@@ -112,19 +101,18 @@ const CompletedOrderCard = ({
           <CustomText isBold style={styles.heading}>
             Time :
           </CustomText>
-          <CustomText style={styles.Text}>
-            {selectedItem?.booking_time
-              ? selectedItem?.booking_time
-              : item?.booking_time}
+          <CustomText numberOfLines={1} style={styles.Text}>
+            {item?.booking_time}
           </CustomText>
         </View>
         <View style={styles.row}>
           <CustomText isBold style={styles.heading}>
-            total Amount :
+            Amount :
           </CustomText>
-          <CustomText style={styles.Text}>
-            {/* 5000 */}
-            {amount()}
+          <CustomText
+            numberOfLines={1}
+            style={[styles.Text, {width: windowWidth * 0.25}]}>
+            {numeral(item?.total_price).format('$0,0.00')}
           </CustomText>
         </View>
         <View style={styles.row}>
@@ -146,9 +134,7 @@ const CompletedOrderCard = ({
               fontSize: moderateScale(12, 0.6),
               paddingHorizontal: moderateScale(5, 0.6),
             }}>
-            {selectedItem?.custom_location
-              ? selectedItem?.custom_location
-              : item?.custom_location}
+            {item?.custom_location}
           </CustomText>
         </View>
       </View>
@@ -161,10 +147,11 @@ const CompletedOrderCard = ({
         height={windowHeight * 0.04}
         text={'details'}
         fontSize={moderateScale(13, 0.3)}
-        // onPress={navigationService.navigate('OrderDetails', {item: item})}
+        onPress={() => navigationService.navigate('OrderDetails', {item: item})}
         isBold
         marginHorizontal={moderateScale(20, 0.3)}
         marginTop={moderateScale(5, 0.3)}
+        disabled={fromModal == true || fromSupportScreen}
       />
     </TouchableOpacity>
   );
@@ -185,6 +172,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: moderateScale(1, 0.6),
     paddingHorizontal: moderateScale(8, 0.6),
+    width: windowWidth * 0.5,
+    // backgroundColor : 'red'
   },
   statusView: {
     position: 'absolute',
@@ -201,10 +190,12 @@ const styles = StyleSheet.create({
   },
   Text: {
     // backgroundColor:'orange',
-    marginHorizontal: moderateScale(10, 0.3),
+    marginLeft: moderateScale(10, 0.3),
     color: Color.white,
     fontSize: moderateScale(13, 0.6),
     paddingRight: moderateScale(25, 0.6),
+    // backgroundColor : 'red',
+    width: windowWidth * 0.3,
   },
   heading: {
     fontSize: moderateScale(12, 0.6),

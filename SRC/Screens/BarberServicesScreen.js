@@ -31,24 +31,29 @@ import ReviewCard from '../Components/ReviewCard';
 import ShowReview from '../Components/ShowReview';
 
 const BarberServicesScreen = props => {
+  const userData = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ BarberServicesScreen ~ userData:", userData?.wallet?.amount)
+
+  const token = useSelector(state => state.authReducer.token);
   const [selectedService, setSelectedService] = useState([]);
+  console.log("🚀 ~ BarberServicesScreen ~ selectedService:", selectedService)
   const [barberDetails, setBarberDetails] = useState([]);
   const [Loading, setLoading] = useState(false);
-  const token = useSelector(state => state.authReducer.token);
   const [modal, setModal] = useState(false);
+  const [totalPrice, settotalPrice] = useState(0)
   const detail = props?.route?.params?.detail;
+ 
   // console.log("🚀 ~ BarberServicesScreen ~ detail:", detail)
 
   const BarberDetals = async () => {
     const url = `auth/barber/detail/${detail?.id}`;
     setLoading(true);
     const response = await Get(url, token);
-
     setLoading(false);
     if (response != undefined) {
       console.log(
         '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000Alpha High Command',
-        response?.data?.user_detail?.review[0],
+        response?.data?.user_detail,
       );
       setBarberDetails(response?.data?.user_detail);
     }
@@ -57,6 +62,32 @@ const BarberServicesScreen = props => {
   useEffect(() => {
     BarberDetals();
   }, []);
+
+  useEffect(() => {
+    if(selectedService?.length > 0){
+      let t_Price = 0;
+      selectedService?.map((item , index)=> t_Price += item?.price)
+      settotalPrice(t_Price)
+      if(t_Price > userData?.wallet?.amount){
+        Alert.alert('Insufficient credits' , 'please buy some and try again', [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Buy coins',
+            onPress: () => {
+              navigationService.navigate('Purchase')
+            },
+          },
+        ]);
+   
+      }
+    }
+
+    
+  }, [selectedService])
+  
 
   const serviceArray = [
     {
@@ -139,7 +170,7 @@ const BarberServicesScreen = props => {
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <CustomImage style={styles.image} source={{uri: detail?.photo}} />
+          <CustomImage style={styles.image} source={ {uri: detail?.photo}} />
           <View style={{marginLeft: moderateScale(10, 0.3)}}>
             <CustomTextWithMask
               data={`${detail?.first_name} ${detail?.last_name}`}
@@ -175,7 +206,7 @@ const BarberServicesScreen = props => {
                 color: Color.themeLightGray,
                 fontSize: moderateScale(10, 0.3),
               }}>
-              3 | 120 reviews
+              {barberDetails?.review?.length} Review
             </CustomText>
           </View>
         </View>
@@ -347,6 +378,7 @@ const BarberServicesScreen = props => {
                     isBold
                     marginTop={moderateScale(30, 0.3)}
                     borderRadius={moderateScale(35, 0.6)}
+                    disabled={totalPrice > userData?.wallet?.amount}
                   />
                   <CustomButton
                     // bgColor={Color.themePink}
@@ -377,13 +409,14 @@ const BarberServicesScreen = props => {
                     isBold
                     marginTop={moderateScale(10, 0.3)}
                     borderRadius={moderateScale(35, 0.6)}
+                    disabled={totalPrice > userData?.wallet?.amount}
                   />
                 </>
               );
             }}
           />
         )}
-        <ShowReview
+     <ShowReview
           barberDetails={barberDetails?.review}
           modal={modal}
           setModal={setModal}

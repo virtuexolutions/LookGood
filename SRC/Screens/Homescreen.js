@@ -34,31 +34,19 @@ const Homescreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [Loading, setLoading] = useState(false);
   const [barberData, setBarberData] = useState([]);
-  // console.log('🚀 ~ Homescreen ~ barberData:', barberData);
   const [orderData, setOrderData] = useState([]);
-  // console.log('🚀 ~ Homescreen ~ orderData:', orderData);
   const [isVisible, setIsVisible] = useState(false);
-  console.log('🚀 ~ Homescreen ~ isVisible:', isVisible);
   const [selectedItem, setSelectedItem] = useState([]);
   const [isHolidayMode, setIsHolidayMode] = useState(false);
-  const [barberFilters, setBarberFilters] = useState([]);
-  // console.log('🚀 ~ Homescreen ~ barberFilters:', barberFilters);
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);
+  // console.log("🚀 ~ Homescreen ~ user:", user)
   const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ Homescreen ~ token:", token)
   const [index, setIndex] = useState(0);
 
-  const BarberList = async () => {
-    const url = `auth/barber/list`;
-    setIsLoading(true);
-    const response = await Get(url, token);
-    setIsLoading(false);
-    if (response != undefined) {
-      // console.log("🚀 ~ BarberList ~ response:", response)
-      setBarberData(response?.data?.users);
-    }
-  };
+
 
   const GetBarberBooking = async () => {
     const url = `auth/barber/booking/list`;
@@ -66,38 +54,53 @@ const Homescreen = () => {
     const response = await Get(url, token);
 
     setLoading(false);
-    console.log('Data ==>', response?.data?.data);
+    // console.log('Data ==>', response?.data?.data);
 
     if (response != undefined) {
+      // console.log("🚀 ~ GetBarberBooking ~ response:", response?.data)
       setOrderData(response?.data?.barber_booking_list);
     }
   };
 
   // TIME GET API END
-  useEffect(() => {
-    BarberList();
-    GetBarberBooking();
-  }, [focused]);
-
+  
   const barberFilter = async () => {
-    const body = {
-      featured: selectedItem,
-      near: selectedItem,
-      earlier: selectedItem,
-    };
     const url = 'auth/barber/filter';
+    const body = {
+      featured: selectedItem?.includes('featured barber')  ? 1 : 0,
+      near: selectedItem?.includes('nearest to me')  ? 1 : 0,
+      earlier: selectedItem?.includes('earliest')  ? 1 : 0,
+      
+    };
+    // console.log("🚀 ~ barberFilter ~ body:", body)
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (response != undefined) {
-     console.log('🚀 ~ barberFilter ~ response:', response?.data);
-      setBarberFilters(response?.data);
+      
+      console.log('🚀 ~ barberFilter ~ response:', response?.data?.users);
+      // setBarberFilters(response?.data);
+      setBarberData(response?.data?.users);
+      // setIsVisible(false)
     }
   };
+  
+  useEffect(() => {
+  if(user?.role == 'barber'){
+
+      // BarberList();
+      GetBarberBooking();
+    }
+  }, [focused]);
 
   useEffect(() => {
-    // barberFilter();
-  }, [barberFilters]);
+    if(user?.role == 'customer'){
+
+      barberFilter()
+    }
+  }, [focused , selectedItem.length])
+  
+
 
   const bannerArray = [
     {
@@ -116,125 +119,8 @@ const Homescreen = () => {
       description: 'The latest trend Hair Dresser',
     },
   ];
-  const cardArray = [
-    {
-      image: require('../Assets/Images/barbarDummy1.png'),
-      name: 'Daniel M. Bell',
-    },
-    {
-      image: require('../Assets/Images/barbarDummy.png'),
-      name: 'Ramon C. Raines',
-    },
-    {
-      image: require('../Assets/Images/barbarDummy1.png'),
-      name: 'Daniel M. Bell',
-    },
-    {
-      image: require('../Assets/Images/barbarDummy.png'),
-      name: 'Ramon C. Raines',
-    },
-    {
-      image: require('../Assets/Images/barbarDummy1.png'),
-      name: 'Daniel M. Bell',
-    },
-  ];
-  const orderArray = [
-    {
-      image: require('../Assets/Images/dummyCustomer1.png'),
-      name: 'Lorraine Lebrun',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer2.png'),
-      name: 'Benjamin Evalent',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer3.png'),
-      name: 'Jay cuttler',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer4.png'),
-      name: 'mark joe',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer1.png'),
-      name: 'Danjay joesph',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-      services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-  ];
+ 
+ 
 
   return (
     <ScreenBoiler
@@ -475,7 +361,7 @@ const Homescreen = () => {
                         width: windowWidth * 0.6,
                         alignItems: 'center',
                       }}
-                      text={'No Upcoming Orders'}
+                      text={'No barber found'}
                     />
                   );
                 }}
@@ -488,16 +374,18 @@ const Homescreen = () => {
                   justifyContent: 'space-between',
                   // paddingHorizontal: moderateScale(8, 0.3),
                 }}
-                data={barberData.reverse()}
+                data={barberData?.reverse()}
                 renderItem={({item, index}) => {
+
                   // console.log("🚀 ~ file: Homescreen.js:356 ~ Homescreen ~ item:", item)
                   return (
                     <BarberCard
+                    
                       item={item}
                       setIsHolidayMode={setIsHolidayMode}
                       isHolidayMode={isHolidayMode}
                       onPress={() => {
-                        if (barberData?.holiday_mode == true) {
+                        if (item?.holiday_mode == true) {
                           setIsHolidayMode(true);
                         } else {
                           navigationService.navigate('BarberServicesScreen', {

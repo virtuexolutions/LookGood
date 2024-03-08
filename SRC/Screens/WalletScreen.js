@@ -1,4 +1,4 @@
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
@@ -7,14 +7,18 @@ import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import Color from '../Assets/Utilities/Color';
-import {Icon} from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
 import NoData from '../Components/NoData';
 import TransactionhistoryCard from '../Components/TransactionhistoryCard';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
+import moment from 'moment';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
 const WalletScreen = () => {
+  const focused = useIsFocused()
+  const navigation = useNavigation()
+  const userData = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ WalletScreen ~ userData:", userData)
   const token = useSelector(state => state.authReducer.token);
 
   const [loading, setLoading] = useState(false);
@@ -24,34 +28,15 @@ const WalletScreen = () => {
     const url = 'auth/transaction';
     setLoading(true);
     const response = await Get(url, token);
-    // console.log("🚀 ~ userTransactionList ~ response:", response?.data)
     setLoading(false);
     if (response != undefined) {
-      console.log('🚀 ~ userTransactionList ~ response:', response?.data);
-      setTransactionHistory(response?.data);
+      setTransactionHistory(response?.data?.date?.data);
     }
   };
   useEffect(() => {
     userTransactionList();
-  }, []);
-  const dummyArray = [
-    {
-      name: 'haircut',
-      amount: 1500,
-    },
-    {
-      name: 'nail poslish',
-      amount: 200,
-    },
-    {
-      name: 'skin poslish',
-      amount: 1000,
-    },
-    {
-      name: 'hydra facial',
-      amount: 2000,
-    },
-  ];
+  }, [focused]);
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -83,11 +68,15 @@ const WalletScreen = () => {
                 Balance
               </CustomText>
               <CustomText isBold style={styles.text2}>
-                Today, 21 Feb
+                {moment().format("MMM Do YYYY")}
+                {/* Today, 21 Feb */}
               </CustomText>
             </View>
 
-            <View
+            <TouchableOpacity
+            onPress={() => {
+             navigation.navigate('Purchase')
+            }}
               style={{
                 flexDirection: 'row',
                 height: windowHeight * 0.04,
@@ -107,7 +96,7 @@ const WalletScreen = () => {
                 style={{color: '#E3A33D', fontSize: moderateScale(12, 0.6)}}>
                 Add
               </CustomText>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View
@@ -117,16 +106,16 @@ const WalletScreen = () => {
               marginLeft: moderateScale(15, 0.3),
               //    backgroundColor:'red'
             }}>
-            <CustomText style={{fontSize: 24, color: Color.lightGrey}}>
-              $
-            </CustomText>
+            
             <CustomText
               style={{
-                fontSize: 73,
+                fontSize:moderateScale(70,.6) ,
                 color: Color.lightGrey,
                 marginLeft: moderateScale(10, 0.3),
               }}>
-              8219
+                {/* 8219 */}
+                {userData?.wallet?.amount}
+              
             </CustomText>
 
             <CustomText
@@ -135,16 +124,10 @@ const WalletScreen = () => {
                 color: 'rgba(238,238,238,0.8)',
                 marginLeft: moderateScale(5, 0.3),
               }}>
-              .96
+                  coins
             </CustomText>
 
-            <Icon
-              name="arrow-up-right"
-              as={Feather}
-              size={moderateScale(20, 0.3)}
-              color={'#DADADA'}
-              style={{marginLeft: moderateScale(5, 0.3)}}
-            />
+         
           </View>
 
           <View
@@ -153,16 +136,31 @@ const WalletScreen = () => {
               alignItems: 'center',
               marginLeft: moderateScale(15, 0.3),
               marginTop: moderateScale(-10, 0.3),
+              marginTop:moderateScale(8,.3)
             }}>
             <CustomText
               style={{
                 fontSize: moderateScale(12, 0.6),
                 color: 'rgba(238,238,238,0.5)',
               }}>
-              +25 % Comp. last week
+             1 coin is equals to $1
             </CustomText>
           </View>
         </View>
+        {
+          loading ? <View style={{
+            width : windowWidth ,
+            height : windowHeight * 0.4 ,
+            justifyContent : 'center',
+            alignItems : 'center',
+          }}>
+            <ActivityIndicator 
+            size={'large'}
+            color={Color.themeColor}
+            />
+          </View>
+          :
+      
         <FlatList
           showsVerticalScrollIndicator={false}
           // decelerationRate={'fast'}
@@ -181,20 +179,22 @@ const WalletScreen = () => {
           }}
           style={{
             marginTop: moderateScale(10, 0.3),
+            // height : windowHeight * 0.5,
+
           }}
           contentContainerStyle={{
             width: windowWidth,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingBottom: moderateScale(100, 0.6),
+            // alignItems: 'center',
+            // justifyContent: 'space-between',
+            paddingBottom: moderateScale(200, 0.6),
             // paddingHorizontal: moderateScale(8, 0.3),
           }}
-          data={dummyArray}
+          data={Transactionhistory}
           renderItem={({item, index}) => {
-            // console.log("🚀 ~ file: Homescreen.js:356 ~ Homescreen ~ item:", item)
             return <TransactionhistoryCard item={item} />;
           }}
         />
+      }
 
         <View
           style={{

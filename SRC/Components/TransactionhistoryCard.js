@@ -4,12 +4,15 @@ import CustomText from './CustomText';
 import {moderateScale} from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
 import {windowWidth} from '../Utillity/utils';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
+import moment from 'moment';
+import {Icon} from 'native-base';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { color } from 'react-native-reanimated';
 
 const TransactionhistoryCard = ({item}) => {
-const userData = useSelector(state => state.commonReducer.userData)
-// console.log("🚀 ~ TransactionhistoryCard ~ userData:", userData)
-
+  const userData = useSelector(state => state.commonReducer.userData);
+  // console.log("🚀 ~ TransactionhistoryCard ~ userData:", userData)
 
   const [text, setText] = useState('credit');
   return (
@@ -27,13 +30,17 @@ const userData = useSelector(state => state.commonReducer.userData)
         marginVertical: moderateScale(10, 0.3),
         // alignItems:'center',justifyContent:'center'
       }}>
-     {userData?.role == 'barber' && 
-     <View
+      <View
         style={{
           paddingVertical: moderateScale(5, 0.6),
           flexDirection: 'row',
           //   justifyContent: 'space-between',
         }}>
+        {item.type == 'debit' ? (
+          <Icon name="arrowup" as={AntDesign} size={19} color={Color.themePink} />
+        ) : (
+          <Icon name="arrowdown" as={AntDesign} size={15} color={Color.green} />
+        )}
         <CustomText
           onPress={() => {
             setText('credit');
@@ -42,17 +49,19 @@ const userData = useSelector(state => state.commonReducer.userData)
           style={[
             styles.heading,
             {
-              width: windowWidth * 0.17,
-              backgroundColor: text == 'credit' ? Color.themeColor : 'grey',
+              // paddingHorizontal:moderateScale(3,.6),
+              // backgroundColor:Color.red,
+              //   marginHorizontal: moderateScale(5, 0.3),
+              width: windowWidth * 0.12,
+            
               textAlign: 'center',
-              fontSize:moderateScale(12,.6),
-              color: text == 'credit' ? Color.black : 'white'
-            //   marginHorizontal: moderateScale(5, 0.3),
+              fontSize: moderateScale(14, 0.6),
+              color: Color.themeColor,
             },
           ]}>
-          credit
+         {item.type == 'debit' ? 'Debit' : 'Credit'}
         </CustomText>
-        <CustomText
+        {/* <CustomText
           onPress={() => {
             setText('debit');
           }}
@@ -70,45 +79,50 @@ const userData = useSelector(state => state.commonReducer.userData)
             },
           ]}>
           debit
-        </CustomText>
-      </View>}
+        </CustomText> */}
+      </View>
       <View
         style={{
-          paddingVertical: moderateScale(5, 0.6),
+          paddingTop: moderateScale(10, 0.6),
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
         <CustomText isBold style={styles.heading}>
-          services
-        </CustomText>
-        <CustomText isBold style={styles.heading}>
           amount
         </CustomText>
-      </View>
-      <View style={styles.row}>
+
         <CustomText
           isBold
           style={{
             fontSize: moderateScale(12, 0.6),
             color: Color.white,
           }}>
-          {item?.name}
-        </CustomText>
-        <CustomText isBold style={styles.amounttext}>
           {item?.amount}
         </CustomText>
       </View>
       <View style={styles.row}>
-        <CustomText
-          isBold
-          style={{
-            fontSize: moderateScale(12, 0.6),
-            color: Color.white,
-          }}>
-          {item?.name}
+        <CustomText isBold style={styles.heading}>
+          created at
         </CustomText>
         <CustomText isBold style={styles.amounttext}>
-          {item?.amount}
+          {moment(item?.created_at).format('MMM Do YY')}
+          {/* {item?.created_at} */}
+        </CustomText>
+      </View>
+      <View style={styles.row}>
+        <CustomText isBold style={styles.heading}>
+          type
+        </CustomText>
+        <CustomText isBold style={styles.amounttext}>
+          {item?.type}
+        </CustomText>
+      </View>
+      <View style={styles.row}>
+        <CustomText isBold style={styles.heading}>
+          reason
+        </CustomText>
+        <CustomText isBold style={styles.amounttext}>
+          {item?.reason}
         </CustomText>
       </View>
     </View>
@@ -119,7 +133,7 @@ export default TransactionhistoryCard;
 
 const styles = StyleSheet.create({
   heading: {
-    fontSize: moderateScale(14, 0.6),
+    fontSize: moderateScale(12, 0.6),
     color: Color.white,
   },
   row: {

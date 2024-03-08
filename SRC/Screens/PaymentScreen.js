@@ -24,13 +24,16 @@ import numeral from 'numeral';
 import navigationService from '../navigationService';
 import CustomImage from '../Components/CustomImage';
 import {useDispatch, useSelector} from 'react-redux';
-import {setVoucherData, setWholeCart} from '../Store/slices/common';
+import {setUserData, setVoucherData, setWholeCart} from '../Store/slices/common';
 import { Post } from '../Axios/AxiosInterceptorFunction';
 
 const PaymentScreen = props => {
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
-  console.log("🚀 ~ file: PaymentScreen.js:33 ~ PaymentScreen ~ finalData:", finalData)
+  const userData = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ PaymentScreen ~ userData:", userData?.wallet?.amount)
+
+  console.log("🚀 ~ file: PaymentScreen.js:33 ~ PaymentScreen ~ finalData:", finalData?.total)
 
   const dispatch = useDispatch();
   const token = useSelector(state=> state.authReducer.token)
@@ -67,13 +70,14 @@ const PaymentScreen = props => {
     setIsLoading(false);
 
     if (response != undefined) {
+      // return console.log( 'data =====> > >> ',response?.data?.user_info)
       Platform.OS === 'android'
         ? ToastAndroid.show('Booking successful', ToastAndroid.SHORT)
         : Alert.alert('Booking successful');
-
+        dispatch(setUserData(response?.data?.user_info));
+        dispatch(setVoucherData({}))
       navigationService.navigate('TabNavigation');
       fromStore && dispatch(setWholeCart([]));
-      dispatch(setVoucherData({}))
     }
   };
 
@@ -202,7 +206,7 @@ const PaymentScreen = props => {
                   styles.subHeading,
                   {color: Color.black, marginTop: moderateScale(0, 0.3)},
                 ]}>
-                Mastercard
+              Wallet
               </CustomText>
 
               <CustomText
@@ -213,7 +217,7 @@ const PaymentScreen = props => {
                     marginTop: moderateScale(0, 0.3),
                   },
                 ]}>
-                ****** 44102
+               My wallet
               </CustomText>
             </View>
             <View style={styles.addCardContainer}>

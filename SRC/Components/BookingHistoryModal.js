@@ -17,46 +17,40 @@ const BookingHistoryModal = ({
   selectedItem,
   setSelectedItem,
 }) => {
-
   const isFocused = useIsFocused();
   const [bookingResponse, setBookingResponse] = useState([]);
-  console.log("🚀 ~ bookingResponse:", bookingResponse)
-  const [item, setItem] = useState('');
+  console.log('🚀 ~ bookingResponse:', bookingResponse);
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
   // const [bookingList, setBookinglist] = useState([]);
   const [loading, setLoading] = useState(false);
- 
+
   const GetBooking = async () => {
-    const url = `auth/booking/list?${item == '' ? 'all' : item}`;
+    const url = `auth/booking/list?status=all`;
     setLoading(true);
     //  return console.log("🚀 ~ GetBooking ~ url:", url)
     const response = await Get(url, token);
 
     setLoading(false);
     if (response != undefined) {
-      console.log(
-        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000PARTY',
-        response?.data,
-      );
+     
       setBookingResponse(response?.data?.data);
     }
   };
 
   const barberBooking = async () => {
-    const url = `auth/barber/booking/list?${item == '' ? 'all' : item}`;
+    const url = `auth/barber/booking/list?status=all`;
     setLoading(true);
     const response = await Get(url, token);
     setLoading(false);
     if (response != undefined) {
-      console.log('🚀 ~ barberBooking ~ response:', response?.data?.data);
-      setBookingResponse(response?.data?.data);
+      setBookingResponse(response?.data?.barber_booking_list);
     }
   };
 
   useEffect(() => {
     user?.role == 'customer' ? GetBooking() : barberBooking();
-  }, [isFocused, item]);
+  }, [isFocused]);
   return (
     <Modal
       isVisible={isVisible}
@@ -76,7 +70,7 @@ const BookingHistoryModal = ({
           width: windowWidth * 0.92,
           // marginTop: moderateScale(10, 0.3),
           borderWidth: 2,
-      //  paddingRights:moderateScale(20,.3),
+          //  paddingRights:moderateScale(20,.3),
           height: windowHeight * 0.8,
           borderColor: Color.themeColor,
           borderRadius: moderateScale(20, 0.6),
@@ -87,33 +81,19 @@ const BookingHistoryModal = ({
           showsVerticalScrollIndicator={false}
           // decelerationRate={'fast'}
           numColumns={1}
-          // ListEmptyComponent={() => {
-          //   return (
-          //     <NoData
-          //       style={{
-          //         height: windowHeight * 0.25,
-          //         width: windowWidth * 0.6,
-          //         alignItems: 'center',
-          //       }}
-          //       text={'No Upcoming Orders'}
-          //     />
-          //   );
-          // }}
-          style={{
-            // marginTop: moderateScale(10, 0.3),
-          }}
+         
+         
           contentContainerStyle={{
-            width: '100%' ,
+            width: '100%',
             alignItems: 'center',
-            paddingTop:moderateScale(20,.6),
+            paddingTop: moderateScale(20, 0.6),
             // justifyContent: 'space-between',
             paddingBottom: moderateScale(100, 0.6),
             // paddingHorizontal: moderateScale(8, 0.3),
           }}
           data={bookingResponse}
           renderItem={({item, index}) => {
-            // console.log("🚀 ~ file: Homescreen.js:356 ~ Homescreen ~ item:", item)
-            return (
+          return (
               <CompletedOrderCard
                 item={item}
                 fromModal={true}
