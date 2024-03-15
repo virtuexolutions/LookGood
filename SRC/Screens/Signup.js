@@ -124,7 +124,7 @@ const Signup = ({navigation}) => {
     const response = await Post(url, formData, apiHeader());
     setIsLoading(false);
     if (response != undefined) {
-      //  return  console.log("response?.data", response?.data);
+        console.log("response?.data", response?.data);
       Platform.OS === 'android'
         ? ToastAndroid.show('User Registered Succesfully', ToastAndroid.SHORT)
         : Alert.alert('User Registered Succesfully');

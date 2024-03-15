@@ -39,9 +39,7 @@ const BarberCard = ({
   fromComparebarber,
   setSelectedBarber
 }) => {
-  console.log("🚀 ~ onPress:", onPress)
-  // console.log("🚀 ~ selectedBarber:", selectedBarber)
-  console.log('🚀 ~ data:', item);
+
   const cartData = useSelector(state => state.commonReducer.cartData);
   const token = useSelector(state => state.authReducer.token);
   const dispatch = useDispatch();
@@ -94,6 +92,7 @@ const BarberCard = ({
         paddingVertical: moderateScale(15, 0.6),
       }}>
       <Pressable
+      // disabled={fromComparebarber ? true :false}
         onLongPress={() => {
           added == false &&
             (setStart(true),
@@ -116,7 +115,6 @@ const BarberCard = ({
               setSelectedBarber(prev => [...prev, item]);
             }
           }else{
-            console.log('i want to navigate ')
             onPress()
           }
 
@@ -214,16 +212,25 @@ const BarberCard = ({
               setIsHolidayMode={setIsHolidayMode}
               isHolidayMode={isHolidayMode}
             />
+  <View style={styles.absoluteContainer}>
 
             <CustomText
               isBold
               style={{
                 color: Color.black,
-                textAlign: 'center',
                 marginTop: moderateScale(5, 0.3),
               }}>
               {item?.first_name}
             </CustomText>
+            <CustomText
+              isBold
+              style={{
+                color: Color.themeColor,
+                marginTop: moderateScale(5, 0.3),
+              }}>
+              {item?.tier}
+            </CustomText>
+            </View>
             {added && (
               <TouchableOpacity
                 onPress={() => {
@@ -257,8 +264,9 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.26,
     backgroundColor: 'white',
     // overflow: 'hidden',
-    borderRadius: moderateScale(20, 0.5),
+    borderRadius: moderateScale(10, 0.5),
     marginBottom: moderateScale(10, 0.3),
+    overflow : 'hidden'
   },
   heart: {
     width: moderateScale(40, 0.3),
@@ -271,6 +279,17 @@ const styles = StyleSheet.create({
     right: moderateScale(10, 0.3),
     top: moderateScale(10, 0.3),
     zIndex: 1,
+  },
+  absoluteContainer : { 
+    position : 'absolute',
+    bottom : 0,
+    width : '100%',
+    height : moderateScale(40,0.6),
+    backgroundColor : 'rgba(0,0,0,0.4)',
+    justifyContent : 'space-between',
+    paddingHorizontal : moderateScale(5,0.6),
+    flexDirection : 'row',
+    alignItems : 'center'
   },
   remove: {
     marginBottom: moderateScale(10, 0.3),

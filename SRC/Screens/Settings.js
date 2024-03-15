@@ -52,18 +52,21 @@ const Settings = () => {
           {
             name: 'Add Service',
             onPress: () => {
-              navigationService.navigate('AddService');
+              navigationService.navigate('AddService' ,{fromSettings :true});
             },
           },
         ]
       : []),
+...(UserData?.role == 'customer' ?
 
-      {
-        name: 'compare barber',
+[{
+name: 'compare barber',
         onPress: () => {
           navigationService.navigate('CompareBaberScreen');
         },
-      },
+      },]:[]
+
+),
     {
       name: 'Payment Method',
       onPress: () => {

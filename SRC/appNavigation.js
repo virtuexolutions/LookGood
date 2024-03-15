@@ -46,13 +46,16 @@ import CustomerBookingDetails from './Screens/CustomerBookingDetails';
 import GetStarted from './Screens/GetStarted';
 import CompareBaberScreen from './Screens/CompareBaberScreen';
 import BarberCompersion from './Screens/BarberCompersion';
+import QuestionAnswerScreen from './Screens/QuestionAnswerScreen';
 
 const AppNavigator = () => {
   // const isLogin = false;
+  const userData = useSelector(state => state.commonReducer.userData);
+  console.log('🚀 ~ AppNavigator ~ userData :', userData?.services);
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
-
   const walkThrough = useSelector(state => state.authReducer.userWalkThrough);
   const isVerified = useSelector(state => state.authReducer.isVerified);
+
   const token = useSelector(state => state.authReducer.token);
   console.log(token);
 
@@ -60,14 +63,37 @@ const AppNavigator = () => {
   const RootNavLogged = createNativeStackNavigator();
 
   const AppNavigatorContainer = () => {
-    const firstScreen = token != null ? 'TabNavigation' : 'LoginScreen';
+    // const firstScreen = token != null ? 'TabNavigation' : 'LoginScreen';
+
+    const customerFirstScreen = token == null ? 'LoginScreen' : 'TabNavigation';
+
+    const secondScreen =
+      token == null
+        ? 'LoginScreen'
+        : userData?.services?.length == 0
+        ? 'AddService'
+        : userData?.complete_questions?.toLowerCase() == 'no'
+        ? 'QuestionAnswerScreen'
+        : 'TabNavigation';
+
+    console.log(
+      '🚀 ~ AppNavigatorContainer ~ secondScreen ==============>:',
+      secondScreen,
+    );
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
         <RootNav.Navigator
-          initialRouteName={firstScreen}
+          initialRouteName={
+            userData?.role == 'customer' ? customerFirstScreen : secondScreen
+          }
           screenOptions={{headerShown: false}}>
           {/* <RootNav.Screen name="Walkthrough" component={Walkthrough} /> */}
+          <RootNav.Screen
+            name="QuestionAnswerScreen"
+            component={QuestionAnswerScreen}
+          />
+
           <RootNav.Screen name="EnterPhone" component={EnterPhone} />
           <RootNav.Screen name="GetStarted" component={GetStarted} />
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
@@ -106,9 +132,14 @@ const AppNavigator = () => {
           <RootNav.Screen name="ImageUpload" component={ImageUpload} />
           <RootNav.Screen name="ImageScreen" component={ImageScreen} />
           <RootNav.Screen name="Purchase" component={Purchase} />
-          <RootNav.Screen name="CompareBaberScreen" component={CompareBaberScreen} />
-          <RootNav.Screen name="BarberCompersion" component={BarberCompersion} />
-
+          <RootNav.Screen
+            name="CompareBaberScreen"
+            component={CompareBaberScreen}
+          />
+          <RootNav.Screen
+            name="BarberCompersion"
+            component={BarberCompersion}
+          />
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -120,7 +151,7 @@ const AppNavigator = () => {
 export const TabNavigation = props => {
   const Tabs = createBottomTabNavigator();
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log("🚀 ~ TabNavigation ~ userData:", userData?.role)
+  console.log('🚀 ~ TabNavigation ~ userData:', userData?.role);
 
   return (
     <Tabs.Navigator
@@ -187,7 +218,6 @@ export const TabNavigation = props => {
         <Tabs.Screen name={'Wishlist'} component={Wishlist} />
       ) : (
         <Tabs.Screen name="WalletScreen" component={WalletScreen} />
-
       )}
 
       <Tabs.Screen name={'Store'} component={Store} />

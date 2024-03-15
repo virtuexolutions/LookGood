@@ -35,17 +35,16 @@ import {Platform} from 'react-native';
 import CustomButton from '../Components/CustomButton';
 import {Rating} from 'react-native-ratings';
 
-const BarberCompersion = () => {
-  const navigation = useNavigation()
+const BarberCompersion = props => {
+  const navigation = useNavigation();
+  const detail = props?.route?.params?.item;
+
   const [isLoading, setIsLoading] = useState(false);
   const [Loading, setLoading] = useState(false);
   const [barberData, setBarberData] = useState([]);
-  const [orderData, setOrderData] = useState([]);
+
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState([]);
-  const [isHolidayMode, setIsHolidayMode] = useState(false);
-  const [selectBarber, setSelectBarber] = useState([]);
-  console.log('🚀 ~ CompareBaberScreen ~ selectedBarber:', selectBarber);
+
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);
@@ -109,134 +108,118 @@ const BarberCompersion = () => {
                 width: windowWidth,
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                // paddingHorizontal: moderateScale(8, 0.3),
+                
               }}
-              // data={barberdata}
-              data={[1, 2,3,4]}
-              // data={barberData?.reverse()}
+              data={detail}
               renderItem={({item, index}) => {
                 return (
-                  <View style={{
-                    // backgroundColor:'red'
-                  }}>
-                  <TouchableOpacity 
-                  onPress={() => 
-                    {
-                      if(selectBarber == 2){
-                        Platform.OS == 'android' ? 
-                        ToastAndroid.show('you can only select one barber'):
-                        Alert.alert('you can only select  one barber');
-                      }else{
-                        if (
-                          selectBarber?.length == 2 ||
-                          selectBarber.some(item1 => item1?.id == item?.id)
-                        ) {
-                          selectBarber.some(item1 => item1?.id == item?.id) &&
-                          setSelectBarber(
-                            selectBarber?.filter(
-                              (value, index) => value?.id !== item?.id,
-                            ),
-                          );
-                      }
-                    console.log('Selected barber here')}}
-                  }
-                  style={styles.mainContainer}>
-                    <View style={styles.imageConatiner}>
-                      <CustomImage
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                        }}
-                        // resizeMode= "contain"
-                        source={require('../Assets/Images/dummyUser1.png')}
-                      />
-                    </View>
-                    <View
-                      style={[
-                        styles.row,
-                        {
-                          paddingTop: moderateScale(5, 0.6),
-                        },
-                      ]}>
-                      <CustomText
-                        style={{
-                          fontSize: moderateScale(12, 0.6),
-                        }}>
-                        name :
-                      </CustomText>
-                      <CustomText style={styles.h1}>barber1</CustomText>
-                    </View>
-                    <View style={styles.row}>
-                      <CustomText
-                        style={{
-                          fontSize: moderateScale(12, 0.6),
-                        }}>
-                        ratings :
-                      </CustomText>
-                      <CustomText style={styles.h1}>
-                        {' '}
+                  <View
+                    // style={
+                    //   {
+                    //     // backgroundColor:'red'
+                    //   }
+                    // }
+                    >
+                    <TouchableOpacity style={styles.mainContainer}>
+                      <View style={styles.imageConatiner}>
+                        <CustomImage
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                          }}
+                          // resizeMode= "contain"
+                          source={{uri: item?.photo}}
+                        />
+                      </View>
+                      <View
+                        style={[
+                          styles.row,
+                          {
+                            paddingTop: moderateScale(5, 0.6),
+                          },
+                        ]}>
+                        <CustomText
+                          style={{
+                            fontSize: moderateScale(12, 0.6),
+                          }}>
+                          name :
+                        </CustomText>
+                        <CustomText
+                          style={
+                            styles.h1
+                          }>{`${item?.first_name}${item?.last_name} `}</CustomText>
+                      </View>
+                      <View style={styles.row}>
+                        <CustomText
+                          style={{
+                            fontSize: moderateScale(12, 0.6),
+                          }}>
+                          ratings :
+                        </CustomText>
                         <Rating
                           type="custom"
                           readonly
-                          startingValue={3}
+                          // startingValue={3}
+                          startingValue={item?.reviews_avg_rating}
                           ratingCount={5}
                           imageSize={moderateScale(10, 0.3)}
                           style={{
-                            width: windowWidth * 0.24,
+                            width: windowWidth * 0.17,
+                            justifyContent: 'center',
+                            // backgroundColor: 'green',
                           }}
                           ratingBackgroundColor={'transparent'}
                         />
-                      </CustomText>
-                    </View>
-                    <View style={styles.row}>
-                      <CustomText
-                        style={{
-                          fontSize: moderateScale(12, 0.6),
-                        }}>
-                        total reviews :
-                      </CustomText>
-                      <CustomText
-                        style={{
-                          fontSize: moderateScale(12, 0.6),
-                          paddingHorizontal: moderateScale(5, 0.6),
-                        }}>
-                        331
-                      </CustomText>
-                    </View>
-                    <View style={styles.row}>
-                      <CustomText
-                        style={{
-                          fontSize: moderateScale(12, 0.6),
-                        }}>
-                        price :
-                      </CustomText>
-                      <CustomText style={styles.h1}>1$</CustomText>
-                    </View>
-                  </TouchableOpacity>
-       
-            <CustomButton
-              textColor={Color.black}
-              width={windowWidth * 0.3}
-              height={windowHeight * 0.045}
-              text={'book now'}
-              fontSize={moderateScale(14, 0.3)}
-              onPress={() => {
-                navigation.navigate('BarberServicesScreen')
-              }}
-              isGradient={true}
-              borderRadius={moderateScale(30, 0.4)}
-              isBold
-              marginTop={moderateScale(5, 0.3)}
-              marginBottom={moderateScale(14,.6)}
-            />
-        
+                      </View>
+                      <View style={styles.row}>
+                        <CustomText
+                          style={{
+                            fontSize: moderateScale(12, 0.6),
+                          }}>
+                          total reviews :
+                        </CustomText>
+                        <CustomText
+                          style={{
+                            fontSize: moderateScale(12, 0.6),
+                            paddingHorizontal: moderateScale(5, 0.6),
+                          }}>
+                          {item?.reviews_count}
+                          {/* 331 */}
+                        </CustomText>
+                      </View>
+                      <View style={styles.row}>
+                        <CustomText
+                          style={{
+                            fontSize: moderateScale(12, 0.6),
+                          }}>
+                          price :
+                        </CustomText>
+                        <CustomText style={styles.h1}>1$</CustomText>
+                      </View>
+                    </TouchableOpacity>
+
+                    <CustomButton
+                      textColor={Color.black}
+                      width={windowWidth * 0.3}
+                      height={windowHeight * 0.045}
+                      text={'book now'}
+                      fontSize={moderateScale(14, 0.3)}
+                      onPress={() => {
+                        navigation.navigate('BarberServicesScreen', {
+                          detail: item,
+                        });
+                      }}
+                      isGradient={true}
+                      borderRadius={moderateScale(30, 0.4)}
+                      isBold
+                      marginTop={moderateScale(5, 0.3)}
+                      marginBottom={moderateScale(14, 0.6)}
+                    />
                   </View>
-                  
                 );
               }}
             />
           )}
-         
         </ScrollView>
       </LinearGradient>
     </ScreenBoiler>
@@ -291,7 +274,7 @@ const styles = ScaledSheet.create({
     borderRadius: moderateScale(10, 0.6),
     overflow: 'hidden',
     marginHorizontal: moderateScale(10, 0.3),
-    marginVertical:moderateScale(5,.6)
+    marginVertical: moderateScale(5, 0.6),
   },
   imageConatiner: {
     height: windowHeight * 0.13,

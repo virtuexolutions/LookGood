@@ -16,22 +16,9 @@ import TextInputWithTitle from './TextInputWithTitle';
 import { Platform } from 'react-native';
 import { ToastAndroid } from 'react-native';
 
-const ServiceComponent = ({setService, service, item}) => {
+const ServiceComponent = ({setService, service, item ,serviceArray}) => {
  
-  const serviceArray = [
-    'Blow dry',
-    'Blow dry with curling and striaght iron',
-    'Hair cut with Blow dry',
-    'Mens haircut',
-    'Gloss',
-    'Gel Polist',
-    'Meni pedi',
-    'nail cutting',
-    'pink and white fill',
-    'Polish change',
-    'Acrylic fill',
-    'partial highlight',
-  ];
+
 
   return (
     <View
@@ -45,7 +32,7 @@ const ServiceComponent = ({setService, service, item}) => {
       }}>
       {item?.name == '' ? (
         <SelectDropdown
-          data={serviceArray}
+          data={serviceArray.map(item=> {return item?.name})}
           // defaultValue={item?.name}
           dropdownStyle={{
             width: windowWidth * 0.6,

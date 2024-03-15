@@ -6,7 +6,8 @@ const initialState = {
   cartData: [],
   selectedVoucher :{},
   financeBreakDown: [],
-  notification : false
+  notification : false,
+  // barberServices:[]
 };
 
 const CommonSlice = createSlice({
@@ -23,12 +24,15 @@ const CommonSlice = createSlice({
       state.cartData = data ;
 
 
+
+
     },
     setWholeCart(state , action){
       state.cartData = action.payload;
     },
     setUserData(state, action) {
       state.userData = action?.payload;
+      // console.log("🚀 ~ setUserData ~ action?.payload:", action?.payload)
     },
     setUserLogOut(state, action) {
       state.userData = {};
@@ -43,8 +47,12 @@ const CommonSlice = createSlice({
     setVoucherData(state,action){
       state.selectedVoucher = action.payload
       console.log('Selected Voucher=====>>>>', state.selectedVoucher)
-    }
-  },
+    },
+  //  setbarberServices(state, action) {
+  //   state.barberServices = action.payload
+  //   console.log("🚀 ~ setbarberServices ~ action.payload ============>:", action.payload)
+  // },
+}
 });
 
 export const {
@@ -55,7 +63,8 @@ export const {
   setServices,
   setRemoveCardData,
   setWholeCart,
-  setVoucherData
+  setVoucherData,
+  // setbarberServices
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;

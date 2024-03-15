@@ -38,13 +38,13 @@ const CompareBaberScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [Loading, setLoading] = useState(false);
   const [barberData, setBarberData] = useState([]);
-  console.log("🚀 ~ CompareBaberScreen ~ barberData:", barberData)
+
   const [orderData, setOrderData] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState([]);
   const [isHolidayMode, setIsHolidayMode] = useState(false);
   const [selectedBarber, setSelectedBarber] = useState([]);
-  console.log('🚀 ~ CompareBaberScreen ~ selectedBarber:', selectedBarber);
+
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);
@@ -58,10 +58,8 @@ const CompareBaberScreen = () => {
     const response = await Get(url, token);
 
     setLoading(false);
-    // console.log('Data ==>', response?.data?.data);
 
     if (response != undefined) {
-      //   console.log('🚀 ~ GetBarberBooking ~ response:', response?.data);
       setOrderData(response?.data?.barber_booking_list);
     }
   };
@@ -73,15 +71,16 @@ const CompareBaberScreen = () => {
       near: selectedItem?.includes('nearest to me') ? 1 : 0,
       earlier: selectedItem?.includes('earliest') ? 1 : 0,
     };
-    // console.log('🚀 ~ barberFilter ~ body:', body);
+
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (response != undefined) {
-      //   console.log('🚀 ~ barberFilter ~ response:', response?.data?.users);
-      // setBarberFilters(response?.data);
+      console.log(
+        '🚀 ~ barberFilter ~ response================>:',
+        response?.data?.users,
+      );
       setBarberData(response?.data?.users);
-      // setIsVisible(false)
     }
   };
 
@@ -138,15 +137,14 @@ const CompareBaberScreen = () => {
         end={{x: 0.5, y: 1.0}}
         colors={Color.themeGradient}
         style={styles.container}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: windowHeight * 0.155,
-            // paddingTop : moderateScale(20,0.3),
-            alignItems: 'center',
-          }}
+        <View
           style={{
             width: windowWidth,
+            paddingBottom: windowHeight * 0.155,
+            // paddingTop: moderateScale(20, 0.3),
+            alignItems: 'center',
+            height: windowHeight * 0.95,
+            // backgroundColor:'green'
           }}>
           {isLoading ? (
             <View
@@ -183,29 +181,26 @@ const CompareBaberScreen = () => {
                 // paddingHorizontal: moderateScale(8, 0.3),
               }}
               // data={barberdata}
-              data={barberData?.reverse()}
+              data={barberData}
               renderItem={({item, index}) => {
                 return (
-             
-
-                    <BarberCard
-                      selectedBarber={selectedBarber}
-                      setSelectedBarber={setSelectedBarber}
-                      fromComparebarber={true}
-                      item={item}
-                      setIsHolidayMode={setIsHolidayMode}
-                      isHolidayMode={isHolidayMode}
-                      onPress={() => {
-                        if (item?.holiday_mode == true) {
-                          setIsHolidayMode(true);
-                        } else {
-                            navigationService.navigate('BarberServicesScreen', {
-                              detail: item,
-                            });
-                        }
-                      }}
-                    />
-            
+                  <BarberCard
+                    selectedBarber={selectedBarber}
+                    setSelectedBarber={setSelectedBarber}
+                    fromComparebarber={true}
+                    item={item}
+                    setIsHolidayMode={setIsHolidayMode}
+                    isHolidayMode={isHolidayMode}
+                    onPress={() => {
+                      if (item?.holiday_mode == true) {
+                        setIsHolidayMode(true);
+                      } else {
+                        navigationService.navigate('BarberServicesScreen', {
+                          detail: item,
+                        });
+                      }
+                    }}
+                  />
                 );
               }}
             />
@@ -214,7 +209,8 @@ const CompareBaberScreen = () => {
             <View
               style={{
                 position: 'absolute',
-                bottom: 250,
+                bottom: 100,
+                // backgroundColor: 'red',
               }}>
               <CustomButton
                 textColor={Color.black}
@@ -223,7 +219,9 @@ const CompareBaberScreen = () => {
                 text={'compare'}
                 fontSize={moderateScale(14, 0.3)}
                 onPress={() => {
-                  navigationService.navigate('BarberCompersion');
+                  navigationService.navigate('BarberCompersion', {
+                    item: selectedBarber,
+                  });
                 }}
                 isGradient={true}
                 borderRadius={moderateScale(30, 0.4)}
@@ -232,7 +230,7 @@ const CompareBaberScreen = () => {
               />
             </View>
           )}
-        </ScrollView>
+        </View>
       </LinearGradient>
     </ScreenBoiler>
   );

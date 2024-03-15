@@ -42,11 +42,10 @@ const Homescreen = () => {
 
   const user = useSelector(state => state.commonReducer.userData);
   // console.log("🚀 ~ Homescreen ~ user:", user)
+
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ Homescreen ~ token:", token)
+  // console.log("🚀 ~ Homescreen ~ token:", token)
   const [index, setIndex] = useState(0);
-
-
 
   const GetBarberBooking = async () => {
     const url = `auth/barber/booking/list`;
@@ -54,53 +53,43 @@ const Homescreen = () => {
     const response = await Get(url, token);
 
     setLoading(false);
-    // console.log('Data ==>', response?.data?.data);
 
     if (response != undefined) {
-      // console.log("🚀 ~ GetBarberBooking ~ response:", response?.data)
       setOrderData(response?.data?.barber_booking_list);
     }
   };
 
   // TIME GET API END
-  
+
   const barberFilter = async () => {
     const url = 'auth/barber/filter';
     const body = {
-      featured: selectedItem?.includes('featured barber')  ? 1 : 0,
-      near: selectedItem?.includes('nearest to me')  ? 1 : 0,
-      earlier: selectedItem?.includes('earliest')  ? 1 : 0,
-      
+      featured: selectedItem?.includes('featured barber') ? 1 : 0,
+      near: selectedItem?.includes('nearest to me') ? 1 : 0,
+      earlier: selectedItem?.includes('earliest') ? 1 : 0,
     };
-    // console.log("🚀 ~ barberFilter ~ body:", body)
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (response != undefined) {
-      
-      console.log('🚀 ~ barberFilter ~ response:', response?.data?.users);
-      // setBarberFilters(response?.data);
+      console.log('response here==============',JSON.stringify(response?.data?.users ,null ,2));
+
       setBarberData(response?.data?.users);
-      // setIsVisible(false)
     }
   };
-  
-  useEffect(() => {
-  if(user?.role == 'barber'){
 
+  useEffect(() => {
+    if (user?.role == 'barber') {
       // BarberList();
       GetBarberBooking();
     }
   }, [focused]);
 
   useEffect(() => {
-    if(user?.role == 'customer'){
-
-      barberFilter()
+    if (user?.role == 'customer') {
+      barberFilter();
     }
-  }, [focused , selectedItem.length])
-  
-
+  }, [focused, selectedItem.length]);
 
   const bannerArray = [
     {
@@ -119,8 +108,6 @@ const Homescreen = () => {
       description: 'The latest trend Hair Dresser',
     },
   ];
- 
- 
 
   return (
     <ScreenBoiler
@@ -164,11 +151,9 @@ const Homescreen = () => {
                 }}
                 onPress={() => {
                   setIsVisible(true);
-                  console.log('hello-===============>con');
                 }}>
                 <Icon
                   style={{
-                    // backgroundColor:'red',
                     textAlign: 'center',
                   }}
                   onPress={() => {
@@ -187,7 +172,6 @@ const Homescreen = () => {
                       <CustomText
                         onPress={() => {
                           setIsVisible(true);
-                          console.log('hello-===============>con');
                         }}
                         isBold
                         style={{
@@ -372,15 +356,11 @@ const Homescreen = () => {
                   width: windowWidth,
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  // paddingHorizontal: moderateScale(8, 0.3),
                 }}
                 data={barberData?.reverse()}
                 renderItem={({item, index}) => {
-
-                  // console.log("🚀 ~ file: Homescreen.js:356 ~ Homescreen ~ item:", item)
                   return (
                     <BarberCard
-                    
                       item={item}
                       setIsHolidayMode={setIsHolidayMode}
                       isHolidayMode={isHolidayMode}
@@ -549,7 +529,6 @@ const Homescreen = () => {
                 }}
                 numColumns={1}
                 renderItem={({item, index}) => {
-                  // console.log("🚀 ~ file: Homescreen.js:520 ~ Homescreen ~ item:", item)
                   return <CompletedOrderCard item={item} />;
 
                   //  <OrderCard item={item} />;

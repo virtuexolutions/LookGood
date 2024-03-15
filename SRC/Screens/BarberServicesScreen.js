@@ -29,21 +29,24 @@ import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
 import ReviewCard from '../Components/ReviewCard';
 import ShowReview from '../Components/ShowReview';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const BarberServicesScreen = props => {
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log("🚀 ~ BarberServicesScreen ~ userData:", userData?.wallet?.amount)
 
   const token = useSelector(state => state.authReducer.token);
   const [selectedService, setSelectedService] = useState([]);
-  console.log("🚀 ~ BarberServicesScreen ~ selectedService:", selectedService)
   const [barberDetails, setBarberDetails] = useState([]);
+  console.log(
+    '🚀 ~ BarberServicesScreen ~ barberDetails:',
+    // JSON.stringify(barberDetails?.questions_ans, null, 2),
+    // barberDetails?.questions_ans[0]?.answer?.answer,
+    // barberDetails?.questions_ans[0]?.answer?.answer
+  );
   const [Loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
-  const [totalPrice, settotalPrice] = useState(0)
+  const [totalPrice, settotalPrice] = useState(0);
   const detail = props?.route?.params?.detail;
- 
-  // console.log("🚀 ~ BarberServicesScreen ~ detail:", detail)
 
   const BarberDetals = async () => {
     const url = `auth/barber/detail/${detail?.id}`;
@@ -51,10 +54,7 @@ const BarberServicesScreen = props => {
     const response = await Get(url, token);
     setLoading(false);
     if (response != undefined) {
-      console.log(
-        '🚀 ~ file: AddService.js:35 ~ GetServices ~ response:3333330000Alpha High Command',
-        response?.data?.user_detail,
-      );
+      // console.log('🚀 ~ BarberDetals ~ response:', response?.data);
       setBarberDetails(response?.data?.user_detail);
     }
   };
@@ -64,12 +64,13 @@ const BarberServicesScreen = props => {
   }, []);
 
   useEffect(() => {
-    if(selectedService?.length > 0){
+    if (selectedService?.length > 0) {
       let t_Price = 0;
-      selectedService?.map((item , index)=> t_Price += item?.price)
-      settotalPrice(t_Price)
-      if(t_Price > userData?.wallet?.amount){
-        Alert.alert('Insufficient credits' , 'please buy some and try again', [
+      selectedService?.map((item, index) => (t_Price += item?.price));
+      console.log(t_Price, userData?.wallet?.amount);
+      settotalPrice(t_Price);
+      if (t_Price > userData?.wallet?.amount) {
+        Alert.alert('Insufficient credits', 'please buy some and try again', [
           {
             text: 'Cancel',
             style: 'cancel',
@@ -77,17 +78,13 @@ const BarberServicesScreen = props => {
           {
             text: 'Buy coins',
             onPress: () => {
-              navigationService.navigate('Purchase')
+              navigationService.navigate('Purchase');
             },
           },
         ]);
-   
       }
     }
-
-    
-  }, [selectedService])
-  
+  }, [selectedService]);
 
   const serviceArray = [
     {
@@ -152,6 +149,13 @@ const BarberServicesScreen = props => {
     },
   ];
 
+  const question = [
+    'car parking area ',
+    ' cafeteria',
+    ' airconditional waiting area',
+    ' security surveillance',
+  ];
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -170,7 +174,7 @@ const BarberServicesScreen = props => {
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <CustomImage style={styles.image} source={ {uri: detail?.photo}} />
+          <CustomImage style={styles.image} source={{uri: detail?.photo}} />
           <View style={{marginLeft: moderateScale(10, 0.3)}}>
             <CustomTextWithMask
               data={`${detail?.first_name} ${detail?.last_name}`}
@@ -182,7 +186,6 @@ const BarberServicesScreen = props => {
             />
             <TouchableOpacity
               onPress={() => {
-                console.log('hye review here');
                 setModal(true);
               }}
               style={{
@@ -209,6 +212,80 @@ const BarberServicesScreen = props => {
               {barberDetails?.review?.length} Review
             </CustomText>
           </View>
+        </View>
+        <View
+          style={{
+            // backgroundColor : 'red',
+            width: windowWidth,
+            // marginTop :moderateScale(10,.6),
+            marginHorizontal: moderateScale(10, 0.6),
+          }}>
+          <CustomText
+            isBold
+            // size={moderateScale(30, 0.3)}
+            style={{
+              color: Color.themeColor,
+              fontSize: moderateScale(18, 0.3),
+            }}>
+            Ambiance
+          </CustomText>
+
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={question}
+            style={{
+              width: windowWidth * 0.95,
+            }}
+            contentContainerStyle={{
+              padding: moderateScale(10, 0.6),
+            }}
+            renderItem={({item, index}) => {
+              console.log(
+                '🚀 ~ BarberServicesScreen ~ item=============>pro here:',
+                item,
+                // barberDetails?.questions_ans[0]?.answer?.answer
+              );
+              return (
+                <View
+                  activeOpacity={0.9}
+                  style={{
+                    width: windowWidth,
+                    paddingVertical: moderateScale(5, 0.6),
+                    flexDirection: 'row',
+                  }}>
+                  <CustomText
+                    isBold
+                    style={{
+                      fontSize: moderateScale(13, 0.3),
+                      width: windowWidth * 0.8,
+                      // backgroundColor: 'red',
+                      color: Color.white,
+                    }}>
+                    {barberDetails?.questions_ans[0]?.answer?.answer.toLowerCase() ==
+                    'yes'
+                      ? `${'i have'} ${item}`
+                      : `${'i have no'} ${item}`}
+                  </CustomText>
+                  <Icon
+                    as={Entypo}
+                    name={
+                      barberDetails?.questions_ans[0]?.answer?.answer.toLowerCase() ==
+                      'yes'
+                        ? 'check'
+                        : 'cross'
+                    }
+                    size={15}
+                    color={
+                      barberDetails?.questions_ans[0]?.answer?.answer.toLowerCase() ==
+                      'yes'
+                        ? Color.green
+                        : Color.themePink
+                    }
+                  />
+                </View>
+              );
+            }}
+          />
         </View>
 
         <CustomTextWithMask
@@ -238,12 +315,14 @@ const BarberServicesScreen = props => {
         ) : (
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={barberDetails.services}
+            data={barberDetails?.services}
             style={{
               width: windowWidth,
+              // backgroundColor : 'red',
+              flexGrow: 0,
             }}
             contentContainerStyle={{
-              paddingBottom: moderateScale(140, 0.3),
+              paddingBottom: moderateScale(80, 0.3),
               paddingTop: moderateScale(20, 0.3),
             }}
             ListEmptyComponent={() => {
@@ -416,7 +495,8 @@ const BarberServicesScreen = props => {
             }}
           />
         )}
-     <ShowReview
+
+        <ShowReview
           barberDetails={barberDetails?.review}
           modal={modal}
           setModal={setModal}
