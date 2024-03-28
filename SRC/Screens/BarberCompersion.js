@@ -160,7 +160,7 @@ const BarberCompersion = props => {
                           type="custom"
                           readonly
                           // startingValue={3}
-                          startingValue={item?.reviews_avg_rating}
+                          startingValue={item?.reviews_avg_rating ?item?.reviews_avg_rating :0}
                           ratingCount={5}
                           imageSize={moderateScale(10, 0.3)}
                           style={{
@@ -168,7 +168,7 @@ const BarberCompersion = props => {
                             justifyContent: 'center',
                             // backgroundColor: 'green',
                           }}
-                          ratingBackgroundColor={'transparent'}
+                          ratingBackgroundColor={'yellow'}
                         />
                       </View>
                       <View style={styles.row}>
@@ -194,7 +194,7 @@ const BarberCompersion = props => {
                           }}>
                           price :
                         </CustomText>
-                        <CustomText style={styles.h1}>1$</CustomText>
+                        <CustomText style={styles.h1}>{item?.tier}</CustomText>
                       </View>
                     </TouchableOpacity>
 

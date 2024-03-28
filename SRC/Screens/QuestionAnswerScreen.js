@@ -241,7 +241,7 @@ const styles = ScaledSheet.create({
     textTransform: 'uppercase',
     color: Color.white,
     textAlign: 'center',
-    fontSize: moderateScale(20, 0.3),
+    fontSize: moderateScale(20, 0.6),
   },
   container1: {
     flexDirection: 'row',
@@ -263,8 +263,8 @@ const styles = ScaledSheet.create({
     justifyContent: 'space-between',
     width: windowWidth * 0.4,
     // backgroundColor : 'red',
-    marginHorizontal: moderateScale(20, 6),
-    paddingVertical: moderateScale(5, 6),
+    marginHorizontal: moderateScale(20, 0.6),
+    paddingVertical: moderateScale(5, 0.6),
   },
   row: {
     alignItems: 'center',
@@ -272,7 +272,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
   },
   yes: {
-    fontSize: moderateScale(8, 6),
+    fontSize: moderateScale(12,0.6),
     color: Color.white,
     marginHorizontal: moderateScale(5, 0.6),
   },

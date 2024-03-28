@@ -43,7 +43,8 @@ const CustomButton = (props) => {
     isBold,
     disabled = false,
     alignSelf,
-    image
+    image,
+    gradientColor
 
     // value
   } = props;
@@ -95,7 +96,7 @@ const CustomButton = (props) => {
           }}
           start={{ x: 0.2, y: 0.6}}
           end={{ x: 1, y: 0 }}
-          colors={Color.btnColor}
+          colors={props?.gradientColor ? props?.gradientColor :  Color.btnColor}
         >
           {loader && (
             <ActivityIndicator

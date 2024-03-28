@@ -21,12 +21,12 @@ import CustomImage from '../Components/CustomImage';
 import {CardField, createToken} from '@stripe/stripe-react-native';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import {useDispatch, useSelector} from 'react-redux';
-import { setUserData } from '../Store/slices/common';
-import { useNavigation } from '@react-navigation/native';
+import {setUserData} from '../Store/slices/common';
+import {useNavigation} from '@react-navigation/native';
 
 const Purchase = () => {
-  const dispatch = useDispatch()
-  const navigation = useNavigation()
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
   const [amount, setAmount] = useState();
   const [transactionAdd, setTransactionAdd] = useState([]);
@@ -73,10 +73,13 @@ const Purchase = () => {
       const response = await Post(url, body, apiHeader(token));
       setIsLoading(false);
       if (response != undefined) {
-        console.log('🚀 ~ addTransaction ~ response:', response?.data?.user_info);
+        console.log(
+          '🚀 ~ addTransaction ~ response:',
+          response?.data?.user_info,
+        );
         dispatch(setUserData(response?.data?.user_info));
-        setIsVisible(false)
-        navigation.goBack()
+        setIsVisible(false);
+        navigation.goBack();
       }
     }
   };
@@ -150,6 +153,8 @@ const Purchase = () => {
                   right: 10,
                   //   backgroundColor: 'red',
                 }}>
+                {/* hfsdhfg */}
+
                 {selectedCoins != 'Other...' && selectedCoins}
               </CustomText>
             </View>
@@ -178,20 +183,21 @@ const Purchase = () => {
                       setSelectedCoins(item?.coin);
                       //   }
                     }}
+                    // elevation={true}
                     width={windowWidth * 0.4}
                     marginTop={moderateScale(37, 0.7)}
                     margin={moderateScale(13, 0.6)}
-                    height={
-                      //   selectedCoins?.some((item1, index) => item1?.id != item?.id)
-                      //     ? windowHeight * 0.07
-                      // :
-                      windowHeight * 0.05
-                    }
+                    height={windowHeight * 0.05}
                     borderRadius={moderateScale(25, 0.6)}
                     text={`${item.coin} Coins`}
                     fontSize={moderateScale(14, 0.3)}
                     textTransform={'uppercase'}
                     isGradient={true}
+                    gradientColor={
+                      item?.coin == selectedCoins
+                        ? Color.btnColor
+                        : ['white', 'white']
+                    }
                     isBold
                   />
                 )}
@@ -330,7 +336,7 @@ const styles = ScaledSheet.create({
     backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom : moderateScale(10,0.6),
+    marginBottom: moderateScale(10, 0.6),
   },
   text1: {
     textTransform: 'uppercase',

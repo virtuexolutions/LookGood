@@ -149,12 +149,7 @@ const BarberServicesScreen = props => {
     },
   ];
 
-  const question = [
-    'car parking area ',
-    ' cafeteria',
-    ' airconditional waiting area',
-    ' security surveillance',
-  ];
+
 
   return (
     <ScreenBoiler
@@ -194,7 +189,7 @@ const BarberServicesScreen = props => {
               <Rating
                 type="custom"
                 readonly
-                startingValue={3}
+                startingValue={detail?.reviews_avg_rating ?detail?.reviews_avg_rating :0}
                 ratingCount={5}
                 imageSize={moderateScale(18, 0.3)}
                 style={{
@@ -232,7 +227,7 @@ const BarberServicesScreen = props => {
 
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={question}
+            data={barberDetails?.questions_ans}
             style={{
               width: windowWidth * 0.95,
             }}
@@ -261,25 +256,25 @@ const BarberServicesScreen = props => {
                       // backgroundColor: 'red',
                       color: Color.white,
                     }}>
-                    {barberDetails?.questions_ans[0]?.answer?.answer.toLowerCase() ==
+                    {item?.name.split('Do u have ')}
+                    {/* {barberDetails?.questions_ans[0]?.answer?.answer.toLowerCase() ==
                     'yes'
                       ? `${'i have'} ${item}`
-                      : `${'i have no'} ${item}`}
+                      : `${'i have no'} ${item}`} */}
                   </CustomText>
                   <Icon
                     as={Entypo}
                     name={
-                      barberDetails?.questions_ans[0]?.answer?.answer.toLowerCase() ==
-                      'yes'
+                      item?.answer?.answer.toLowerCase() == 'yes'
                         ? 'check'
                         : 'cross'
                     }
                     size={15}
                     color={
-                      barberDetails?.questions_ans[0]?.answer?.answer.toLowerCase() ==
+                      item?.answer?.answer.toLowerCase() ==
                       'yes'
-                        ? Color.green
-                        : Color.themePink
+                      ? Color.green
+                      : Color.themePink
                     }
                   />
                 </View>

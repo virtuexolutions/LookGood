@@ -205,7 +205,7 @@ const CompareBaberScreen = () => {
               }}
             />
           )}
-          {selectedBarber?.length == 4 && (
+          {selectedBarber?.length === 4 && (
             <View
               style={{
                 position: 'absolute',

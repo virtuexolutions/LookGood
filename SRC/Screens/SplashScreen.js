@@ -11,7 +11,7 @@ import ScreenBoiler from "../Components/ScreenBoiler";
 import LinearGradient from "react-native-linear-gradient";
 
 const SplashScreen = () => {
-  const backgroundImage = require("../Assets/Images/appLogo.png");
+  const backgroundImage = require("../Assets/Images/Logo.png");
   return (
     <ScreenBoiler
      
