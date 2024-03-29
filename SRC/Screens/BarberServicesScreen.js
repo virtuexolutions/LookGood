@@ -30,10 +30,12 @@ import {useSelector} from 'react-redux';
 import ReviewCard from '../Components/ReviewCard';
 import ShowReview from '../Components/ShowReview';
 import Entypo from 'react-native-vector-icons/Entypo';
+import BookingDateModal from '../Components/BookingDateModal';
 
 const BarberServicesScreen = props => {
   const userData = useSelector(state => state.commonReducer.userData);
-
+  const userWallet = useSelector(state => state.commonReducer.userWallet);
+  console.log("🚀 ~ WalletScreen ~ userWallet:", userWallet)
   const token = useSelector(state => state.authReducer.token);
   const [selectedService, setSelectedService] = useState([]);
   const [barberDetails, setBarberDetails] = useState([]);
@@ -46,6 +48,7 @@ const BarberServicesScreen = props => {
   const [Loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
   const [totalPrice, settotalPrice] = useState(0);
+  const [modalIsVisible, setModalIsVisible] = useState(false);
   const detail = props?.route?.params?.detail;
 
   const BarberDetals = async () => {
@@ -59,6 +62,8 @@ const BarberServicesScreen = props => {
     }
   };
 
+
+
   useEffect(() => {
     BarberDetals();
   }, []);
@@ -67,9 +72,9 @@ const BarberServicesScreen = props => {
     if (selectedService?.length > 0) {
       let t_Price = 0;
       selectedService?.map((item, index) => (t_Price += item?.price));
-      console.log(t_Price, userData?.wallet?.amount);
+      console.log(t_Price, userWallet?.amount);
       settotalPrice(t_Price);
-      if (t_Price > userData?.wallet?.amount) {
+      if (t_Price > userWallet?.amount) {
         Alert.alert('Insufficient credits', 'please buy some and try again', [
           {
             text: 'Cancel',
@@ -452,7 +457,7 @@ const BarberServicesScreen = props => {
                     isBold
                     marginTop={moderateScale(30, 0.3)}
                     borderRadius={moderateScale(35, 0.6)}
-                    disabled={totalPrice > userData?.wallet?.amount}
+                    disabled={totalPrice > userWallet?.amount}
                   />
                   <CustomButton
                     // bgColor={Color.themePink}
@@ -461,6 +466,7 @@ const BarberServicesScreen = props => {
                     textColor={Color.black}
                     onPress={() => {
                       if (selectedService.length > 0) {
+
                         navigationService.navigate('ChooseDate', {
                           data: selectedService,
                           barber: barberDetails,
@@ -483,7 +489,7 @@ const BarberServicesScreen = props => {
                     isBold
                     marginTop={moderateScale(10, 0.3)}
                     borderRadius={moderateScale(35, 0.6)}
-                    disabled={totalPrice > userData?.wallet?.amount}
+                    disabled={totalPrice > userWallet?.amount}
                   />
                 </>
               );
@@ -496,6 +502,8 @@ const BarberServicesScreen = props => {
           modal={modal}
           setModal={setModal}
         />
+        
+
       </LinearGradient>
     </ScreenBoiler>
   );

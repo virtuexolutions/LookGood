@@ -18,7 +18,7 @@ import {Platform} from 'react-native';
 import {ToastAndroid} from 'react-native';
 import {Alert} from 'native-base';
 import {ActivityIndicator} from 'react-native';
-import {setUserData} from '../Store/slices/common';
+import {setUserData, setUserWallet} from '../Store/slices/common';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -47,6 +47,8 @@ const LoginScreen = () => {
     
       dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
+      dispatch(setUserWallet(response?.data?.user_info?.wallet));
+
     }
   };
 

@@ -21,7 +21,7 @@ import CustomImage from '../Components/CustomImage';
 import {CardField, createToken} from '@stripe/stripe-react-native';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import {useDispatch, useSelector} from 'react-redux';
-import {setUserData} from '../Store/slices/common';
+import {setUserData, setUserWallet} from '../Store/slices/common';
 import {useNavigation} from '@react-navigation/native';
 
 const Purchase = () => {
@@ -77,7 +77,8 @@ const Purchase = () => {
           '🚀 ~ addTransaction ~ response:',
           response?.data?.user_info,
         );
-        dispatch(setUserData(response?.data?.user_info));
+        // dispatch(setUserData(response?.data?.user_info));
+        dispatch(setUserWallet(response?.data?.user_info?.wallet));
         setIsVisible(false);
         navigation.goBack();
       }

@@ -134,7 +134,7 @@ const AddService = props => {
         : Alert.alert('Servicess Add');
         if(fromSettings){
           dispatch(setUserData(response?.data?.data));
-          navigation.goBack();
+          // navigation.goBack();
 
         }
         else{

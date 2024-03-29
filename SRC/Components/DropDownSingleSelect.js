@@ -129,10 +129,10 @@ const DropDownSingleSelect = ({
                 size={moderateScale(27, 0.3)}
                 style={[
                   styles.icon,
-                  extreme && {
-                    position: 'absolute',
-                    left: -8,
-                  },
+                  // extreme && {
+                  //   position: 'absolute',
+                  //   left: -8,
+                  // },
                   backgroundColor && {color: Color.themeGray},
                 ]}
               />
@@ -154,6 +154,7 @@ const styles = ScaledSheet.create({
   dropDownBtn: {
     backgroundColor: Color.themeInputText,
     height: height * 0.057,
+    paddingHorizontal:moderateScale(11,0.3),
     borderRadius: moderateScale(20, 0.3),
     borderWidth:1,
     borderColor: Color.themeColor1,
@@ -162,7 +163,7 @@ const styles = ScaledSheet.create({
     position: 'relative',
     backgroundColor: Color.themeInputText,
     height: height * 0.06,
-    borderBottomWidth: moderateScale(1, 0.3),
+    // borderBottomWidth: moderateScale(1, 0.3),
     borderColor: 'lightgrey',
     marginTop: moderateScale(6, 0.3),
     // borderRadius: moderateScale(20, 0.3),

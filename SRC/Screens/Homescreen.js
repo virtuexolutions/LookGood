@@ -72,7 +72,7 @@ const Homescreen = () => {
     const response = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (response != undefined) {
-      console.log('response here==============',JSON.stringify(response?.data?.users ,null ,2));
+      // console.log('response here==============',JSON.stringify(response?.data?.users ,null ,2));
 
       setBarberData(response?.data?.users);
     }

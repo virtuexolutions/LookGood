@@ -25,7 +25,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {validateEmail} from '../Config';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import {useDispatch} from 'react-redux';
-import {setUserData} from '../Store/slices/common';
+import {setUserData, setUserWallet} from '../Store/slices/common';
 import {setUserLogin, setUserToken} from '../Store/slices/auth';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -131,6 +131,7 @@ const Signup = ({navigation}) => {
       dispatch(setUserData(response?.data?.user_info));
       dispatch(setUserLogin(response?.data?.token));
       dispatch(setUserToken({token:response?.data?.token}))
+      dispatch(setUserWallet(response?.data?.user_info?.wallet));
     }
   };
 

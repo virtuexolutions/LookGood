@@ -129,7 +129,7 @@ const MyAccounts = props => {
       Platform.OS == 'android'
         ? ToastAndroid.show('Profile Updated Succesfully', ToastAndroid.SHORT)
         : Alert.alert('Profile Updated Succesfully');
-      props.navigation.goBack();
+      // props.navigation.goBack();
     }
   };
 
@@ -171,7 +171,7 @@ const MyAccounts = props => {
       Platform.OS == 'android'
         ? ToastAndroid.show('Profile Updated Succesfully', ToastAndroid.SHORT)
         : Alert.alert('Profile Updated Succesfully');
-      props.navigation.goBack();
+      // props.navigation.goBack();
     }
   };
 

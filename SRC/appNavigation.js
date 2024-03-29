@@ -49,21 +49,12 @@ import BarberCompersion from './Screens/BarberCompersion';
 import QuestionAnswerScreen from './Screens/QuestionAnswerScreen';
 
 const AppNavigator = () => {
-  // const isLogin = false;
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ AppNavigator ~ userData :', userData?.services);
-  const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
-  const walkThrough = useSelector(state => state.authReducer.userWalkThrough);
-  const isVerified = useSelector(state => state.authReducer.isVerified);
-
   const token = useSelector(state => state.authReducer.token);
-  console.log(token);
 
   const RootNav = createNativeStackNavigator();
-  const RootNavLogged = createNativeStackNavigator();
 
   const AppNavigatorContainer = () => {
-    // const firstScreen = token != null ? 'TabNavigation' : 'LoginScreen';
 
     const customerFirstScreen = token == null ? 'LoginScreen' : 'TabNavigation';
 
@@ -76,10 +67,7 @@ const AppNavigator = () => {
         ? 'QuestionAnswerScreen'
         : 'TabNavigation';
 
-    console.log(
-      '🚀 ~ AppNavigatorContainer ~ secondScreen ==============>:',
-      secondScreen,
-    );
+  
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
@@ -151,7 +139,6 @@ const AppNavigator = () => {
 export const TabNavigation = props => {
   const Tabs = createBottomTabNavigator();
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ TabNavigation ~ userData:', userData?.role);
 
   return (
     <Tabs.Navigator

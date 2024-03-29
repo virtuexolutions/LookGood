@@ -8,6 +8,7 @@ import {
   Platform,
   ToastAndroid,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -24,10 +25,13 @@ import numeral from 'numeral';
 import navigationService from '../navigationService';
 import CustomImage from '../Components/CustomImage';
 import {useDispatch, useSelector} from 'react-redux';
-import {setUserData, setVoucherData, setWholeCart} from '../Store/slices/common';
+import {setUserData, setUserWallet, setVoucherData, setWholeCart} from '../Store/slices/common';
 import { Post } from '../Axios/AxiosInterceptorFunction';
+import BookingDateModal from '../Components/BookingDateModal';
 
 const PaymentScreen = props => {
+  const [modalIsVisible, setModalIsVisible] = useState(false);
+  console.log("🚀 ~ PaymentScreen ~ modalIsVisible:", modalIsVisible)
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
   const userData = useSelector(state => state.commonReducer.userData);
@@ -70,14 +74,39 @@ const PaymentScreen = props => {
     setIsLoading(false);
 
     if (response != undefined) {
-      // return console.log( 'data =====> > >> ',response?.data?.user_info)
-      Platform.OS === 'android'
+      console.log( 'data =====> > >> ',response?.data)
+
+       Platform.OS === 'android'
         ? ToastAndroid.show('Booking successful', ToastAndroid.SHORT)
         : Alert.alert('Booking successful');
-        dispatch(setUserData(response?.data?.user_info));
+       
+        dispatch(setUserWallet(response?.data?.user_info?.wallet));
         dispatch(setVoucherData({}))
-      navigationService.navigate('TabNavigation');
-      fromStore && dispatch(setWholeCart([]));
+
+      Alert.alert('Insufficient credits',"Are You Sure to book this barber? ",
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress:() =>{
+            navigationService.navigate('TabNavigation');
+            // fromStore && dispatch(setWholeCart([]));
+          }
+        },
+        {
+          text: 'OK',
+          onPress:() =>{
+            setModalIsVisible(true)
+          }
+        
+        },
+      ]
+      )
+
+     
+     
+     
+
     }
   };
 
@@ -247,6 +276,12 @@ const PaymentScreen = props => {
           marginBottom={moderateScale(130, 0.3)}
         />
       </LinearGradient>
+      <BookingDateModal
+        modalIsVisible={modalIsVisible}
+        setModalIsVisible={setModalIsVisible}
+        bookingDate= {finalData?.date}
+        bookingStartTime= {finalData?.time?.time}
+        />
     </ScreenBoiler>
   );
 };

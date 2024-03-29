@@ -54,7 +54,8 @@ const ChooseDate = props => {
     if (response != undefined) {
       console.log(
         '🚀 ~ file: ChooseDate.js:48 ~ getTimings ~ response:',
-        response?.data?.user_detail?.filter(item => item?.booking == null),
+        response?.data
+        // response?.data?.user_detail?.filter(item => item?.booking == null),
       );
       setBookingResponse(
         response?.data?.user_detail?.filter(item => item?.booking == null),

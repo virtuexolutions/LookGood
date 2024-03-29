@@ -18,7 +18,8 @@ const WalletScreen = () => {
   const focused = useIsFocused()
   const navigation = useNavigation()
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log("🚀 ~ WalletScreen ~ userData:", userData)
+  const userWallet = useSelector(state => state.commonReducer.userWallet);
+  console.log("🚀 ~ WalletScreen ~ userWallet:", userWallet)
   const token = useSelector(state => state.authReducer.token);
 
   const [loading, setLoading] = useState(false);
@@ -114,7 +115,7 @@ const WalletScreen = () => {
                 marginLeft: moderateScale(10, 0.3),
               }}>
                 {/* 8219 */}
-                {userData?.wallet?.amount}
+                {userWallet?.amount}
               
             </CustomText>
 
