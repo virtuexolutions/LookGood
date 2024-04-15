@@ -47,6 +47,9 @@ import GetStarted from './Screens/GetStarted';
 import CompareBaberScreen from './Screens/CompareBaberScreen';
 import BarberCompersion from './Screens/BarberCompersion';
 import QuestionAnswerScreen from './Screens/QuestionAnswerScreen';
+import ConsulationVideoScreen from './Screens/ConsulationVideoScreen';
+import VideoReplyScreen from './Screens/VideoReplyScreen';
+import CustomerVideoPlayer from './Screens/CustomerVideoPlayer';
 
 const AppNavigator = () => {
   const userData = useSelector(state => state.commonReducer.userData);
@@ -128,6 +131,17 @@ const AppNavigator = () => {
             name="BarberCompersion"
             component={BarberCompersion}
           />
+          <RootNav.Screen
+            name="ConsulationVideoScreen"
+            component={ConsulationVideoScreen}
+          /><RootNav.Screen
+          name="VideoReplyScreen"
+          component={VideoReplyScreen}
+        />
+        <RootNav.Screen
+          name="CustomerVideoPlayer"
+          component={CustomerVideoPlayer}
+        />
         </RootNav.Navigator>
       </NavigationContainer>
     );

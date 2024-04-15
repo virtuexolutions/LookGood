@@ -44,7 +44,7 @@ const Homescreen = () => {
   // console.log("🚀 ~ Homescreen ~ user:", user)
 
   const token = useSelector(state => state.authReducer.token);
-  // console.log("🚀 ~ Homescreen ~ token:", token)
+  // console.log("🚀 ~ Homescreen ~ token===========>:", token)
   const [index, setIndex] = useState(0);
 
   const GetBarberBooking = async () => {
@@ -55,6 +55,7 @@ const Homescreen = () => {
     setLoading(false);
 
     if (response != undefined) {
+      console.log("🚀 ~ GetBarberBooking ~ response:", response?.data)
       setOrderData(response?.data?.barber_booking_list);
     }
   };
@@ -497,7 +498,7 @@ const Homescreen = () => {
                   marginLeft: moderateScale(10, 0.3),
                 },
               ]}>
-              New Orders
+              Completed Orders
             </CustomText>
             {isLoading ? (
               <View

@@ -25,8 +25,9 @@ import ReviewCard from '../Components/ReviewCard';
 
 const OrderDetails = props => {
   const item = props?.route?.params?.item;
-  console.log('🚀 ~ OrderDetails ~ item:', item?.review);
+  console.log('🚀 ~ OrderDetails ~ item:', item?.status);
   const user = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ OrderDetails ~ user:", user?.role)
   const token = useSelector(state => state.authReducer.token);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
@@ -38,11 +39,15 @@ const OrderDetails = props => {
   );
 
   const dateDiff = (date, time) => {
+   
     return moment(date + ' ' + moment(time, 'h:mm A').format('HH:mm:ss')).diff(
       moment(),
       'minute',
     );
   };
+  console.log(item?.status == 'accept' &&
+  user?.role == 'barber' &&
+  dateDiff(item?.booking_date, item?.booking_time) <= 0);
 
   const calculateTotalAmount = () => {
     console.log('Booking Details:', item);
@@ -368,7 +373,7 @@ const OrderDetails = props => {
             {item?.status == 'accept' &&
               user?.role == 'barber' &&
               dateDiff(item?.booking_date, item?.booking_time) <= 0 && 
-              (
+              
                 <CustomButton
                   bgColor={Color.themeColor}
                   borderColor={'white'}
@@ -393,7 +398,7 @@ const OrderDetails = props => {
                   isBold
                   marginTop={moderateScale(30, 0.3)}
                 />
-              )}
+              }
             {item?.status == 'waiting for approval' &&
               user?.role == 'customer' &&
               dateDiff(item?.booking_date, item?.booking_time) <= 0 && 

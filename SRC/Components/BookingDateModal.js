@@ -12,6 +12,7 @@ import {
   TextInput,
   Switch,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import CustomText from './CustomText';
 import SelectDropdown from 'react-native-select-dropdown';
@@ -284,7 +285,7 @@ const BookingDateModal = ({
 
               <CustomButton
                 bgColor={Color.themeColor}
-                text="Create EVent"
+                text={"Create EVent"}
                 width={windowWidth * 0.7}
                 height={windowHeight * 0.06}
                 textColor="white"

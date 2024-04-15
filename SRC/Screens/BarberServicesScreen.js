@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ImageBackground,
   View,
@@ -9,11 +9,17 @@ import {
   Alert,
   ActivityIndicator,
   Modal,
+  PermissionsAndroid,
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {
+  apiHeader,
+  requestCameraPermission,
+  windowHeight,
+  windowWidth,
+} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -25,32 +31,35 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {TouchableOpacity} from 'react-native';
 import navigationService from '../navigationService';
 import numeral from 'numeral';
-import {Get} from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
 import ReviewCard from '../Components/ReviewCard';
 import ShowReview from '../Components/ShowReview';
 import Entypo from 'react-native-vector-icons/Entypo';
-import BookingDateModal from '../Components/BookingDateModal';
+import ImagePickerModal from '../Components/ImagePickerModal';
+import Video from 'react-native-video';
+import {launchCamera} from 'react-native-image-picker';
 
 const BarberServicesScreen = props => {
   const userData = useSelector(state => state.commonReducer.userData);
   const userWallet = useSelector(state => state.commonReducer.userWallet);
-  console.log("🚀 ~ WalletScreen ~ userWallet:", userWallet)
+  // console.log('🚀 ~ WalletScreen ~ userWallet:', userWallet);
   const token = useSelector(state => state.authReducer.token);
   const [selectedService, setSelectedService] = useState([]);
   const [barberDetails, setBarberDetails] = useState([]);
-  console.log(
-    '🚀 ~ BarberServicesScreen ~ barberDetails:',
-    // JSON.stringify(barberDetails?.questions_ans, null, 2),
-    // barberDetails?.questions_ans[0]?.answer?.answer,
-    // barberDetails?.questions_ans[0]?.answer?.answer
-  );
   const [Loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [video, setVideo] = useState({});
+  console.log('🚀 ~ BarberServicesScreen ~ video:', video);
+  const [videos, setVideos] = useState([]);
   const [modal, setModal] = useState(false);
   const [totalPrice, settotalPrice] = useState(0);
   const [modalIsVisible, setModalIsVisible] = useState(false);
+  const [fileObject, setFileObject] = useState();
   const detail = props?.route?.params?.detail;
-
+  console.log("🚀 ~ BarberServicesScreen ~ detail:", detail)
+  const fromConsultationVideo =props?.route?.params?.fromConsultationVideo
+  console.log("🚀 ~ BarberServicesScreen ~ fromConsultationVideo:", fromConsultationVideo)
   const BarberDetals = async () => {
     const url = `auth/barber/detail/${detail?.id}`;
     setLoading(true);
@@ -61,8 +70,6 @@ const BarberServicesScreen = props => {
       setBarberDetails(response?.data?.user_detail);
     }
   };
-
-
 
   useEffect(() => {
     BarberDetals();
@@ -154,7 +161,95 @@ const BarberServicesScreen = props => {
     },
   ];
 
+  const openCamera = async () => {
+    let options = {
+      mediaType: 'video',
+      maxWidth: 500,
+      maxHeight: 500,
+      quailty: 0.9,
+      saveToPhotos: true,
+    };
+    if (Platform.OS === 'android') {
+      if (PermissionsAndroid.PERMISSIONS.CAMERA) {
+      } else {
+        await requestCameraPermission();
+      }
+    }
+    launchCamera(options, response => {
+      console.log('Response from camera =====>', response);
+      console.log('URI: ', response.uri);
+      if (Platform.OS == 'ios') {
+        setShow(false);
+      } else if (response?.assets && response?.assets[0]?.duration > 15) {
+        alert('Video is too long you can post  maximum video of 15 seconds');
+      }
+      // if (response.didCancel) {
+      // } else if (response.error) {
+      // }
+      // else if (response.customButton) {
+      //   Alert.alert(response.customButton);
+      // }
+      else {
+        consultancyVideo({
+          uri: response?.assets[0]?.uri,
+          type: response?.assets[0]?.type,
+          name: response?.assets[0]?.fileName,
+        });
+      }
+    });
+  };
 
+  // api consultancyVideo for asking  barber
+  // const consultancyVideo = async (videoObject) => {
+  //   const formData = new FormData();
+  //   const url = 'auth/video';
+  //   setLoading(true);
+  //   const body ={
+  //     video :videoObject,
+  //     berber_id :detail?.id
+  //   }
+  //  ]
+  //   console.log("🚀 ~ consultancyVideo ~ body:", body)
+  //   formData.append('body',body);
+  //   console.log("🚀 ~ consultancyVideo ~ formData:", formData)
+  //   const response = await Post(url,  formData ,apiHeader(token));
+  //   // console.log("🚀 ~ consultancyVideo ~ formData:", )
+  //   setLoading(false);
+  //   if (response != undefined) {
+  //     console.log('🚀 ~ consultancyVideo ~ response:', JSON.stringify(response?.data,null,2));
+  //   }
+  // };
+
+  const consultancyVideo = async videoObject => {
+    const formData = new FormData();
+    const url = 'auth/video';
+    setLoading(true);
+    const body = {
+      video: videoObject,
+      barber_id: detail?.id,
+    };
+    formData.append('video', body.video);
+    formData.append('barber_id', String(body.barber_id));
+    const response = await Post(url, formData, apiHeader(token));
+    setLoading(false);
+    if (response != undefined) {
+      console.log(
+        '🚀  consultancyVideo  response:',
+        JSON.stringify(response?.data, null, 2),
+      );
+    }
+  };
+
+  // useEffect(() => {
+  //   if (Object.keys(video).length > 0) {
+  //     setVideos(prev => [...prev, video]);
+  //     setVideo({});
+  //   }
+  // }, [video]);
+
+  useEffect(() => {
+    // consultancyVideo()
+  }, []);
 
   return (
     <ScreenBoiler
@@ -194,7 +289,9 @@ const BarberServicesScreen = props => {
               <Rating
                 type="custom"
                 readonly
-                startingValue={detail?.reviews_avg_rating ?detail?.reviews_avg_rating :0}
+                startingValue={
+                  detail?.reviews_avg_rating ? detail?.reviews_avg_rating : 0
+                }
                 ratingCount={5}
                 imageSize={moderateScale(18, 0.3)}
                 style={{
@@ -240,11 +337,6 @@ const BarberServicesScreen = props => {
               padding: moderateScale(10, 0.6),
             }}
             renderItem={({item, index}) => {
-              console.log(
-                '🚀 ~ BarberServicesScreen ~ item=============>pro here:',
-                item,
-                // barberDetails?.questions_ans[0]?.answer?.answer
-              );
               return (
                 <View
                   activeOpacity={0.9}
@@ -276,10 +368,9 @@ const BarberServicesScreen = props => {
                     }
                     size={15}
                     color={
-                      item?.answer?.answer.toLowerCase() ==
-                      'yes'
-                      ? Color.green
-                      : Color.themePink
+                      item?.answer?.answer.toLowerCase() == 'yes'
+                        ? Color.green
+                        : Color.themePink
                     }
                   />
                 </View>
@@ -428,6 +519,22 @@ const BarberServicesScreen = props => {
             ListFooterComponent={() => {
               return (
                 <>
+                { fromConsultationVideo != true && <CustomButton
+                    textColor={Color.black}
+                    onPress={() => {
+                      openCamera();
+                    }}
+                    width={windowWidth * 0.75}
+                    height={windowHeight * 0.06}
+                    text={'Get your consultancy'}
+                    fontSize={moderateScale(14, 0.3)}
+                    textTransform={'uppercase'}
+                    isGradient={true}
+                    isBold
+                    marginTop={moderateScale(30, 0.3)}
+                    borderRadius={moderateScale(35, 0.6)}
+                    // disabled={totalPrice > userWallet?.amount}
+                  />}
                   <CustomButton
                     // bgColor={Color.themePink}
                     // borderColor={'white'}
@@ -455,7 +562,7 @@ const BarberServicesScreen = props => {
                     textTransform={'uppercase'}
                     isGradient={true}
                     isBold
-                    marginTop={moderateScale(30, 0.3)}
+                    marginTop={moderateScale(10, 0.3)}
                     borderRadius={moderateScale(35, 0.6)}
                     disabled={totalPrice > userWallet?.amount}
                   />
@@ -466,7 +573,6 @@ const BarberServicesScreen = props => {
                     textColor={Color.black}
                     onPress={() => {
                       if (selectedService.length > 0) {
-
                         navigationService.navigate('ChooseDate', {
                           data: selectedService,
                           barber: barberDetails,
@@ -496,20 +602,24 @@ const BarberServicesScreen = props => {
             }}
           />
         )}
+        {/* <VideoRecorderModal 
+        /> */}
+        <ImagePickerModal
+          show={showModal}
+          setShow={setShowModal}
+          setFileObject={setVideo}
+          type={'video'}
+        />
 
         <ShowReview
           barberDetails={barberDetails?.review}
           modal={modal}
           setModal={setModal}
         />
-        
-
       </LinearGradient>
     </ScreenBoiler>
   );
 };
-
-export default BarberServicesScreen;
 
 const styles = ScaledSheet.create({
   container: {
@@ -546,3 +656,81 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(2.5, 0.3),
   },
 });
+
+export default BarberServicesScreen;
+
+const VideoComponent = ({item, videos, setVideos}) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  return (
+    <View style={styles.image}>
+      <TouchableOpacity
+        style={{
+          position: 'absolute',
+          right: 2,
+          top: 2,
+          zIndex: 2,
+          // backgroundColor: 'green',
+        }}
+        onPress={() => {
+          setVideos(videos.filter(data => data?.uri != item?.uri));
+        }}>
+        <Icon
+          name={'cross'}
+          color={Color.black}
+          as={Entypo}
+          onPress={() => {
+            setVideos(videos.filter(data => data?.uri != item?.uri));
+          }}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setIsPlaying(!isPlaying);
+        }}
+        style={{
+          position: 'absolute',
+          zIndex: 1,
+          // backgroundColor:'red',
+          width: windowWidth * 0.12,
+          height: windowWidth * 0.12,
+          justifyContent: 'center',
+          alignItems: 'center',
+          // backgroundColor: 'green',
+          alignSelf: 'center',
+        }}>
+        {!isPlaying && (
+          <Icon
+            onPress={() => {
+              setIsPlaying(!isPlaying);
+            }}
+            name={'controller-play'}
+            as={Entypo}
+            size={10}
+            color={'rgba(255,255,255,.9)'}
+          />
+        )}
+      </TouchableOpacity>
+      <Video
+        // muted
+        paused={!isPlaying}
+        repeat={true}
+        // controls={true}
+        source={{uri: item?.uri}}
+        // ref={videoRef}
+        // onProgress={x => {
+        //   console.log(
+        //     '🚀 ~ file: VideoController.js:46 ~ VideoController ~ x:',
+        //     x,
+        //   );
+        //   setProgress(x);
+        // }}
+        // onBuffer={() => console.log('buffering video')}
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundColor: Color.white,
+        }}
+      />
+    </View>
+  );
+};

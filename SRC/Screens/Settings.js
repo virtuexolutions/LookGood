@@ -67,10 +67,16 @@ name: 'compare barber',
       },]:[]
 
 ),
+    // {
+    //   name: 'Payment Method',
+    //   onPress: () => {
+    //     navigationService.navigate('PaymentMethod');
+    //   },
+    // },
     {
-      name: 'Payment Method',
+      name: 'consultation video',
       onPress: () => {
-        navigationService.navigate('PaymentMethod');
+        navigationService.navigate('ConsulationVideoScreen');
       },
     },
     {
