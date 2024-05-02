@@ -89,6 +89,17 @@ const Store = () => {
         style={styles.container}>
         <View
           style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: windowHeight*0.7,
+            width: windowWidth,
+          }}>
+          <CustomText isBold style={styles.text1}>
+          coming soon....
+          </CustomText>
+        </View>
+        {/* <View
+          style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             width: windowWidth * 0.85,
@@ -116,8 +127,8 @@ const Store = () => {
               }}
             />
           </LinearGradient>
-        </View>
-        <ScrollView
+        </View> */}
+        {/* <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: windowHeight * 0.15,
@@ -151,7 +162,7 @@ const Store = () => {
                     }}
                   />
                   {/* <View style={{position : 'absolute' , bottom : 0}}> */}
-                  <LinearGradient
+        {/* <LinearGradient
                     start={{x: 0, y: 0}}
                     end={{x: 0, y: 1}}
                     colors={['#8A8A8A00', '#000000']}
@@ -202,9 +213,9 @@ const Store = () => {
                         );
                       })}
                     </View>
-                  </LinearGradient>
-                  {/* </View> */}
-                </View>
+                  </LinearGradient> */}
+        {/* </View> */}
+        {/* </View>
               );
             }}
           />
@@ -233,8 +244,8 @@ const Store = () => {
             numColumns={2}
             />
           </View>
-         
-        </ScrollView>
+          */}
+        {/* </ScrollView> */}
       </LinearGradient>
     </ScreenBoiler>
   );

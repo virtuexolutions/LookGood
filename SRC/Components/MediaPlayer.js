@@ -71,26 +71,34 @@ const MediaPlayer = ({uri, item, userRole, replied, text}) => {
       }
     }
     launchCamera(options, response => {
-      console.log('Response from camera =====>', response);
-      console.log('URI: ', response.uri);
-      if (Platform.OS == 'ios') {
-        setShow(false);
-      } else if (response?.assets && response?.assets[0]?.duration > 30) {
-        alert('Video is too long you can post  maximum video of 30 seconds');
-      }
-      // if (response.didCancel) {
-      // } else if (response.error) {
-      // }
-      // else if (response.customButton) {
-      //   Alert.alert(response.customButton);
-      // }
-      else {
-       setModalVisible(true);
-        answerToCustomer({
-          uri: response?.assets[0]?.uri,
-          type: response?.assets[0]?.type,
-          name: response?.assets[0]?.fileName,
-        });
+      // console.log('Response from camera =====>', response);
+      // console.log('URI: ', response.uri);
+      try {
+        if (Platform.OS == 'ios') {
+          setShow(false);
+        } else if (response?.assets && response?.assets[0]?.duration > 30) {
+          alert('Video is too long you can post  maximum video of 30 seconds');
+        }
+        // if (response.didCancel) {
+        // } else if (response.error) {
+        // }
+        // else if (response.customButton) {
+        //   Alert.alert(response.customButton);
+        // }
+        else {
+          if (response?.assets && response?.assets[0]) {
+            setModalVisible(true);
+            answerToCustomer({
+              uri: response?.assets[0]?.uri,
+              type: response?.assets[0]?.type,
+              name: response?.assets[0]?.fileName,
+            });
+          }else{
+            console.log('modal false beacuse response is undefined')
+          }
+        }
+      } catch (error) {
+        console.log('response is undefined===========>', response);
       }
     });
   };
@@ -134,6 +142,7 @@ const MediaPlayer = ({uri, item, userRole, replied, text}) => {
         activeOpacity={0.9}
         style={{
           backgroundColor: 'white',
+          width :windowWidth,
         }}
         onPress={() => {
           // console.log('i  am clicked');
@@ -168,6 +177,7 @@ const MediaPlayer = ({uri, item, userRole, replied, text}) => {
           style={{
             height: windowHeight * 0.38,
             width: windowWidth,
+            // backgroundColor :'red'
           }}
         />
         {clicked && (
@@ -304,45 +314,44 @@ const MediaPlayer = ({uri, item, userRole, replied, text}) => {
         />
       )}
       {userRole == 'barber' && !replied && (
-      <View style={styles.buttonRow}>
-        <CustomButton
-          textColor={Color.white}
-          width={windowWidth * 0.3}
-          height={windowHeight * 0.06}
-          borderRadius={moderateScale(10, 0.4)}
-          text={'reply'}
-          fontSize={moderateScale(15, 0.3)}
-          onPress={() => {
-            openCamera();
-          }}
-          isBold
-          marginHorizontal={moderateScale(10, 0.6)}
-          bgColor={Color.green}
-          marginTop={moderateScale(15, 0.3)}
-          marginBottom={moderateScale(5, 0.3)}
-        />
+        <View style={styles.buttonRow}>
+          <CustomButton
+            textColor={Color.white}
+            width={windowWidth * 0.3}
+            height={windowHeight * 0.06}
+            borderRadius={moderateScale(10, 0.4)}
+            text={'reply'}
+            fontSize={moderateScale(15, 0.3)}
+            onPress={() => {
+              openCamera();
+            }}
+            isBold
+            marginHorizontal={moderateScale(10, 0.6)}
+            bgColor={Color.green}
+            marginTop={moderateScale(15, 0.3)}
+            marginBottom={moderateScale(5, 0.3)}
+          />
 
-        <CustomButton
-          textColor={Color.white}
-          width={windowWidth * 0.3}
-          height={windowHeight * 0.06}
-          borderRadius={moderateScale(10, 0.4)}
-          text={'Denied'}
-          fontSize={moderateScale(15, 0.3)}
-          onPress={() => {
-            isLoading ? (
-              <ActivityIndicator size={'small'} color={Color.white} />
-            ) : (
-              reject()
-            );
-          }}
-          isBold
-          bgColor={Color.red}
-          marginTop={moderateScale(15, 0.3)}
-          marginBottom={moderateScale(5, 0.3)}
-        />
-      </View>
-
+          <CustomButton
+            textColor={Color.white}
+            width={windowWidth * 0.3}
+            height={windowHeight * 0.06}
+            borderRadius={moderateScale(10, 0.4)}
+            text={'Denied'}
+            fontSize={moderateScale(15, 0.3)}
+            onPress={() => {
+              isLoading ? (
+                <ActivityIndicator size={'small'} color={Color.white} />
+              ) : (
+                reject()
+              );
+            }}
+            isBold
+            bgColor={Color.red}
+            marginTop={moderateScale(15, 0.3)}
+            marginBottom={moderateScale(5, 0.3)}
+          />
+        </View>
       )}
       <VideoUploadingModal
         modalVisible={modalVisible}

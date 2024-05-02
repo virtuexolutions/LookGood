@@ -8,36 +8,28 @@ import {useSelector} from 'react-redux';
 import moment from 'moment';
 import {Icon} from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { color } from 'react-native-reanimated';
+import {color} from 'react-native-reanimated';
 
 const TransactionhistoryCard = ({item}) => {
+  // console.log('🚀 ~ TransactionhistoryCard ~ item========>:', item);
   const userData = useSelector(state => state.commonReducer.userData);
   // console.log("🚀 ~ TransactionhistoryCard ~ userData:", userData)
 
   const [text, setText] = useState('credit');
   return (
-    <View
-      style={{
-        // backgroundColor: 'red',
-        borderRadius: moderateScale(15, 0.6),
-        borderWidth: moderateScale(2, 0.6),
-        borderColor: Color.themeColor,
-        padding: moderateScale(10, 0.6),
-        // height:windowHeight*0.03,
-        width: windowWidth * 0.95,
-        paddingHorizontal: moderateScale(15, 0.6),
-        marginHorizontal: moderateScale(10, 0.3),
-        marginVertical: moderateScale(10, 0.3),
-        // alignItems:'center',justifyContent:'center'
-      }}>
+    <View style={styles.maincontainer}>
       <View
         style={{
           paddingVertical: moderateScale(5, 0.6),
           flexDirection: 'row',
-          //   justifyContent: 'space-between',
         }}>
         {item.type == 'debit' ? (
-          <Icon name="arrowup" as={AntDesign} size={19} color={Color.themePink} />
+          <Icon
+            name="arrowup"
+            as={AntDesign}
+            size={19}
+            color={Color.themePink}
+          />
         ) : (
           <Icon name="arrowdown" as={AntDesign} size={15} color={Color.green} />
         )}
@@ -49,37 +41,14 @@ const TransactionhistoryCard = ({item}) => {
           style={[
             styles.heading,
             {
-              // paddingHorizontal:moderateScale(3,.6),
-              // backgroundColor:Color.red,
-              //   marginHorizontal: moderateScale(5, 0.3),
               width: windowWidth * 0.12,
-            
               textAlign: 'center',
               fontSize: moderateScale(14, 0.6),
               color: Color.themeColor,
             },
           ]}>
-         {item.type == 'debit' ? 'Debit' : 'Credit'}
+          {item.type == 'debit' ? 'Debit' : 'Credit'}
         </CustomText>
-        {/* <CustomText
-          onPress={() => {
-            setText('debit');
-          }}
-          isBold
-          style={[
-            styles.heading,
-            {
-              width: windowWidth * 0.17,
-              backgroundColor: text == 'debit' ? Color.themeColor : 'grey',
-              textAlign: 'center',
-              marginHorizontal: moderateScale(10, 0.3),
-              fontSize:moderateScale(12,.6),
-              color: text == 'debit' ? Color.black : 'white'
-
-            },
-          ]}>
-          debit
-        </CustomText> */}
       </View>
       <View
         style={{
@@ -97,7 +66,7 @@ const TransactionhistoryCard = ({item}) => {
             fontSize: moderateScale(12, 0.6),
             color: Color.white,
           }}>
-          {item?.amount}
+          ${item?.amount}
         </CustomText>
       </View>
       <View style={styles.row}>
@@ -106,7 +75,6 @@ const TransactionhistoryCard = ({item}) => {
         </CustomText>
         <CustomText isBold style={styles.amounttext}>
           {moment(item?.created_at).format('MMM Do YY')}
-          {/* {item?.created_at} */}
         </CustomText>
       </View>
       <View style={styles.row}>
@@ -143,5 +111,15 @@ const styles = StyleSheet.create({
   amounttext: {
     fontSize: moderateScale(12, 0.6),
     color: Color.white,
+  },
+  maincontainer: {
+    borderRadius: moderateScale(15, 0.6),
+    borderWidth: moderateScale(2, 0.6),
+    borderColor: Color.themeColor,
+    padding: moderateScale(10, 0.6),
+    width: windowWidth * 0.95,
+    paddingHorizontal: moderateScale(15, 0.6),
+    marginHorizontal: moderateScale(10, 0.3),
+    marginVertical: moderateScale(10, 0.3),
   },
 });

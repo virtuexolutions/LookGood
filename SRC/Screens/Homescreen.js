@@ -41,7 +41,7 @@ const Homescreen = () => {
   const focused = useIsFocused();
 
   const user = useSelector(state => state.commonReducer.userData);
-  // console.log("🚀 ~ Homescreen ~ user:", user)
+  console.log("🚀 ~ Homescreen ~ user:", user)
 
   const token = useSelector(state => state.authReducer.token);
   // console.log("🚀 ~ Homescreen ~ token===========>:", token)

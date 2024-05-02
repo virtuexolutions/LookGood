@@ -32,6 +32,7 @@ const Purchase = () => {
   const [transactionAdd, setTransactionAdd] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCoins, setSelectedCoins] = useState(0);
+  console.log("🚀 ~ Purchase ~ selectedCoins:", selectedCoins)
   const [otherCoins, setOtherCoins] = useState(0);
 
   console.log('🚀 ~ Purchase ~ selectedCoins:', selectedCoins);
@@ -57,17 +58,13 @@ const Purchase = () => {
       type: 'Card',
     });
     if (responsetoken != undefined) {
-      //  return console.log(
-      //     '🚀 ~ addTransaction ~ responsetoken:',
-      //     responsetoken?.token?.id,
-      //   );
       const body = {
         amount: selectedCoins == 'Other...' ? otherCoins : selectedCoins,
         reason: 'Coin Purchase',
         type: 'debit',
         pm_id: responsetoken?.token?.id,
       };
-      console.log('🚀 ~ addTransaction ~ body:', body);
+
       const url = 'auth/transaction';
       setIsLoading(true);
       const response = await Post(url, body, apiHeader(token));
@@ -152,7 +149,7 @@ const Purchase = () => {
                   position: 'absolute',
                   bottom: 0,
                   right: 10,
-                  //   backgroundColor: 'red',
+                    // backgroundColor: 'red',
                 }}>
                 {/* hfsdhfg */}
 
@@ -168,21 +165,13 @@ const Purchase = () => {
                 keyExtractor={item => item.id}
                 renderItem={({item}) => (
                   <CustomButton
-                    // style={{
-                    //   height: selectedCoins?.some(
-                    //     (item1, index) => item1?.id != item?.id,
-                    //   )
-                    //     ? windowHeight * 0.07
-                    //     : windowHeight * 0.05,
-                    // }}
-                    // image={require('../Assets/Images/coins.png')}
                     textColor={Color.black}
                     onPress={() => {
-                      //   if (item?.id == 6) {
-                      //     item?.onPress();
-                      //   } else {
+                        //  if (selectedCoins =='Other...') {
+                        // setIsVisible(true)
+                        //  } else {
                       setSelectedCoins(item?.coin);
-                      //   }
+                        //  }
                     }}
                     // elevation={true}
                     width={windowWidth * 0.4}
@@ -205,20 +194,11 @@ const Purchase = () => {
               />
             </View>
 
-            {isVisible && (
-              <View
-                style={{
-                  width: windowWidth * 0.35,
-                  height: windowHeight * 0.05,
-                }}></View>
-            )}
-            <View>
+            {(selectedCoins > 0|| selectedCoins == 'Other...') && (
               <CustomButton
                 textColor={Color.black}
                 onPress={() => {
                   setIsVisible(true);
-
-                  //   setSelected('Product');
                 }}
                 width={windowWidth * 0.35}
                 height={windowHeight * 0.05}
@@ -229,9 +209,8 @@ const Purchase = () => {
                 textTransform={'uppercase'}
                 isGradient={true}
                 isBold
-                // marginBottom={moderateScale(30, 0.3)}
               />
-            </View>
+            )}
           </View>
         </ScrollView>
       </LinearGradient>

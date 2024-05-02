@@ -181,11 +181,13 @@ export const TabNavigation = props => {
             color = focused ? Color.themeColor : Color.themeLightGray;
             size = focused ? moderateScale(30, 0.3) : moderateScale(20, 0.3);
             type = Ionicons;
-          } else if (route.name === 'Store') {
+          } 
+          else if (route.name === 'Store') {
             iconName = focused ? 'briefcase' : 'briefcase-outline';
             color = focused ? Color.themeColor : Color.themeLightGray;
             size = focused ? moderateScale(30, 0.3) : moderateScale(20, 0.3);
-          } else if (route.name === 'Settings') {
+          }
+           else if (route.name === 'Settings') {
             iconName = focused ? 'settings' : 'settings-outline';
 
             color = focused ? Color.themeColor : Color.themeLightGray;

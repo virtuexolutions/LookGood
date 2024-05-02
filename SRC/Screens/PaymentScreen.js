@@ -34,8 +34,9 @@ const PaymentScreen = props => {
   console.log("🚀 ~ PaymentScreen ~ modalIsVisible:", modalIsVisible)
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
+  console.log("🚀 ~ PaymentScreen ~ finalData ===============> :", finalData)
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log("🚀 ~ PaymentScreen ~ userData:", userData?.wallet?.amount)
+  console.log("🚀 ~ PaymentScreen ~ userData===============> user data here:", userData)
 
   console.log("🚀 ~ file: PaymentScreen.js:33 ~ PaymentScreen ~ finalData:", finalData?.total)
 

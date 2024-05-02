@@ -10,8 +10,8 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import navigationService from '../navigationService';
 
 const SearchLocation = props => {
- const data = props?.route?.params?.finalData
-  console.log("🚀 ~ file: SearchLocation.js:13 ~ SearchLocation ~ data:", data)
+  const data = props?.route?.params?.finalData;
+  console.log('🚀 ~ file: SearchLocation.js:13 ~ SearchLocation ~ data:', data);
   const [searchData, setSearchData] = useState('');
   console.log(
     '🚀 ~ file: SearchLocation.js:23 ~ SearchLocation ~ searchData:',
@@ -45,7 +45,6 @@ const SearchLocation = props => {
           textInputProps={{
             placeholderTextColor: '#5d5d5d',
           }}
-          
           onPress={(data, details = null) => {
             console.log('Location ========>>>>', {
               name: data?.description,
@@ -98,19 +97,19 @@ const SearchLocation = props => {
             }}>
             <CustomButton
               bgColor={Color.themePink}
-              borderColor={'white'}
               borderWidth={1}
               textColor={Color.black}
               onPress={() => {
                 navigationService.navigate('CheckoutScreen', {
-                    finalData:{...data,location:searchData}
-                  });
+                  finalData: {...data, location: searchData},
+                });
               }}
               width={windowWidth * 0.75}
               height={windowHeight * 0.06}
               text={'Proceed'}
               fontSize={moderateScale(14, 0.3)}
               textTransform={'uppercase'}
+              borderRadius={moderateScale(30, 0.4)}
               isGradient={true}
               isBold
               marginTop={moderateScale(30, 0.3)}
@@ -177,4 +176,3 @@ const styles = ScaledSheet.create({
     marginBottom: moderateScale(5, 0.3),
   },
 });
-

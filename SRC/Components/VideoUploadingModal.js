@@ -57,9 +57,12 @@ const VideoUploadingModal = ({modalVisible, setModalVisible}) => {
             isBold
             style={{
               marginHorizontal: moderateScale(10, 0.6),
-              fontSize: moderateScale(18, 0.6),
+              fontSize: moderateScale(20, 0.6),
               color: Color.white,
               textAlign: 'center',
+              // backgroundColor :'red'
+              paddingHorizontal :moderateScale(10,.6),
+             marginTop:moderateScale(35,.3)
             }}>
             loading
           </CustomText>

@@ -28,6 +28,7 @@ const Wishlist = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [wishListData, setWishListData] = useState([]);
+
   // console.log('🚀 ~ Wishlist ~ wishListData:', wishListData);
 
   const getWishList = async () => {
