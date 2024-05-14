@@ -79,28 +79,28 @@ const BarberServicesScreen = props => {
     BarberDetals();
   }, []);
 
-  useEffect(() => {
-    if (selectedService?.length > 0) {
-      let t_Price = 0;
-      selectedService?.map((item, index) => (t_Price += item?.price));
-      console.log(t_Price, userWallet?.amount);
-      settotalPrice(t_Price);
-      if (t_Price > userWallet?.amount) {
-        Alert.alert('Insufficient credits', 'please buy some and try again', [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Buy coins',
-            onPress: () => {
-              navigationService.navigate('Purchase');
-            },
-          },
-        ]);
-      }
-    }
-  }, [selectedService]);
+  // useEffect(() => {
+  //   if (selectedService?.length > 0) {
+  //     let t_Price = 0;
+  //     selectedService?.map((item, index) => (t_Price += item?.price));
+  //     console.log(t_Price, userWallet?.amount);
+  //     settotalPrice(t_Price);
+  //     if (t_Price > userWallet?.amount) {
+  //       Alert.alert('Insufficient credits', 'please buy some and try again', [
+  //         {
+  //           text: 'Cancel',
+  //           style: 'cancel',
+  //         },
+  //         {
+  //           text: 'Buy coins',
+  //           onPress: () => {
+  //             navigationService.navigate('Purchase');
+  //           },
+  //         },
+  //       ]);
+  //     }
+  //   }
+  // }, [selectedService]);
 
   const serviceArray = [
     {

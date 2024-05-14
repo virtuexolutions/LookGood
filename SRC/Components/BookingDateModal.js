@@ -48,14 +48,14 @@ const BookingDateModal = ({
   const [timePickerModalVisible, setTimePickerModalVisible] = useState(false);
   const [calendarsInDevice, setCalendarsInDevice] = useState(null);
   const [startTime, setStartTime] = useState(null);
-  console.log('🚀 ~ startTime:', startTime);
-  console.log(
-    '🚀 ~ startTime:',
-    `${new Date(startTime).toISOString()}`,
-    new Date(bookingDate),
-  );
+  // console.log('🚀 ~ startTime:', startTime);
+  // console.log(
+  //   '🚀 ~ startTime:',
+  //   `${new Date(startTime).toISOString()}`,
+  //   new Date(bookingDate),
+  // );
   const [endTime, setEndTime] = useState(null);
-  console.log('🚀 ~ endTime:', `${new Date(endTime).toISOString()}`);
+  // console.log('🚀 ~ endTime:', `${new Date(endTime).toISOString()}`);
   const [eventName, setEventName] = useState('');
 
   const checkCalendarPermission = async () => {
