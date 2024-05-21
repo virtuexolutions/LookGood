@@ -161,15 +161,16 @@ const ImagePickerModal = props => {
       if (Platform.OS == 'ios') {
         setShow(false);
       }
+     
+      if (response.didCancel) {
+      } else if (response.error) {
+      } 
+      else if (response.customButton) {
+        Alert.alert(response.customButton);
+      }
       else if( response?.assets && response?.assets[0]?.duration > 15){
         alert('Video is too long you can post  maximum video of 15 seconds');
       }
-      // if (response.didCancel) {
-      // } else if (response.error) {
-      // } 
-      // else if (response.customButton) {
-      //   Alert.alert(response.customButton);
-      // }
       else {
         setFileObject &&
           setFileObject({
