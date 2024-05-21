@@ -22,6 +22,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import CustomText from '../Components/CustomText';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 
 const requestCameraPermission = async () => {
   try {
@@ -43,11 +44,12 @@ const requestCameraPermission = async () => {
 };
 
 const ImagePickerModal = props => {
-  let {show, setShow, setFileObject, setMultiImages, crop} = props;
+  let {show, setShow, setFileObject, setMultiImages, crop ,type} = props;
+  
 
   const openGallery = () => {
     let options = {
-      mediaType: 'photo',
+      mediaType: type ? type : 'photo',
       maxWidth: 500,
       maxHeight: 500,
       quailty: 0.9,
@@ -64,6 +66,7 @@ const ImagePickerModal = props => {
     //       })
     //     : 
     launchImageLibrary(options, response => {
+      
             if (Platform.OS === 'ios') {
               setShow(false);
             }
@@ -90,12 +93,57 @@ const ImagePickerModal = props => {
                 ]);
             }
           });
+
     // }
   };
 
+  // const openCamera = async () => {
+  //   let options = {
+  //     mediaType: type ? type : 'photo',
+  //     maxWidth: 500,
+  //     maxHeight: 500,
+  //     quailty: 0.9,
+  //     saveToPhotos: true,
+  //   };
+  //   if (Platform.OS === 'android') {
+  //     if (PermissionsAndroid.PERMISSIONS.CAMERA) {
+  //     } else {
+  //       await requestCameraPermission();
+  //     }
+  //   }
+  //   launchCamera(options, response => {
+  //     if (Platform.OS == 'ios') {
+  //       setShow(false);
+  //     }
+  //     // if (response.didCancel) {
+  //     // } else if (response.error) {
+  //     // }
+  //     //  else if (response.customButton) {
+  //     //   Alert.alert(response.customButton);
+  //     // }
+  //     // else {
+  //       setFileObject &&
+  //         setFileObject({
+  //           uri: type == 'video' ?  `${response?.assets[0]?.uri}`: response?.assets[0]?.uri ,
+  //           type: response?.assets[0]?.type,
+  //           name: response?.assets[0]?.fileName,
+  //         });
+
+  //       setMultiImages &&
+  //         setMultiImages(x => [
+  //           ...x,
+  //           {
+  //             uri: response?.assets[0]?.uri,
+  //             type: response?.assets[0]?.type,
+  //             name: response?.assets[0]?.fileName,
+  //           },
+  //         ]);
+  //     // }
+  //   });
+  // };
   const openCamera = async () => {
     let options = {
-      mediaType: 'photo',
+      mediaType: type ? type : 'photo',
       maxWidth: 500,
       maxHeight: 500,
       quailty: 0.9,
@@ -108,19 +156,25 @@ const ImagePickerModal = props => {
       }
     }
     launchCamera(options, response => {
+      console.log('Response from camera =====>', response)
+      console.log('URI: ', response.uri);
       if (Platform.OS == 'ios') {
         setShow(false);
       }
-      // if (response.didCancel) {
-      // } else if (response.error) {
-      // }
-      //  else if (response.customButton) {
-      //   Alert.alert(response.customButton);
-      // }
-      // else {
+     
+      if (response.didCancel) {
+      } else if (response.error) {
+      } 
+      else if (response.customButton) {
+        Alert.alert(response.customButton);
+      }
+      else if( response?.assets && response?.assets[0]?.duration > 15){
+        alert('Video is too long you can post  maximum video of 15 seconds');
+      }
+      else {
         setFileObject &&
           setFileObject({
-            uri: response?.assets[0]?.uri,
+            uri: type == 'video' ?  `${response?.assets[0]?.uri}`: response?.assets[0]?.uri ,
             type: response?.assets[0]?.type,
             name: response?.assets[0]?.fileName,
           });
@@ -134,136 +188,140 @@ const ImagePickerModal = props => {
               name: response?.assets[0]?.fileName,
             },
           ]);
-      // }
+      }
     });
   };
 
   return (
     <Modal
-      isVisible={show}
-      swipeDirection="up"
+    isVisible={show}
+    swipeDirection="up"
+    style={{
+      justifyContent: 'center',
+      alignItems: 'center',
+      // backgroundColor: Color.white,
+    }}
+    onBackdropPress={() => {
+      setShow(false);
+    }}>
+    <View
       style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        // backgroundColor: Color.white,
-      }}
-      onBackdropPress={() => {
-        setShow(false);
+        backgroundColor: Color.white,
+        height: Dimensions.get('window').height * 0.33,
+        width: Dimensions.get('window').width * 0.8,
+        paddingHorizontal: moderateScale(10, 0.3),
+        paddingVertical: moderateScale(10, 0.3),
+        borderRadius: Dimensions.get('window').width * 0.02,
       }}>
+      <CustomText style={styles.modalHead}>Upload {type}</CustomText>
       <View
-        style={{
-          backgroundColor: Color.white,
-          height: Dimensions.get('window').height * 0.33,
-          width: Dimensions.get('window').width * 0.8,
-          paddingHorizontal: moderateScale(10, 0.3),
-          paddingVertical: moderateScale(10, 0.3),
-          borderRadius: Dimensions.get('window').width * 0.02,
-        }}>
-        <CustomText isBold style={styles.modalHead}>Upload picture</CustomText>
-        <View style={styles.modalContentContianer}>
-          <TouchableOpacity
-            onPress={() => {
-              if (Platform.OS === 'android') {
-                setShow(false);
-              }
-              openGallery();
+        style={[
+          styles.modalContentContianer,
+          // {borderBottomColor: themeColor[1], borderTopColor: themeColor[1]},
+        ]}>
+       <TouchableOpacity
+          onPress={() => {
+            if (Platform.OS === 'android') {
+              setShow(false);
+            }
+            openGallery();
+          }}
+          style={[styles.modalContentBtn, {backgroundColor:  Color.themeColor1}]}>
+          <Icon
+            name={'folder-images'}
+            as={Entypo}
+            size={moderateScale(25, 0.3)}
+            style={{
+              color: Color.white,
             }}
-            style={styles.modalContentBtn}>
-            <Icon
-              name={'folder-images'}
-              as={Entypo}
-              size={moderateScale(25, 0.3)}
-              style={{
-                color: Color.white,
-              }}
-            />
-            <CustomText isBold style={styles.modalBtnText}>Gallery</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              if (Platform.OS === 'android') {
-                setShow(false);
-              }
-              openCamera();
-            }}
-            style={styles.modalContentBtn}>
-            <Icon
-              name={'camera'}
-              as={FontAwesome}
-              size={moderateScale(25, 0.3)}
-              style={{
-                color: Color.white,
-              }}
-            />
-            <CustomText isBold style={styles.modalBtnText}>Camera</CustomText>
-          </TouchableOpacity>
-        </View>
+          />
+          <CustomText style={styles.modalBtnText}>Gallery</CustomText>
+        </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setShow(false)}
-          style={styles.modalCancelBtn}>
-          <CustomText isBold style={styles.modalBtnText}>Cancel</CustomText>
+          onPress={() => {
+            if (Platform.OS === 'android') {
+              setShow(false);
+            }
+            openCamera();
+          }}
+          style={[styles.modalContentBtn, {backgroundColor: Color.themeColor}]}>
+          <Icon
+            name={'camera'}
+            as={FontAwesome5}
+            size={moderateScale(25, 0.3)}
+            style={{
+              color: Color.white,
+            }}
+          />
+          <CustomText style={styles.modalBtnText}>Camera</CustomText>
         </TouchableOpacity>
       </View>
-      {/* <View
-        style={{
-          // flex: 1,
-          backgroundColor: Color.black,
-          height: Dimensions.get("window").height * 0.33,
-          width: Dimensions.get("window").width * 0.8,
-          paddingHorizontal: moderateScale(10, 0.3),
-          paddingVertical: moderateScale(10, 0.3),
-          borderRadius: Dimensions.get("window").width * 0.02,
-        }}
-      >
-        <CustomText style={styles.modalHead}>Upload picture</CustomText>
-        <View style={styles.modalContentContianer}>
-          <TouchableOpacity
-            onPress={() => {
-              if (Platform.OS === "android") {
-                setShow(false);
-              }
-              openGallery();
-            }}
-            style={styles.modalContentBtn}
-          >
-            <Icon
-              name={"folder-images"}
-              as={Entypo}
-              size={moderateScale(25, 0.3)}
-              style={{
-                color: Color.black,
-              }}
-            />
-            <CustomText style={styles.modalBtnText}>Gallery</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              if (Platform.OS === "android") {
-                setShow(false);
-              }
-              openCamera();
-            }}
-            style={styles.modalContentBtn}
-          >
-            <Icon
-              name={"camera"}
-              as={FontAwesome}
-              size={moderateScale(25, 0.3)}
-              style={{
-                color: Color.black,
-              }}
-            />
-            <CustomText style={styles.modalBtnText}>Camera</CustomText>
-          </TouchableOpacity>
-        </View>
+      <TouchableOpacity
+        onPress={() => setShow(false)}
+        style={[styles.modalCancelBtn, {backgroundColor: Color.themeColor1}]}>
+        <CustomText style={styles.modalBtnText}>Cancel</CustomText>
+      </TouchableOpacity>
+    </View>
+    {/* <View
+      style={{
+        // flex: 1,
+        backgroundColor: Color.black,
+        height: Dimensions.get("window").height * 0.33,
+        width: Dimensions.get("window").width * 0.8,
+        paddingHorizontal: moderateScale(10, 0.3),
+        paddingVertical: moderateScale(10, 0.3),
+        borderRadius: Dimensions.get("window").width * 0.02,
+      }}
+    >
+      <CustomText style={styles.modalHead}>Upload picture</CustomText>
+      <View style={styles.modalContentContianer}>
         <TouchableOpacity
-          onPress={() => setShow(false)}
-          style={styles.modalCancelBtn}
+          onPress={() => {
+            if (Platform.OS === "android") {
+              setShow(false);
+            }
+            openGallery();
+          }}
+          style={styles.modalContentBtn}
         >
-          <CustomText style={styles.modalBtnText}>Cancel</CustomText>
+          <Icon
+            name={"folder-images"}
+            as={Entypo}
+            size={moderateScale(25, 0.3)}
+            style={{
+              color: Color.black,
+            }}
+          />
+          <CustomText style={styles.modalBtnText}>Gallery</CustomText>
         </TouchableOpacity>
-      </View> */}
-    </Modal>
+        <TouchableOpacity
+          onPress={() => {
+            if (Platform.OS === "android") {
+              setShow(false);
+            }
+            openCamera();
+          }}
+          style={styles.modalContentBtn}
+        >
+          <Icon
+            name={"camera"}
+            as={FontAwesome5}
+            size={moderateScale(25, 0.3)}
+            style={{
+              color: Color.black,
+            }}
+          />
+          <CustomText style={styles.modalBtnText}>Camera</CustomText>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity
+        onPress={() => setShow(false)}
+        style={styles.modalCancelBtn}
+      >
+        <CustomText style={styles.modalBtnText}>Cancel</CustomText>
+      </TouchableOpacity>
+    </View> */}
+  </Modal>
   );
 };
 
@@ -279,7 +337,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     alignContent: 'center',
     height: windowHeight * 0.21,
-    borderBottomColor: Color.themeColor,
+    borderBottomColor: Color.themeColor1,
     borderBottomWidth: 2,
     borderTopColor: Color.themeColor,
     borderTopWidth: 2,
@@ -303,7 +361,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-end',
     marginTop: moderateScale(10, 0.3),
-    borderRadius: moderateScale(5, 0.3),
+    borderRadius: moderateScale(25, 0.3),
   },
 });
 

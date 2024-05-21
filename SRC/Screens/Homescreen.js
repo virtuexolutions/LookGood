@@ -1,9 +1,16 @@
-import React, {useState} from 'react';
-import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  ImageBackground,
+  View,
+  ScrollView,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,12 +20,77 @@ import CustomTextWithMask from '../Components/CustomTextWithMask';
 import BarberCard from '../Components/BarberCard';
 import {useSelector} from 'react-redux';
 import OrderCard from '../Components/OrderCard';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import NoData from '../Components/NoData';
+import {useIsFocused} from '@react-navigation/native';
+import CompletedOrderCard from '../Components/CompletedOrderCard';
+import FilteringModal from '../Components/FilteringModal';
+import ShowReview from '../Components/ShowReview';
+import {Icon} from 'native-base';
+import Entypo from 'react-native-vector-icons/Entypo';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Homescreen = () => {
-  const user = useSelector((state)=>state.commonReducer.userData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [Loading, setLoading] = useState(false);
+  const [barberData, setBarberData] = useState([]);
+  const [orderData, setOrderData] = useState([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState([]);
+  const [isHolidayMode, setIsHolidayMode] = useState(false);
+  const focused = useIsFocused();
+
+  const user = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ Homescreen ~ user:", user)
+
+  const token = useSelector(state => state.authReducer.token);
+  // console.log("🚀 ~ Homescreen ~ token===========>:", token)
   const [index, setIndex] = useState(0);
-  console.log('🚀 ~ file: Homescreen.js:18 ~ Homescreen ~ index', index);
-  
+
+  const GetBarberBooking = async () => {
+    const url = `auth/barber/booking/list`;
+    setLoading(true);
+    const response = await Get(url, token);
+
+    setLoading(false);
+
+    if (response != undefined) {
+      console.log("🚀 ~ GetBarberBooking ~ response:", response?.data)
+      setOrderData(response?.data?.barber_booking_list);
+    }
+  };
+
+  // TIME GET API END
+
+  const barberFilter = async () => {
+    const url = 'auth/barber/filter';
+    const body = {
+      featured: selectedItem?.includes('featured barber') ? 1 : 0,
+      near: selectedItem?.includes('nearest to me') ? 1 : 0,
+      earlier: selectedItem?.includes('earliest') ? 1 : 0,
+    };
+    setIsLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setIsLoading(false);
+    if (response != undefined) {
+      // console.log('response here==============',JSON.stringify(response?.data?.users ,null ,2));
+
+      setBarberData(response?.data?.users);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.role == 'barber') {
+      // BarberList();
+      GetBarberBooking();
+    }
+  }, [focused]);
+
+  useEffect(() => {
+    if (user?.role == 'customer') {
+      barberFilter();
+    }
+  }, [focused, selectedItem.length]);
 
   const bannerArray = [
     {
@@ -37,125 +109,7 @@ const Homescreen = () => {
       description: 'The latest trend Hair Dresser',
     },
   ];
-  const cardArray = [
-    {
-      image: require('../Assets/Images/barbarDummy1.png'),
-      name: 'Daniel M. Bell',
-    },
-    {
-      image: require('../Assets/Images/barbarDummy.png'),
-      name: 'Ramon C. Raines',
-    },
-    {
-      image: require('../Assets/Images/barbarDummy1.png'),
-      name: 'Daniel M. Bell',
-    },
-    {
-      image: require('../Assets/Images/barbarDummy.png'),
-      name: 'Ramon C. Raines',
-    },
-    {
-      image: require('../Assets/Images/barbarDummy1.png'),
-      name: 'Daniel M. Bell',
-    },
-  ];
-  const orderArray = [
-    {
-      image: require('../Assets/Images/dummyCustomer1.png'),
-      name: 'Lorraine Lebrun',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-          services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ]
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer2.png'),
-      name: 'Benjamin Evalent',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-        services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer3.png'),
-      name: 'Jay cuttler',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-        services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer4.png'),
-      name: 'mark joe',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-        services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-    {
-      image: require('../Assets/Images/dummyCustomer1.png'),
-      name: 'Danjay joesph',
-      date: moment().format('ll'),
-      time: moment().format('hh : mm A'),
-      amount: 1000,
-      address: '13th Street. 47 W 13th St, New York,',
-        services: [
-        'Blow dry with curling and striaght iron',
-        'Blow dry',
-        'Hair cut with Blow dry',
-        'Mens haircut',
-        'Gloss',
-        'Gel Polist',
-        'Meni pedi',
-        'nail cutting',
-        'pink and white fill',
-      ],
-    },
-  ];
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -179,6 +133,98 @@ const Homescreen = () => {
             style={{
               width: windowWidth,
             }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                // backgroundColor: 'red',
+                width: windowWidth * 0.9,
+              }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: Color.themeColor1,
+                  height: windowHeight * 0.05,
+                  width: windowHeight * 0.05,
+                  borderRadius: (windowHeight * 0.05) / 2,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+
+                  marginRight: moderateScale(10, 0.3),
+                }}
+                onPress={() => {
+                  setIsVisible(true);
+                }}>
+                <Icon
+                  style={{
+                    textAlign: 'center',
+                  }}
+                  onPress={() => {
+                    setIsVisible(true);
+                  }}
+                  name="filter"
+                  as={FontAwesome}
+                  size={25}
+                  color={Color.lightGrey}
+                />
+              </TouchableOpacity>
+              <View style={styles.mapview}>
+                {selectedItem?.map((item, index) => {
+                  return (
+                    <>
+                      <CustomText
+                        onPress={() => {
+                          setIsVisible(true);
+                        }}
+                        isBold
+                        style={{
+                          color: Color.white,
+                          borderColor: Color.themeColor,
+                          borderWidth: 1,
+                          borderRadius: moderateScale(20, 0.6),
+                          padding: moderateScale(7, 0.6),
+                          marginHorizontal: moderateScale(5, 0.3),
+                          fontSize: moderateScale(13, 0.6),
+                          marginVertical: moderateScale(5, 0.3),
+                        }}>
+                        {item}
+                      </CustomText>
+                      <View
+                      // style={{
+                      //   position: 'absolute',
+                      //   top: -4,
+                      //   right: 7,
+                      //   backgroundColor: 'red',
+                      // }}
+                      >
+                        <Icon
+                          style={{
+                            position: 'absolute',
+                            right: 2,
+                          }}
+                          onPress={() => {
+                            let temp = [...selectedItem];
+                            temp.splice(index, 1);
+                            setSelectedItem(temp);
+                          }}
+                          name="circle-with-cross"
+                          as={Entypo}
+                          size={15}
+                          color={Color.lightGrey}
+                        />
+                      </View>
+                    </>
+                  );
+                })}
+              </View>
+            </View>
+
+            <FilteringModal
+              barberFilter={barberFilter}
+              selectedItem={selectedItem}
+              setSelectedItem={setSelectedItem}
+              isVisible={isVisible}
+              setIsVisible={setIsVisible}
+            />
+
             <CustomText isBold style={styles.text1}>
               New HairStyle Trends
             </CustomText>
@@ -189,6 +235,7 @@ const Homescreen = () => {
               isBold
               size={40}
             />
+
             <FlatList
               style={styles.bannerView}
               data={bannerArray}
@@ -276,38 +323,69 @@ const Homescreen = () => {
                   marginTop: moderateScale(10, 0.3),
                 },
               ]}>
-              Recommended{' '}
+              Recommended
             </CustomText>
-            <View
-              style={{
-                paddingTop: moderateScale(10, 0.3),
-                width: windowWidth * 0.85,
-                //   backgroundColor : 'red',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                //   paddingHorizontal : moderateScale()
-              }}>
-              {cardArray.map((x, index) => {
-                return (
-                  <BarberCard
-                    item={x}
-                    onPress={() => {
-                      navigationService.navigate('BarberServicesScreen', {
-                        detail: x,
-                      });
-                    }}
-                  />
-                );
-              })}
-            </View>
+            {isLoading ? (
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: windowHeight * 0.2,
+                }}>
+                <ActivityIndicator color={Color.themeColor} size={'large'} />
+              </View>
+            ) : (
+              <FlatList
+                decelerationRate={'fast'}
+                numColumns={2}
+                ListEmptyComponent={() => {
+                  return (
+                    <NoData
+                      style={{
+                        height: windowHeight * 0.25,
+                        width: windowWidth * 0.6,
+                        alignItems: 'center',
+                      }}
+                      text={'No barber found'}
+                    />
+                  );
+                }}
+                style={{
+                  marginTop: moderateScale(10, 0.3),
+                }}
+                contentContainerStyle={{
+                  width: windowWidth,
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+                data={barberData?.reverse()}
+                renderItem={({item, index}) => {
+                  return (
+                    <BarberCard
+                      item={item}
+                      setIsHolidayMode={setIsHolidayMode}
+                      isHolidayMode={isHolidayMode}
+                      onPress={() => {
+                        if (item?.holiday_mode == true) {
+                          setIsHolidayMode(true);
+                        } else {
+                          navigationService.navigate('BarberServicesScreen', {
+                            detail: item,
+                          });
+                        }
+                      }}
+                    />
+                  );
+                }}
+              />
+            )}
           </ScrollView>
         ) : (
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               paddingBottom: windowHeight * 0.155,
-              // paddingTop : moderateScale(20,0.3),
+
               alignItems: 'center',
             }}
             style={{
@@ -372,21 +450,42 @@ const Homescreen = () => {
                 View all
               </CustomText>
             </View>
-            <FlatList
-              decelerationRate={'fast'}
-              showsHorizontalScrollIndicator={false}
-              style={{
-                marginTop: moderateScale(10, 0.3),
-              }}
-              contentContainerStyle={{
-                paddingHorizontal: moderateScale(8, 0.3),
-              }}
-              data={orderArray}
-              horizontal
-              renderItem={({item, index}) => {
-                return <OrderCard item={item} />;
-              }}
-            />
+            {isLoading ? (
+              <View
+                style={{height: windowHeight * 0.23, justifyContent: 'center'}}>
+                <ActivityIndicator color={Color.themeColor} size={'large'} />
+              </View>
+            ) : (
+              <FlatList
+                decelerationRate={'fast'}
+                ListEmptyComponent={() => {
+                  return (
+                    <NoData
+                      style={{
+                        height: windowHeight * 0.25,
+                        width: windowWidth * 0.6,
+                        alignItems: 'center',
+                      }}
+                      text={'No Upcoming Orders'}
+                    />
+                  );
+                }}
+                showsHorizontalScrollIndicator={false}
+                style={{
+                  marginTop: moderateScale(10, 0.3),
+                }}
+                contentContainerStyle={{
+                  paddingHorizontal: moderateScale(8, 0.3),
+                }}
+                data={orderData
+                  ?.filter(item => item?.status == 'pending')
+                  .reverse()}
+                horizontal
+                renderItem={({item, index}) => {
+                  return <OrderCard item={item} />;
+                }}
+              />
+            )}
             <CustomText
               isBold
               style={[
@@ -399,23 +498,44 @@ const Homescreen = () => {
                   marginLeft: moderateScale(10, 0.3),
                 },
               ]}>
-              New Orders
+              Completed Orders
             </CustomText>
-            <FlatList
-              decelerationRate={'fast'}
-              showsVerticalScrollIndicator={false}
-              style={{
-                marginTop: moderateScale(10, 0.3),
-              }}
-              contentContainerStyle={{
-                paddingHorizontal: moderateScale(8, 0.3),
-              }}
-              data={orderArray}
-              numColumns={2}
-              renderItem={({item, index}) => {
-                return <OrderCard item={item} />;
-              }}
-            />
+            {isLoading ? (
+              <View
+                style={{height: windowHeight * 0.23, justifyContent: 'center'}}>
+                <ActivityIndicator color={Color.themeColor} size={'large'} />
+              </View>
+            ) : (
+              <FlatList
+                decelerationRate={'fast'}
+                showsVerticalScrollIndicator={false}
+                style={{
+                  marginTop: moderateScale(10, 0.3),
+                }}
+                contentContainerStyle={{
+                  paddingHorizontal: moderateScale(8, 0.3),
+                }}
+                data={orderData?.filter(item => item?.status == 'complete')}
+                ListEmptyComponent={() => {
+                  return (
+                    <NoData
+                      style={{
+                        height: windowHeight * 0.25,
+                        width: windowWidth * 0.6,
+                        alignItems: 'center',
+                      }}
+                      text={'No Upcoming Orders'}
+                    />
+                  );
+                }}
+                numColumns={1}
+                renderItem={({item, index}) => {
+                  return <CompletedOrderCard item={item} />;
+
+                  //  <OrderCard item={item} />;
+                }}
+              />
+            )}
           </ScrollView>
         )}
       </LinearGradient>
@@ -459,5 +579,13 @@ const styles = ScaledSheet.create({
   viewAll: {
     color: Color.white,
     fontSize: moderateScale(12, 0.3),
+  },
+  mapview: {
+    // backgroundColor: 'red',
+    width: windowWidth * 0.76,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    // paddingHorizontal: moderateScale(10, 0.6),
+    paddingVertical: moderateScale(5, 0.6),
   },
 });

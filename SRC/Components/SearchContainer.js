@@ -53,7 +53,7 @@ const SearchContainer = ({ width, text, input, onPress, data, setData }) => {
               setData({ latitute: lat, longitute: lng });
             }}
             query={{
-              key: "AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8",
+              key: "AIzaSyAqNK7IfM16zi79N0u7qX4Ncm5QgGvBqmg",
               language: "en",
             }}
           />

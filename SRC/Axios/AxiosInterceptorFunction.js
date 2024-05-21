@@ -22,7 +22,7 @@ let Get = async (route, token, showAlert = true) => {
     },
   };
   const apiUrl = URL(route);
-  // console.log(apiUrl);
+  console.log( 'api url ==== > ',apiUrl);
   try {
     const response = await axios.get(apiUrl, options);
     return response;
@@ -80,9 +80,9 @@ let Post = async (route, data, headers, showAlert = true) => {
   try {
     return await axios.post(apiUrl, data, headers);
   } catch (error) {
-    console.log("error", error.message);
     let networkError = error.message === "Network Error";
     if (showAlert == true) {
+      console.log( error.message);
       if (networkError === true) {
         console.log('sadasdsad');
 
@@ -102,6 +102,8 @@ let Post = async (route, data, headers, showAlert = true) => {
         // <NetworkErrorAlert/>
 
       } else {
+      console.log("error sdfds fd", error.response?.data?.message);
+// alert(error.response?.data?.message)
         Alert.alert(
           "Submission Errors",
           error.response.data.message,

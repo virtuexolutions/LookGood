@@ -4,20 +4,53 @@ import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomButton from '../Components/CustomButton';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import navigationService from '../navigationService';
-import { setUserToken } from '../Store/slices/auth';
-import { useDispatch } from 'react-redux';
+import {setUserToken} from '../Store/slices/auth';
+import {useDispatch, useSelector} from 'react-redux';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {Platform} from 'react-native';
+import {ToastAndroid} from 'react-native';
+import {Alert} from 'native-base';
+import {ActivityIndicator} from 'react-native';
+import {setUserData, setUserWallet} from '../Store/slices/common';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
+  const token = useSelector(state => state.authReducer.token);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const login = async () => {
+    const url = 'login';
+    const body = {email: email, password: password};
+
+    for (let key in body) {
+      if (body[key] == '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(`${key} is required`, ToastAndroid.SHORT)
+          : Alert.alert(`${key} is required`);
+      }
+    }
+
+    setLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setLoading(false);
+    if (response != undefined) {
+    console.log("🚀 ~ file: LoginScreen.js:46 ~ login ~ response:", response?.data)
+    
+      dispatch(setUserToken({token: response?.data?.token}));
+      dispatch(setUserData(response?.data?.user_info));
+      dispatch(setUserWallet(response?.data?.user_info?.wallet));
+
+    }
+  };
 
   const backgroundImage = require('../Assets/Images/appLogo.png');
   return (
@@ -40,6 +73,7 @@ const LoginScreen = () => {
           }}
           style={{
             width: windowWidth,
+            zIndex : 1,
           }}>
         <CustomText isBold style={styles.text1}>
           Sign in
@@ -48,7 +82,7 @@ const LoginScreen = () => {
           titleText={'Your Email'}
           placeholder={'Enter Your Email'}
           setText={setEmail}
-          value={email}
+          value={email}  
           viewHeight={0.06}
           viewWidth={0.75}
           inputWidth={0.74}
@@ -58,9 +92,10 @@ const LoginScreen = () => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
         />
         <TextInputWithTitle
+          secureText
           titleText={'Your Password'}
           placeholder={'Enter Your Password'}
           setText={setPassword}
@@ -74,7 +109,8 @@ const LoginScreen = () => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
+
         />
         <CustomButton
           bgColor={Color.themePink}
@@ -82,13 +118,21 @@ const LoginScreen = () => {
           borderWidth={1}
           textColor={Color.black}
           onPress={() => {
-            dispatch(setUserToken({token : true}))
+            login();
+
+            // dispatch(setUserToken({token: 'skjfhkjhfdjjsdfjlkjlkfj;kdf;l'}));
           }}
           width={windowWidth * 0.75}
           height={windowHeight * 0.06}
-          text={'Sign In'}
+          borderRadius={moderateScale(25, 0.6)}
+          text={
+            loading ? (
+              <ActivityIndicator size={'small'} color={'black'} />
+            ) : (
+              'Sign In'
+            )
+          }
           fontSize={moderateScale(14, 0.3)}
-          // borderRadius={moderateScale(30, 0.3)}
           textTransform={'uppercase'}
           isGradient={true}
           isBold
@@ -98,7 +142,7 @@ const LoginScreen = () => {
         <CustomText
           isBold
           onPress={() => {
-          // console.log('fdfds');
+            // console.log('fdfds');
             navigationService.navigate('Signup');
           }}
           style={{
@@ -106,14 +150,18 @@ const LoginScreen = () => {
             fontSize: moderateScale(13, 0.3),
             textTransform: 'uppercase',
             marginTop: moderateScale(10, 0.3),
-            zIndex : 1,
+            zIndex: 1,
           }}>
           Sign Up
         </CustomText>
         <CustomText
-       
+          onPress={() => {
+            console.log('fdfds');
+            navigationService.navigate('EnterPhone');
+          }}
           isBold
           style={{
+            zIndex: 1,
             color: 'rgb(227,196,136)',
             fontSize: moderateScale(10, 0.3),
             textTransform: 'uppercase',
@@ -122,13 +170,13 @@ const LoginScreen = () => {
           forgot password?
         </CustomText>
 
+        </ScrollView>
         <View
           style={{
             position: 'absolute',
             bottom: 0,
             right: 0,
-            // zIndex : -1,
-            backgroundColor : 'transparent'
+            // backgroundColor: 'red',
           }}>
           <CustomImage
             source={require('../Assets/Images/backgroundLogo.png')}
@@ -136,7 +184,6 @@ const LoginScreen = () => {
             style={{}}
           />
         </View>
-        </ScrollView>
       </LinearGradient>
     </ScreenBoiler>
   );

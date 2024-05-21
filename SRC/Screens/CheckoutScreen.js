@@ -21,32 +21,26 @@ import {Icon} from 'native-base';
 import numeral from 'numeral';
 import navigationService from '../navigationService';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
-import { useDispatch, useSelector } from 'react-redux';
-import { setWholeCart } from '../Store/slices/common';
+import {useDispatch, useSelector} from 'react-redux';
+import {setVoucherData, setWholeCart} from '../Store/slices/common';
 
 const CheckoutScreen = props => {
   const dispatch = useDispatch();
-  const cartData = useSelector((state)=>state.commonReducer.cartData)
-  // console.log("🚀 ~ file: CheckoutScreen.js:30 ~ CheckoutScreen ~ cartData", cartData)
+
+  const cartData = useSelector(state => state.commonReducer.cartData);
+  const voucher = useSelector(state => state.commonReducer.selectedVoucher);
+  console.log('🚀 ~ CheckoutScreen ~ voucher:', voucher);
+
   const fromStore = props?.route?.params?.fromStore;
   const finalData = props?.route?.params?.finalData;
-  // console.log("🚀 ~ file: CheckoutScreen.js:28 ~ CheckoutScreen ~ finalData", finalData)
+
   const [subTotal, setSubTotal] = useState(0);
-  console.log("🚀 ~ file: CheckoutScreen.js:29 ~ CheckoutScreen ~ subTotal", subTotal)
   const [type, setItem] = useState('');
   const [finalStateData, setFinalStateData] = useState(
     fromStore ? cartData : finalData?.services,
   );
-  console.log(
-    '🚀 ~ file: CheckoutScreen.js:32 ~ CheckoutScreen ~ finalStateData',
-    finalStateData,
-  );
   const [arrayDropDown, setArrayDropdown] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState();
-  // console.log(
-  //   '🚀 ~ file: CheckoutScreen.js:22 ~ CheckoutScreen ~ finalData',
-  //   finalStateData,finalData
-  // );
 
   const servicesArray = [
     {
@@ -63,38 +57,40 @@ const CheckoutScreen = props => {
     },
   ];
 
+  const calculateDiscountedPrice = () => {
+    const finalValue =
+      voucher?.type == 'fixed'
+        ? subTotal - voucher?.value
+        : (subTotal * (100 - voucher?.value)) / 100;
+
+    return finalValue;
+  };
+  const calculateDiscount = () => {
+    const finalValue =
+      voucher?.type == 'fixed'
+        ? subTotal - voucher?.value
+        : (subTotal * voucher?.value) / 100;
+
+    return finalValue;
+  };
+
   useEffect(() => {
     setSubTotal(0);
     setArrayDropdown([]);
     servicesArray.map(x => setArrayDropdown(prev => [...prev, x?.name]));
-
-    // finalStateData.map((x, index) => {
-    //   return setSubTotal(prev => x?.price + prev);
-    // });
-    
   }, []);
-
-
-  
 
   useEffect(() => {
     fromStore &&
-      (setSelectedPrice(servicesArray.find(data => data.name == type))
-      // setSubTotal(prev => prev + selectedPrice?.price)
-      )
+      setSelectedPrice(servicesArray.find(data => data.name == type));
   }, [type]);
 
   useEffect(() => {
-    setSubTotal(0),
-    fromStore &&(
-    dispatch(setWholeCart(finalStateData))
-    )
-     finalStateData.map((x,index)=>{
-      const price = x?.price *x?.quantity ;
-      return setSubTotal(prev=>  prev + price)
-    })
-  }, [finalStateData])
-  
+    setSubTotal(0), fromStore && dispatch(setWholeCart(finalStateData));
+    finalStateData?.map((x, index) => {
+      return setSubTotal(prev => prev + x?.price);
+    });
+  }, [finalStateData]);
 
   return (
     <ScreenBoiler
@@ -103,7 +99,6 @@ const CheckoutScreen = props => {
       showUser={true}
       statusBarBackgroundColor={Color.black}
       statusBarContentStyle={'light-content'}>
-        
       <LinearGradient
         start={{x: 0.0, y: 0.25}}
         end={{x: 0.5, y: 1.0}}
@@ -112,15 +107,13 @@ const CheckoutScreen = props => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            // backgroundColor:'red',
             paddingBottom: windowHeight * 0.15,
-            // paddingTop : moderateScale(20,0.3),
             alignItems: 'center',
           }}
           style={{
             width: windowWidth,
           }}>
-          { finalStateData.map((item, index) => {
+          {finalStateData?.map((item, index) => {
             return (
               <View
                 style={{
@@ -133,7 +126,6 @@ const CheckoutScreen = props => {
                   as={FontAwesome}
                   color={Color.white}
                   size={moderateScale(20, 0.3)}
-                  style={{}}
                 />
 
                 <View
@@ -149,7 +141,7 @@ const CheckoutScreen = props => {
                       {item?.name}
                     </CustomText>
                     <CustomText isBold>
-                      {numeral(item?.price * item?.quantity).format('$0,0.0')}
+                      {numeral(item?.price).format('$0,0.0')}
                     </CustomText>
                   </View>
                   {fromStore && (
@@ -191,10 +183,8 @@ const CheckoutScreen = props => {
                             setFinalStateData(
                               finalStateData.filter(
                                 (x, index) => x?.quantity > 0,
-                              ))
-                            
-                            
-                            );
+                              ),
+                            ));
                         }}
                       />
                     </View>
@@ -223,20 +213,12 @@ const CheckoutScreen = props => {
                 placeholder={'Choose any category'}
                 width={windowWidth * 0.9}
                 dropdownStyle={{
-                  // backgroundColor : 'red',
                   width: windowWidth * 0.9,
                   borderBottomWidth: 0,
                 }}
               />
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: moderateScale(20, 0.3),
-                  paddingHorizontal: moderateScale(20, 0.3),
-                  width: windowWidth,
-                  justifyContent: 'space-between',
-                }}>
+              <View style={styles.row}>
                 <CustomText style={[styles.text1, {color: Color.white}]}>
                   Shipping Cost
                 </CustomText>
@@ -244,14 +226,8 @@ const CheckoutScreen = props => {
                   {numeral(selectedPrice?.price).format('$0.0')}
                 </CustomText>
               </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: moderateScale(15, 0.3),
-                  paddingHorizontal: moderateScale(20, 0.3),
-                  width: windowWidth,
-                  justifyContent: 'space-between',
-                }}>
+              <View style={styles.row}>
+                {/* finalData */}
                 <CustomText style={[styles.text1, {color: Color.white}]}>
                   Subtotal
                 </CustomText>
@@ -262,15 +238,70 @@ const CheckoutScreen = props => {
             </>
           )}
           <View style={styles.underline} />
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: moderateScale(15, 0.3),
-              paddingHorizontal: moderateScale(20, 0.3),
-              width: windowWidth,
-              justifyContent: 'space-between',
-              // backgroundColor:'purple',
-            }}>
+          <View style={styles.row}>
+            <CustomText style={[styles.text1, {color: Color.white}]}>
+              Location :
+            </CustomText>
+            <CustomText
+              isBold
+              style={{
+                color: Color.white,
+                // backgroundColor: 'red',
+                width: windowWidth * 0.5,
+              }}>
+              {`${finalData?.location?.name}`}
+            </CustomText>
+          </View>
+          <View style={styles.underline} />
+          <View style={styles.row}>
+            <CustomText style={[styles.text1, {color: Color.white}]}>
+              Apply voucher :
+            </CustomText>
+            {Object.keys(voucher).length == 0 ? (
+              <CustomButton
+                textColor={Color.black}
+                onPress={() => {
+                  navigationService.navigate('Vouchers', {total: subTotal});
+                }}
+                width={windowWidth * 0.3}
+                height={windowHeight * 0.05}
+                text={'select voucher'}
+                fontSize={moderateScale(12, 0.3)}
+                isGradient={true}
+                isBold
+                borderRadius={moderateScale(30, 0.4)}
+              />
+            ) : (
+              <View
+                style={{
+                  borderColor: Color.themeColor,
+                  borderRadius: moderateScale(10, 0.6),
+                  borderWidth: moderateScale(2, 0.6),
+                  paddingVertical: moderateScale(10, 0.6),
+                  paddingHorizontal: moderateScale(15, 0.6),
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  // backgroundColor:'green'
+                }}>
+                <Icon
+                  onPress={() => {
+                    dispatch(setVoucherData({}));
+                  }}
+                  style={{position: 'absolute', top: 2, right: 2}}
+                  name={'cross'}
+                  as={Entypo}
+                  color={Color.white}
+                  size={moderateScale(11, 0.6)}
+                />
+                <CustomText isBold style={{color: Color.white}}>
+                  {voucher?.value}
+                  {voucher?.type == 'fixed' ? '$' : '%'}
+                </CustomText>
+              </View>
+            )}
+          </View>
+          <View style={styles.underline} />
+          <View style={styles.row}>
             <CustomText style={[styles.text1, {color: Color.white}]}>
               total
             </CustomText>
@@ -282,6 +313,28 @@ const CheckoutScreen = props => {
               ).format('$0,0.0')}
             </CustomText>
           </View>
+          {Object.keys(voucher).length > 0 && (
+            <View style={styles.row}>
+              <CustomText style={[styles.text1, {color: Color.white}]}>
+                Discount
+              </CustomText>
+              <CustomText isBold style={{color: Color.white}}>
+                {voucher?.type == 'fixed'
+                  ? numeral(voucher?.value).format('$0,0.0')
+                  : numeral(voucher?.value / 100).format('0%')}
+              </CustomText>
+            </View>
+          )}
+          {Object.keys(voucher).length > 0 && (
+            <View style={styles.row}>
+              <CustomText style={[styles.text1, {color: Color.white}]}>
+                SubTotal
+              </CustomText>
+              <CustomText isBold style={{color: Color.white}}>
+                {numeral(calculateDiscountedPrice()).format('$0,0.0')}
+              </CustomText>
+            </View>
+          )}
         </ScrollView>
         <CustomButton
           // borderColor={'white'}
@@ -289,19 +342,25 @@ const CheckoutScreen = props => {
           textColor={Color.black}
           onPress={() => {
             navigationService.navigate('PaymentScreen', {
-              finalData: finalData,
+              finalData: {
+                ...finalData,
+                total: subTotal,
+                discount: calculateDiscount(),
+              },
               fromStore: fromStore,
             });
           }}
           width={windowWidth * 0.9}
           height={windowHeight * 0.06}
-          text={'Payment'}
+          text={'Book your slot'}
           fontSize={moderateScale(14, 0.3)}
           // borderRadius={moderateScale(30, 0.3)}
           textTransform={'uppercase'}
           isGradient={true}
           isBold
+          // marginTop={moderateScale(10,.3)}
           marginBottom={windowHeight * 0.15}
+          borderRadius={moderateScale(30, 0.4)}
         />
       </LinearGradient>
     </ScreenBoiler>
@@ -311,20 +370,22 @@ const CheckoutScreen = props => {
 export default CheckoutScreen;
 
 const styles = ScaledSheet.create({
+  row: {
+    flexDirection: 'row',
+    paddingHorizontal: moderateScale(20, 0.3),
+    width: windowWidth,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // backgroundColor: 'red',
+  },
   container: {
-    // paddingTop: windowHeight * 0.06,
-    // justifyContent: "center",
     height: windowHeight * 0.9,
     width: windowWidth,
     alignItems: 'center',
-    // paddingLeft: moderateScale(20, 0.3),
-    // backgroundColor : Color.themeColor
   },
   text1: {
     color: Color.black,
     fontSize: moderateScale(14, 0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   container1: {
     backgroundColor: Color.white,
@@ -334,12 +395,13 @@ const styles = ScaledSheet.create({
     marginLeft: moderateScale(10, 0.3),
     paddingLeft: moderateScale(10, 0.3),
     paddingTop: moderateScale(20, 0.3),
+    borderRadius: moderateScale(18, 0.6),
     flexDirection: 'row',
   },
   underline: {
     width: windowWidth * 0.9,
     borderTopWidth: 1,
     borderColor: Color.white,
-    marginTop: moderateScale(30, 0.3),
+    marginVertical: moderateScale(20, 0.3),
   },
 });

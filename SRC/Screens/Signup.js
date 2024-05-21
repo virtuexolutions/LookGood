@@ -3,6 +3,7 @@ import {
   Alert,
   ImageBackground,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   ToastAndroid,
@@ -24,22 +25,28 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {validateEmail} from '../Config';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import {useDispatch} from 'react-redux';
-import {setUserData} from '../Store/slices/common';
+import {setUserData, setUserWallet} from '../Store/slices/common';
 import {setUserLogin, setUserToken} from '../Store/slices/auth';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import navigationService from '../navigationService';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import Header from '../Components/Header';
+import Feather from 'react-native-vector-icons/Feather'
+import SelectLocationModal from '../Components/SelectLocationModal';
+
+
+
 
 const Signup = ({navigation}) => {
   const dispatch = useDispatch();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [designation, setDesignation] = useState('');
+  // const [designation, setDesignation] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  console.log("PASSWORD",confirmPassword)
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState({});
   const [userRole, setUserRole] = useState('Barber');
@@ -47,6 +54,11 @@ const Signup = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
   const [contact, setContact] = useState('');
   const [email, setEmail] = useState('');
+  const [address ,setAddress] =useState({})
+  console.log("🚀 ~ Signup ~ address:", address)
+  const [isVisibleModal ,setIsVisibleModal]=useState(false)
+  const [selectLocationModal,setselectLocationModal]=useState(false)
+  console.log("🚀 ~ Signup ~ selectLocationModal:", selectLocationModal)
 
   const formData = new FormData();
 
@@ -55,12 +67,16 @@ const Signup = ({navigation}) => {
       role: userRole,
       first_name: `${firstName}`,
       last_name: `${lastName}`,
-      designation: designation,
+      // designation: designation,
       email: email,
       phone: contact,
       password: password,
-      c_password: confirmPassword,
+      confirm_password: confirmPassword,
+      address_name: address?.name,
+      address_lat: address?.lat,
+      address_lng: address?.lng,
     };
+  //  return console.log("🚀 ~ SignUp ~ params:", params)
 
     for (let key in params) {
       if (params[key] === '') {
@@ -71,7 +87,12 @@ const Signup = ({navigation}) => {
       formData.append(key, params[key]);
     }
     if (Object.keys(image).length > 0) {
-      formData.append('image', image);
+      formData.append('photo', image);
+    }else{
+      return Platform.OS == 'android'
+          ? ToastAndroid.show(`Image is required`, ToastAndroid.SHORT)
+          : Alert.alert(` Image is required`);
+
     }
     console.log(JSON.stringify(formData, null, 2));
     if (isNaN(contact)) {
@@ -84,7 +105,7 @@ const Signup = ({navigation}) => {
         ? ToastAndroid.show('email is not validate', ToastAndroid.SHORT)
         : Alert.alert('email is not validate');
     }
-    if (password.length < 8) {
+    if (password.length < 8 ) {
       return Platform.OS == 'android'
         ? ToastAndroid.show(
             'Password should atleast 8 character long',
@@ -103,25 +124,23 @@ const Signup = ({navigation}) => {
     const response = await Post(url, formData, apiHeader());
     setIsLoading(false);
     if (response != undefined) {
-      //  return  console.log("response?.data", response?.data?.data);
+        console.log("response?.data", response?.data);
       Platform.OS === 'android'
         ? ToastAndroid.show('User Registered Succesfully', ToastAndroid.SHORT)
         : Alert.alert('User Registered Succesfully');
-      dispatch(setUserData(response?.data?.data?.user_details));
-      dispatch(setUserLogin(response?.data?.data?.token));
+      dispatch(setUserData(response?.data?.user_info));
+      dispatch(setUserLogin(response?.data?.token));
+      dispatch(setUserToken({token:response?.data?.token}))
+      dispatch(setUserWallet(response?.data?.user_info?.wallet));
     }
   };
 
   return (
-    // <ScreenBoiler
-    //   // showBack={true}
-    //   showHeader={true}
-    //   statusBarBackgroundColor={Color.black}
-    //   statusBarContentStyle={'light-content'}>
+   
     <>
       <CustomStatusBar backgroundColor={'black'} barStyle={'light-content'} />
       <Header />
-      <KeyboardAwareScrollView
+      <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           alignItems: 'center',
@@ -205,7 +224,8 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(20, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
           <TextInputWithTitle
             titleText={'Last Name'}
@@ -219,7 +239,7 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
           />
 
           <TextInputWithTitle
@@ -234,7 +254,8 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
           <TextInputWithTitle
             titleText={'Contact'}
@@ -248,54 +269,92 @@ const Signup = ({navigation}) => {
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
+          <TouchableOpacity
+            onPress={() => {
+              setselectLocationModal(true);
+            }}>
+            <TextInputWithTitle
+              iconName={'map-pin'}
+              iconType={Feather}
+              // disable
+              titleText={'address'}
+              secureText={false}
+              placeholder={'Address'}
+              setText={setAddress}
+              value={address?.name}
+              viewHeight={0.06}
+              viewWidth={0.75}
+              inputWidth={0.6}
+              // border={1}
+              // borderColor={'#1B5CFB45'}
+              backgroundColor={'#FFFFFF'}
+              marginTop={moderateScale(12, 0.3)}
+              color={Color.themeColor}
+              placeholderColor={Color.themeLightGray}
+              borderRadius={moderateScale(30, 0.4)}
+              disable
+            />
+          </TouchableOpacity>
+          <View style={{
+            zIndex : 1,
+          }}>
           <TextInputWithTitle
+          secureText
             titleText={'Password'}
             placeholder={'Password'}
             setText={setPassword}
             value={password}
             viewHeight={0.06}
             viewWidth={0.75}
-            inputWidth={0.74}
+            inputWidth={0.6}
             backgroundColor={'#FFFFFF'}
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
           <TextInputWithTitle
+            secureText
             titleText={'Confirm Password'}
             placeholder={'Confirm Password'}
             setText={setConfirmPassword}
             value={confirmPassword}
             viewHeight={0.06}
             viewWidth={0.75}
-            inputWidth={0.74}
+            inputWidth={0.6}
             backgroundColor={'#FFFFFF'}
             marginTop={moderateScale(12, 0.3)}
             color={Color.themeColor}
             placeholderColor={Color.themeLightGray}
-            borderRadius={moderateScale(1, 0.3)}
+            borderRadius={moderateScale(30, 0.4)}
+
           />
+          </View>
           <CustomButton
             bgColor={Color.themeColor}
             borderColor={'white'}
+          borderRadius={moderateScale(30, 0.4)}
             borderWidth={1}
             textColor={Color.black}
             onPress={() => {
-              dispatch(
-                setUserData(
-                  userRole == 'Customer'
-                    ? {role: 'customer', name: 'Justin Beber'}
-                    : {role: 'barber', name: 'Justin Beber'},
-                ),
-              );
-              dispatch(setUserToken({token : true}))
+              SignUp()
+              
+              // dispatch(
+              //   setUserData(
+              //     userRole == 'Customer'
+              //       ? {role: 'customer', name: 'Justin Beber'}
+              //       : {role: 'barber', name: 'Justin Beber'},
+              //   ),
+              // );
+              // dispatch(setUserToken({token : true}))
             }}
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
-            text={'Sign Up'}
+            text={ isLoading ? <ActivityIndicator color={Color.black} size={'small'} /> : 'Sign Up'}
             fontSize={moderateScale(14, 0.3)}
             textTransform={'uppercase'}
             isGradient={true}
@@ -322,7 +381,7 @@ const Signup = ({navigation}) => {
               bottom: 0,
               right: 0,
               // zIndex : -1,
-              backgroundColor: 'transparent',
+              // backgroundColor: 'red',
             }}>
             <CustomImage
               source={require('../Assets/Images/backgroundLogo.png')}
@@ -330,6 +389,7 @@ const Signup = ({navigation}) => {
               style={{}}
             />
           </View>
+         
         </LinearGradient>
 
         <ImagePickerModal
@@ -337,7 +397,13 @@ const Signup = ({navigation}) => {
           setShow={setShowModal}
           setFileObject={setImage}
         />
-      </KeyboardAwareScrollView>
+        
+      </ScrollView>
+        <SelectLocationModal
+         isVisible={selectLocationModal}
+         setIsVisibleModal={setselectLocationModal}
+         setLocation={setAddress}
+       />
       {/* // </ScreenBoiler> */}
     </>
   );
@@ -385,7 +451,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: moderateScale(100, 0.3),
+    width: moderateScale(100, 0.3), 
     height: moderateScale(100, 0.3),
     borderRadius: moderateScale(49, 0.3),
     marginLeft: moderateScale(2.5, 0.3),
@@ -421,7 +487,7 @@ const styles = ScaledSheet.create({
   },
   txt2: {
     fontSize: moderateScale(12, 0.3),
-    color: Color.themeColor,
+    color: Color.themeColor, 
     // fontWeight : 'bold'
     // backgroundColor : 'red'
   },

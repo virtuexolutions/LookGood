@@ -26,10 +26,10 @@ import {formRegEx, formRegExReplacer, imageUrl} from '../Config';
 import CustomButton from '../Components/CustomButton';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../Components/CustomText';
+import navigationService from '../navigationService';
 
 const ChangePassword = props => {
   const token = useSelector(state => state.authReducer.token);
-  console.log(token);
   const dispatch = useDispatch();
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -43,42 +43,22 @@ const ChangePassword = props => {
       new_password: password,
       confirm_password: confirmPassword,
     };
-    for (let key in params) {
-      if (params[key] === '') {
-        return (Platform.OS = 'android'
-          ? ToastAndroid.show('Required field is empty', ToastAndroid.SHORT)
-          : Alert.alert('Required field is empty'));
-      }
-    }
-
-    // Password Length
-    if (password.length < 8) {
-      return Platform.OS == 'android'
-        ? ToastAndroid.show(
-            'Password should atleast 8 character long',
-            ToastAndroid.SHORT,
-          )
-        : Alert.alert('Password should atleast 8 character long');
-    }
-    if (password != confirmPassword) {
-      return (Platform.OS = 'android'
-        ? ToastAndroid.show('passwords MissMatched !', ToastAndroid.SHORT)
-        : Alert.alert('passwords MissMatched !'));
-    }
+   
 
     const url = 'auth/change_password';
     setIsLoading(true);
     const response = await Post(url, params, apiHeader(token));
     setIsLoading(false);
-    if (response !== undefined) {
-      Platform.OS == 'android'
-        ? ToastAndroid.show('Password changed successfully', ToastAndroid.SHORT)
-        : alert('Password changed successfully');
-      console.log(response?.data);
-      navigationService.navigate('HomeScreen')
+    if (response != undefined) {
+      console.log(response?.data)
+      // Platform.OS == 'android'
+      //   ? ToastAndroid.show('Password changed successfully', ToastAndroid.SHORT)
+      //   : alert('Password changed successfully');
+   
+      // navigationService.navigate('HomeScreen')
     }
   };
-  // dispatch(setUserToken('123456'));
+ 
 
   return (
     <ScreenBoiler
@@ -110,7 +90,7 @@ const ChangePassword = props => {
           iconName={'lock'}
           iconType={FontAwesome}
           titleText={'Current Password'}
-          secureText={false}
+          secureText
           placeholder={'Current Password'}
           setText={setCurrentPassword}
           value={currentPassword}
@@ -123,30 +103,33 @@ const ChangePassword = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
+
         />
         <TextInputWithTitle
+     
           iconName={'lock'}
           iconType={FontAwesome}
           titleText={'New password'}
-          secureText={false}
+          secureText
           placeholder={'New password'}
           setText={setPassword}
           value={password}
           viewHeight={0.06}
           viewWidth={0.75}
           inputWidth={0.74}
-         backgroundColor={'#FFFFFF'}
+          backgroundColor={'#FFFFFF'}
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
+
         />
           <TextInputWithTitle
           iconName={'lock'}
           iconType={FontAwesome}
           titleText={'Confirm New password'}
-          secureText={false}
+          secureText
           placeholder={'Confirm New password'}
           setText={setConfirmPassword}
           value={confirmPassword}
@@ -159,7 +142,8 @@ const ChangePassword = props => {
           marginTop={moderateScale(12, 0.3)}
           color={Color.themeColor}
           placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(1, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
+
         />
         </View>
         <CustomButton
@@ -167,10 +151,11 @@ const ChangePassword = props => {
             borderColor={'white'}
             borderWidth={1}
             textColor={Color.black}
-            onPress={() => {console.log('Will Update profile');}}
+            onPress={() => {passwordReset()}}
+            borderRadius={moderateScale(25, 0.6)}
             width={windowWidth * 0.75}
             height={windowHeight * 0.06}
-            text={'Update'}
+            text={isLoading ? <ActivityIndicator color={'black'} size={'small'}/> :'Update'}
             fontSize={moderateScale(14, 0.3)}
             textTransform={'uppercase'}
             isGradient={true}

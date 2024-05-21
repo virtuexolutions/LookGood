@@ -16,6 +16,8 @@ import LandingPage1 from './SRC/Screens/LandingPage1';
 import LoginScreen from './SRC/Screens/LoginScreen';
 import AppNavigator from './SRC/appNavigation';
 import { Platform } from 'react-native';
+import GetStarted from './SRC/Screens/GetStarted';
+import Purchase from './SRC/Screens/Purchase';
 
 
 
@@ -25,7 +27,7 @@ const App = () => {
 
   return (
     <StripeProvider
-    publishableKey={"pk_test_qblFNYngBkEdjEZ16jxxoWSM"}
+    publishableKey={"pk_test_51McSueJ0WRwehn2Uuf4rm6WNHPQvaJY9NGU235gUEqPA3AJuc9Mq1x98Y8B8uE5eMfivo5l2xK4Vau21zau7ZBDp00g7qWfkx3"}
     // merchantIdentifier="merchant.identifier" // required for Apple Pay
     // urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
   >
@@ -72,6 +74,7 @@ const MainContainer =()=>{
   if (isloading == true) {
     return <SplashScreen />;
   }
+  // return <Purchase/>
   return <AppNavigator />;
 
 }

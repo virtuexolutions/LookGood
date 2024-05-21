@@ -25,10 +25,7 @@ const CustomHairCutModal = ({
   setStyle,
   style,
 }) => {
-  console.log(
-    '🚀 ~ file: CustomHairCutModal.js:10 ~ CustomHairCutModal ~ image:',
-    image,
-  );
+
   const [size, setSize] = useState(15);
   const [rotation, setRotation] = useState(0);
   return (
@@ -138,7 +135,6 @@ const CustomHairCutModal = ({
               minimumTrackTintColor={Color.themeColor}
               maximumTrackTintColor={Color.themeColor}
               onValueChange={data => {
-                console.log(data);
                 setRotation(data);
               }}
             />

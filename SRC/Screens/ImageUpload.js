@@ -16,13 +16,14 @@ import ImagePickerModal from '../Components/ImagePickerModal';
 
 const ImageUpload = props => {
   const selectedServices = props?.route.params?.data;
+  const barber = props?.route?.params?.barber
   const [showModal, setShowModal] = useState(false);
   const [image, setImage] = useState({});
 
   useEffect(() => {
     
     if(Object.keys(image).length > 0){
-      navigationService.navigate('ImageScreen', {data: selectedServices , image : image});
+      navigationService.navigate('ImageScreen', {data: selectedServices , image : image, barber:barber});
     }
   }, [image])
 
@@ -87,6 +88,7 @@ const ImageUpload = props => {
           text={'Choose Image'}
           fontSize={moderateScale(14, 0.3)}
           isGradient={true}
+          borderRadius={moderateScale(30, 0.4)}
           isBold
           marginTop={moderateScale(20, 0.3)}
           onPress={() => {

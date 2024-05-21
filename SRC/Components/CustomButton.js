@@ -13,6 +13,8 @@ import LinearGradient from "react-native-linear-gradient";
 import { moderateScale, scale } from "react-native-size-matters";
 import CustomText from "./CustomText";
 import Color from "../Assets/Utilities/Color";
+import CustomImage from "./CustomImage";
+import { windowWidth } from "../Utillity/utils";
 
 const CustomButton = (props) => {
   const {
@@ -25,6 +27,7 @@ const CustomButton = (props) => {
     borderColor,
     marginTop,
     marginBottom,
+    margin,
     justifyContent,
     borderRadius,
     isGradient,
@@ -40,6 +43,8 @@ const CustomButton = (props) => {
     isBold,
     disabled = false,
     alignSelf,
+    image,
+    gradientColor
 
     // value
   } = props;
@@ -50,6 +55,7 @@ const CustomButton = (props) => {
       style={[
         styles.mainBtn,
         {
+          margin:margin,
           width: width,
           height: height,
           backgroundColor: bgColor,
@@ -65,6 +71,7 @@ const CustomButton = (props) => {
         },
         borderRadius && {
           borderRadius: borderRadius,
+          overflow: 'hidden'
         },
         borderWidth && {
           borderWidth: borderWidth,
@@ -85,11 +92,11 @@ const CustomButton = (props) => {
             height: height,
             alignItems: "center",
             justifyContent: "center",
-            // borderRadius: moderateScale(30, 0.3),
+            borderRadius: borderRadius,
           }}
           start={{ x: 0.2, y: 0.6}}
           end={{ x: 1, y: 0 }}
-          colors={Color.btnColor}
+          colors={props?.gradientColor ? props?.gradientColor :  Color.btnColor}
         >
           {loader && (
             <ActivityIndicator
@@ -105,6 +112,26 @@ const CustomButton = (props) => {
               style={[styles.iconCustom, iconStyle && iconStyle]}
             />
           )}
+          {
+            image &&
+            <View 
+            style={{
+              width: windowWidth * 0.1,
+             height:windowWidth * 0.1,
+            //  paddingVertical:moderateScale(17, 0.8)
+            }}
+            >
+
+            <CustomImage source={image} 
+            resizeMode={'cover'}
+            style={{width:"100%",
+            height:"100%",
+            overflow:"hidden"
+          
+          }}
+            />
+            </View>
+          }
           <CustomText
             style={[
               styles.text,
@@ -187,7 +214,8 @@ const styles = StyleSheet.create({
     paddingLeft: I18nManager.isRTL ? 5 : 0,
   },
   iconCustom: {
-    color: "#C0C0C0",
+    // color: "#C0C0C0",
+    color:Color.black,
     fontSize: 20,
     paddingRight: 20,
     paddingLeft: I18nManager.isRTL ? 20 : 0,

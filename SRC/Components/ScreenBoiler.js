@@ -41,7 +41,7 @@ const ScreenBoiler = props => {
       />
       {showHeader && (
         <Header
-          navigation={navigation}
+          // navigation={navigation}
           title={title}
           showBack={showBack}
           useDebounce={useDebounce}

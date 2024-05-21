@@ -34,43 +34,84 @@ import Support from './Screens/Support';
 import WalletScreen from './Screens/WalletScreen';
 import ImageUpload from './Screens/ImageUpload';
 import ImageScreen from './Screens/ImageScreen';
+import EnterPhone from './Screens/EnterPhone';
+import VerifyNumber from './Screens/VerifyNumber';
+import ResetPassword from './Screens/ResetPassword';
+import SearchLocation from './Screens/SearchLocation';
+import AddService from './Screens/AddService';
+import TimeScreen from './Screens/TimeScreen';
+import Vouchers from './Screens/Vouchers';
+import Purchase from './Screens/Purchase';
+import CustomerBookingDetails from './Screens/CustomerBookingDetails';
+import GetStarted from './Screens/GetStarted';
+import CompareBaberScreen from './Screens/CompareBaberScreen';
+import BarberCompersion from './Screens/BarberCompersion';
+import QuestionAnswerScreen from './Screens/QuestionAnswerScreen';
+import ConsulationVideoScreen from './Screens/ConsulationVideoScreen';
+import VideoReplyScreen from './Screens/VideoReplyScreen';
+import CustomerVideoPlayer from './Screens/CustomerVideoPlayer';
 
 const AppNavigator = () => {
-  // const isLogin = false;
-  const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
-
-  const walkThrough = useSelector(state => state.authReducer.userWalkThrough);
-  const isVerified = useSelector(state => state.authReducer.isVerified);
+  const userData = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
-  console.log(token);
 
   const RootNav = createNativeStackNavigator();
-  const RootNavLogged = createNativeStackNavigator();
 
   const AppNavigatorContainer = () => {
-    const firstScreen = token != null ? 'TabNavigation' : 'LoginScreen';
+
+    const customerFirstScreen = token == null ? 'LoginScreen' : 'TabNavigation';
+
+    const secondScreen =
+      token == null
+        ? 'LoginScreen'
+        : userData?.services?.length == 0
+        ? 'AddService'
+        : userData?.complete_questions?.toLowerCase() == 'no'
+        ? 'QuestionAnswerScreen'
+        : 'TabNavigation';
+
+  
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
         <RootNav.Navigator
-          initialRouteName={firstScreen}
+          initialRouteName={
+            userData?.role == 'customer' ? customerFirstScreen : secondScreen
+          }
           screenOptions={{headerShown: false}}>
           {/* <RootNav.Screen name="Walkthrough" component={Walkthrough} /> */}
+          <RootNav.Screen
+            name="QuestionAnswerScreen"
+            component={QuestionAnswerScreen}
+          />
+
+          <RootNav.Screen name="EnterPhone" component={EnterPhone} />
+          <RootNav.Screen name="GetStarted" component={GetStarted} />
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
+          <RootNav.Screen name="Vouchers" component={Vouchers} />
           <RootNav.Screen name="Homescreen" component={Homescreen} />
           <RootNav.Screen name="OrderDetails" component={OrderDetails} />
           <RootNav.Screen name="Signup" component={Signup} />
+          <RootNav.Screen name="ResetPassword" component={ResetPassword} />
           <RootNav.Screen
             name="BarberServicesScreen"
             component={BarberServicesScreen}
           />
           <RootNav.Screen name="ChooseDate" component={ChooseDate} />
+          <RootNav.Screen name="TimeScreen" component={TimeScreen} />
+          <RootNav.Screen name="AddService" component={AddService} />
+          <RootNav.Screen
+            name="CustomerBookingDetail"
+            component={CustomerBookingDetails}
+          />
           <RootNav.Screen name="TabNavigation" component={TabNavigation} />
           <RootNav.Screen name="CheckoutScreen" component={CheckoutScreen} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
+          <RootNav.Screen name="SearchLocation" component={SearchLocation} />
           <RootNav.Screen name="MyBookings" component={MyBookings} />
           <RootNav.Screen name="MyAccounts" component={MyAccounts} />
           <RootNav.Screen name="ChangePassword" component={ChangePassword} />
+          <RootNav.Screen name="VerifyNumber" component={VerifyNumber} />
           <RootNav.Screen
             name="TermsAndConditions"
             component={TermsAndConditions}
@@ -81,6 +122,26 @@ const AppNavigator = () => {
           <RootNav.Screen name="WalletScreen" component={WalletScreen} />
           <RootNav.Screen name="ImageUpload" component={ImageUpload} />
           <RootNav.Screen name="ImageScreen" component={ImageScreen} />
+          <RootNav.Screen name="Purchase" component={Purchase} />
+          <RootNav.Screen
+            name="CompareBaberScreen"
+            component={CompareBaberScreen}
+          />
+          <RootNav.Screen
+            name="BarberCompersion"
+            component={BarberCompersion}
+          />
+          <RootNav.Screen
+            name="ConsulationVideoScreen"
+            component={ConsulationVideoScreen}
+          /><RootNav.Screen
+          name="VideoReplyScreen"
+          component={VideoReplyScreen}
+        />
+        <RootNav.Screen
+          name="CustomerVideoPlayer"
+          component={CustomerVideoPlayer}
+        />
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -91,6 +152,8 @@ const AppNavigator = () => {
 
 export const TabNavigation = props => {
   const Tabs = createBottomTabNavigator();
+  const userData = useSelector(state => state.commonReducer.userData);
+
   return (
     <Tabs.Navigator
       screenOptions={({route}) => ({
@@ -113,11 +176,18 @@ export const TabNavigation = props => {
             color = focused ? Color.themeColor : Color.themeLightGray;
             size = focused ? moderateScale(30, 0.3) : moderateScale(20, 0.3);
             type = AntDesign;
-          } else if (route.name === 'Store') {
+          } else if (route.name === 'WalletScreen') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
+            color = focused ? Color.themeColor : Color.themeLightGray;
+            size = focused ? moderateScale(30, 0.3) : moderateScale(20, 0.3);
+            type = Ionicons;
+          } 
+          else if (route.name === 'Store') {
             iconName = focused ? 'briefcase' : 'briefcase-outline';
             color = focused ? Color.themeColor : Color.themeLightGray;
             size = focused ? moderateScale(30, 0.3) : moderateScale(20, 0.3);
-          } else if (route.name === 'Settings') {
+          }
+           else if (route.name === 'Settings') {
             iconName = focused ? 'settings' : 'settings-outline';
 
             color = focused ? Color.themeColor : Color.themeLightGray;
@@ -147,7 +217,12 @@ export const TabNavigation = props => {
         tabBarShowLabel: false,
       })}>
       <Tabs.Screen name={'HomeScreen'} component={Homescreen} />
-      <Tabs.Screen name={'Wishlist'} component={Wishlist} />
+      {userData?.role == 'customer' ? (
+        <Tabs.Screen name={'Wishlist'} component={Wishlist} />
+      ) : (
+        <Tabs.Screen name="WalletScreen" component={WalletScreen} />
+      )}
+
       <Tabs.Screen name={'Store'} component={Store} />
       <Tabs.Screen name={'Settings'} component={Settings} />
     </Tabs.Navigator>

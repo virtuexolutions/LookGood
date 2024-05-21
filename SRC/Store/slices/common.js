@@ -4,9 +4,11 @@ const initialState = {
   userData: {},
   services: [],
   cartData: [],
-  
+  selectedVoucher :{},
   financeBreakDown: [],
-  notification : false
+  notification : false,
+  userWallet : {}
+  // barberServices:[]
 };
 
 const CommonSlice = createSlice({
@@ -21,15 +23,16 @@ const CommonSlice = createSlice({
       let data = [...state.cartData];
       data.splice(action.payload , 1);
       state.cartData = data ;
-
-
     },
     setWholeCart(state , action){
       state.cartData = action.payload;
     },
+    setUserWallet(state , action){
+      state.userWallet = action.payload
+    },
     setUserData(state, action) {
       state.userData = action?.payload;
-      // state.userData = action?.payload?.userData;
+      // console.log("🚀 ~ setUserData ~ action?.payload:", action?.payload)
     },
     setUserLogOut(state, action) {
       state.userData = {};
@@ -40,8 +43,13 @@ const CommonSlice = createSlice({
    
     setNotification(state,action){
       state.notification = action.payload
-    }
-  },
+    },
+    setVoucherData(state,action){
+      state.selectedVoucher = action.payload
+      console.log('Selected Voucher=====>>>>', state.selectedVoucher)
+    },
+ 
+}
 });
 
 export const {
@@ -51,7 +59,9 @@ export const {
   setNotification,
   setServices,
   setRemoveCardData,
-  setWholeCart
+  setWholeCart,
+  setVoucherData,
+  setUserWallet
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;

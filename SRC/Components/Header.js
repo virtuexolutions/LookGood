@@ -82,11 +82,11 @@ const Header = props => {
         </TouchableOpacity>
       )}
       <CustomImage
-        source={require('../Assets/Images/appLogo.png')}
+        source={require('../Assets/Images/Logo.png')}
         resizeMode={'stretch'}
         style={{
-          width: windowWidth * 0.25,
-          height: windowHeight * 0.06,
+          width: windowWidth * 0.3,
+          height: windowHeight * 0.1,
           alignSelf: 'center',
         }}
       />

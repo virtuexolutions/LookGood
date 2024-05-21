@@ -1,5 +1,12 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -7,10 +14,64 @@ import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import Color from '../Assets/Utilities/Color';
-import {Icon} from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
+import NoData from '../Components/NoData';
+import TransactionhistoryCard from '../Components/TransactionhistoryCard';
+import {Get} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import moment from 'moment';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 const WalletScreen = () => {
+  const focused = useIsFocused();
+  const navigation = useNavigation();
+  const userData = useSelector(state => state.commonReducer.userData);
+  const userWallet = useSelector(state => state.commonReducer.userWallet);
+  // console.log('🚀 ~ WalletScreen ~ userWallet:', userWallet);
+  const token = useSelector(state => state.authReducer.token);
+
+  const [loading, setLoading] = useState(false);
+  const [Transactionhistory, setTransactionHistory] = useState([]);
+  const [loadMore, setLoadMore] = useState(false);
+  console.log("🚀 ~ WalletScreen ~ loadMore=========>:", loadMore)
+  const [pageNum, setPageNum] = useState(1);
+  const [getMore, setGetMore] = useState(false);
+
+  const userTransactionList = async type => {
+    const url = `auth/transaction?page=${pageNum}`;
+    type == 'loadMore' ? setLoadMore(true) : setLoading(true);
+    const response = await Get(url, token);
+    type == 'loadMore' ? setLoadMore(false) : setLoading(false);
+    setLoading(false);
+    if (response != undefined) {
+      if (type == 'loadMore') {
+        setTransactionHistory(prev => [...prev, ...response?.data?.date?.data]);
+      } else {
+        setTransactionHistory(response?.data?.date?.data);
+      }
+    }
+  };
+
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    const paddingToBottom = 10;
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    );
+  };
+  useEffect(() => {
+    userTransactionList();
+  }, [focused]);
+
+  useEffect(() => {
+    setPageNum(1);
+  }, [Transactionhistory]);
+
+  useEffect(() => {
+    if (pageNum > 1) {
+      userTransactionList('loadMore');
+    }
+  }, [pageNum]);
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -42,18 +103,22 @@ const WalletScreen = () => {
                 Balance
               </CustomText>
               <CustomText isBold style={styles.text2}>
-                Today, 21 Feb
+                {moment().format('MMM Do YYYY')}
+                {/* Today, 21 Feb */}
               </CustomText>
             </View>
 
-            <View
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Purchase');
+              }}
               style={{
                 flexDirection: 'row',
                 height: windowHeight * 0.04,
                 width: windowWidth * 0.17,
                 borderWidth: moderateScale(2, 0.3),
                 borderColor: '#E3A33D',
-                borderRadius: moderateScale(5, 0.3),
+                borderRadius: moderateScale(6, 0.3),
                 justifyContent: 'space-evenly',
                 alignItems: 'center',
                 padding: moderateScale(2, 0.3),
@@ -66,7 +131,7 @@ const WalletScreen = () => {
                 style={{color: '#E3A33D', fontSize: moderateScale(12, 0.6)}}>
                 Add
               </CustomText>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View
@@ -76,16 +141,14 @@ const WalletScreen = () => {
               marginLeft: moderateScale(15, 0.3),
               //    backgroundColor:'red'
             }}>
-            <CustomText style={{fontSize: 24, color: Color.lightGrey}}>
-              $
-            </CustomText>
             <CustomText
               style={{
-                fontSize: 73,
+                fontSize: moderateScale(70, 0.6),
                 color: Color.lightGrey,
                 marginLeft: moderateScale(10, 0.3),
               }}>
-              8219
+              {/* 8219 */}
+              {userWallet?.amount}
             </CustomText>
 
             <CustomText
@@ -94,16 +157,8 @@ const WalletScreen = () => {
                 color: 'rgba(238,238,238,0.8)',
                 marginLeft: moderateScale(5, 0.3),
               }}>
-              .96
+              coins
             </CustomText>
-
-            <Icon
-              name="arrow-up-right"
-              as={Feather}
-              size={moderateScale(20, 0.3)}
-              color={'#DADADA'}
-              style={{marginLeft: moderateScale(5, 0.3)}}
-            />
           </View>
 
           <View
@@ -112,16 +167,94 @@ const WalletScreen = () => {
               alignItems: 'center',
               marginLeft: moderateScale(15, 0.3),
               marginTop: moderateScale(-10, 0.3),
+              marginTop: moderateScale(8, 0.3),
             }}>
             <CustomText
               style={{
                 fontSize: moderateScale(12, 0.6),
                 color: 'rgba(238,238,238,0.5)',
               }}>
-              +25 % Comp. last week
+              1 coin is equals to $1
             </CustomText>
           </View>
         </View>
+        {loading ? (
+          <View
+            style={{
+              width: windowWidth,
+              height: windowHeight * 0.4,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ActivityIndicator size={'large'} color={Color.themeColor} />
+          </View>
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            // decelerationRate={'fast'}
+            numColumns={1}
+            ListEmptyComponent={() => {
+              return (
+                <NoData
+                  style={{
+                    height: windowHeight * 0.25,
+                    width: windowWidth * 0.6,
+                    alignItems: 'center',
+                  }}
+                  text={'No Upcoming Orders'}
+                />
+              );
+            }}
+            style={{
+              marginTop: moderateScale(10, 0.3),
+            }}
+            contentContainerStyle={{
+              width: windowWidth,
+              paddingBottom: moderateScale(200, 0.6),
+            }}
+            data={Transactionhistory}
+            renderItem={({item, index}) => {
+              return <TransactionhistoryCard item={item} />;
+            }}
+            keyExtractor={item => item?.id}
+            onScrollEndDrag={({nativeEvent}) => {
+              {
+                if (isCloseToBottom(nativeEvent)) {
+                  setPageNum(prev => prev + 1);
+                  setGetMore(true);
+                }
+              }
+            }}
+            ListFooterComponent={() => {
+              return (
+                loadMore && (
+                  <View
+                    style={{
+                      // height: windowHeight * 0.1,
+                      width: windowWidth,
+                      // backgroundColor: 'red',
+                      marginTop: moderateScale(10, 0.3),
+                    }}>
+                    <ActivityIndicator
+                      size={moderateScale(35, 0.6)}
+                      color={Color.themeColor}
+                    />
+                  </View>
+                )
+
+                // loadMore && (
+                //   <View
+                //     style={{
+                //       height :windowHeight*0.5,
+                //       width :windowWidth,
+                //       alignSelf: 'center',
+                //     }}>
+                //   </View>
+                // )
+              );
+            }}
+          />
+        )}
 
         <View
           style={{

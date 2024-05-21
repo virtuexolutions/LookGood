@@ -15,6 +15,7 @@ import {Icon} from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {setCartData} from '../Store/slices/common';
+import ProductCard from '../Components/ProductCard';
 
 const Store = () => {
   const cartData = useSelector(state => state.commonReducer.cartData);
@@ -47,7 +48,7 @@ const Store = () => {
   const cardArray = [
     {
       id: 1,
-      image: require('../Assets/Images/glue.png'),
+      photo: require('../Assets/Images/glue.png'),
       name: 'Glue',
       price: 20,
       quantity: 1,
@@ -88,6 +89,17 @@ const Store = () => {
         style={styles.container}>
         <View
           style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: windowHeight*0.7,
+            width: windowWidth,
+          }}>
+          <CustomText isBold style={styles.text1}>
+          coming soon....
+          </CustomText>
+        </View>
+        {/* <View
+          style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             width: windowWidth * 0.85,
@@ -115,8 +127,8 @@ const Store = () => {
               }}
             />
           </LinearGradient>
-        </View>
-        <ScrollView
+        </View> */}
+        {/* <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: windowHeight * 0.15,
@@ -135,9 +147,12 @@ const Store = () => {
               return (
                 <View
                   style={{
+
+                    borderRadius:moderateScale(30,0.6),
+                    overflow:'hidden',
                     width: windowWidth * 0.85,
                     height: windowHeight * 0.46,
-                  }}>
+                 }}>
                   <CustomImage
                     source={item?.image}
                     resizeMode={'stretch'}
@@ -147,14 +162,16 @@ const Store = () => {
                     }}
                   />
                   {/* <View style={{position : 'absolute' , bottom : 0}}> */}
-                  <LinearGradient
+        {/* <LinearGradient
                     start={{x: 0, y: 0}}
                     end={{x: 0, y: 1}}
                     colors={['#8A8A8A00', '#000000']}
                     style={{
                       position: 'absolute',
                       bottom: 0,
-                      borderRadius: 5,
+                      borderBottomLeftRadius: moderateScale(30,0.6),
+                      borderBottomRightRadius: moderateScale(30,0.6),
+                     
                       justifyContent: 'flex-end',
                       shadowOffset: {height: 2, width: 0},
                       shadowOpacity: 1,
@@ -177,6 +194,7 @@ const Store = () => {
                       style={{
                         flexDirection: 'row',
                         alignSelf: 'center',
+                        borderRadius:moderateScale(30,0.8),
                         marginTop: moderateScale(10, 0.3),
                       }}>
                       {bannerArray.map((x, index1) => {
@@ -195,9 +213,9 @@ const Store = () => {
                         );
                       })}
                     </View>
-                  </LinearGradient>
-                  {/* </View> */}
-                </View>
+                  </LinearGradient> */}
+        {/* </View> */}
+        {/* </View>
               );
             }}
           />
@@ -213,31 +231,21 @@ const Store = () => {
                 marginTop: moderateScale(10, 0.3),
               },
             ]}>
-            Recommended{' '}
+           Products
           </CustomText>
-          <View
-            style={{
-              paddingTop: moderateScale(10, 0.3),
-              width: windowWidth * 0.85,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-            }}>
-            {cardArray.map((x, index) => {
-              return (
-                <BarberCard
-                  item={x}
-                  // cartData={cartData}
-                  // setCartData={setCartData}
-                  onPress={() => {
-                    !cartData?.some(data => data.id == x?.id) &&
-                      dispatch(setCartData(x));
-                  }}
-                />
-              );
-            })}
+          <View style={{paddingTop: moderateScale(10, 0.3),
+            paddingHorizontal:19,
+            width: windowWidth,
+          }}>
+            <FlatList
+            data={cardArray}
+            renderItem={(itemData) => <ProductCard item={itemData.item}/>}
+            keyExtractor={item => item.id}
+            numColumns={2}
+            />
           </View>
-        </ScrollView>
+          */}
+        {/* </ScrollView> */}
       </LinearGradient>
     </ScreenBoiler>
   );
@@ -275,7 +283,7 @@ const styles = ScaledSheet.create({
   bannerView: {
     width: windowWidth * 0.85,
     height: windowHeight * 0.46,
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
     marginTop: moderateScale(10, 0.3),
   },
   CircleContainer: {

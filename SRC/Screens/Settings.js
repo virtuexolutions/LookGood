@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {ImageBackground, View, ScrollView, FlatList, TouchableOpacity} from 'react-native';
+import {
+  ImageBackground,
+  View,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
@@ -12,51 +18,108 @@ import {Icon} from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import navigationService from '../navigationService';
 import ImagePickerModal from '../Components/ImagePickerModal';
-import { setUserLogoutAuth } from '../Store/slices/auth';
-import { useDispatch } from 'react-redux';
+import {setUserLogoutAuth} from '../Store/slices/auth';
+import {useDispatch, useSelector} from 'react-redux';
 
 const Settings = () => {
   const dispatch = useDispatch();
   const [image, setImage] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const cardArray = [{
-    name : 'Profile',
-    onPress : ()=>{navigationService.navigate('MyAccounts')}
-  },
-  {
-    name : 'My Bookings',
-    onPress : ()=>{navigationService.navigate('MyBookings')}
-  },
-  {
-    name : 'Payment Method',
-    onPress : ()=>{navigationService.navigate('PaymentMethod')}
-  },
-  {
-    name : 'Change Password',
-    onPress : ()=>{navigationService.navigate('ChangePassword')}
-  },
-  {
-    name : 'Terms And Conditions',
-    onPress : ()=>{navigationService.navigate('TermsAndConditions')}
-  },
-  {
-    name : 'Support',
-    onPress : ()=>{navigationService.navigate('Support')}
-  },
-  {
-    name : 'Wallet',
-    onPress : ()=>{navigationService.navigate('WalletScreen')}
-  },
-  {
-    name : 'Log Out',
-    onPress : ()=>{dispatch(setUserLogoutAuth())}
-  },
+  const UserData = useSelector(state => state.commonReducer.userData);
 
-  ]
+  const cardArray = [
+    {
+      name: 'Profile',
+      onPress: () => {
+        navigationService.navigate('MyAccounts');
+      },
+    },
+    {
+      name: 'My Bookings',
+      onPress: () => {
+        navigationService.navigate('MyBookings');
+      },
+    },
+
+    ...(UserData?.role === 'barber'
+      ? [
+          {
+            name: 'Add Time',
+            onPress: () => {
+              navigationService.navigate('TimeScreen');
+            },
+          },
+          {
+            name: 'Add Service',
+            onPress: () => {
+              navigationService.navigate('AddService' ,{fromSettings :true});
+            },
+          },
+        ]
+      : []),
+...(UserData?.role == 'customer' ?
+
+[{
+name: 'compare barber',
+        onPress: () => {
+          navigationService.navigate('CompareBaberScreen');
+        },
+      },]:[]
+
+),
+    // {
+    //   name: 'Payment Method',
+    //   onPress: () => {
+    //     navigationService.navigate('PaymentMethod');
+    //   },
+    // },
+    {
+      name: 'consultation video',
+      onPress: () => {
+        navigationService.navigate('ConsulationVideoScreen');
+      },
+    },
+    {
+      name: 'Change Password',
+      onPress: () => {
+        navigationService.navigate('ChangePassword');
+      },
+    },
+    {
+      name: 'Terms And Conditions',
+      onPress: () => {
+        navigationService.navigate('TermsAndConditions');
+      },
+    },
+    {
+      name: 'Support',
+      onPress: () => {
+        navigationService.navigate('Support');
+      },
+    },
+    {
+      name: 'purchase Coin',
+      onPress: () => {
+        navigationService.navigate('Purchase');
+      },
+    },
+    {
+      name: 'Wallet',
+      onPress: () => {
+        navigationService.navigate('WalletScreen');
+      },
+    },
+    {
+      name: 'Log Out',
+      onPress: () => {
+        dispatch(setUserLogoutAuth());
+      },
+    },
+  ];
+
   return (
     <ScreenBoiler
       showHeader={true}
-    
       statusBarBackgroundColor={Color.black}
       statusBarContentStyle={'light-content'}>
       <LinearGradient
@@ -64,25 +127,24 @@ const Settings = () => {
         end={{x: 0.5, y: 1.0}}
         colors={Color.themeGradient}
         style={styles.container}>
-          <CustomText isBold style={styles.text1}>
-           Settings
-          </CustomText>
-         
-          <FlatList
+        <CustomText isBold style={styles.text1}>
+          Settings
+        </CustomText>
+
+        <FlatList
           bounces={false}
           showsVerticalScrollIndicator={false}
           style={{
-            width : windowWidth,
+            width: windowWidth,
           }}
-            // style={styles.bannerView}
-            data={cardArray}
-            contentContainerStyle={{
-              paddingBottom: windowHeight * 0.2,
-              alignItems : 'center'
-            }}
-            renderItem={({item, index}) => {
-              return (
-                <CustomButton
+          data={cardArray}
+          contentContainerStyle={{
+            paddingBottom: windowHeight * 0.2,
+            alignItems: 'center',
+          }}
+          renderItem={({item, index}) => {
+            return (
+              <CustomButton
                 bgColor={Color.themeColor}
                 borderColor={'white'}
                 borderWidth={1}
@@ -90,62 +152,69 @@ const Settings = () => {
                 onPress={item?.onPress}
                 width={windowWidth * 0.85}
                 height={windowHeight * 0.06}
+                borderRadius={moderateScale(25, 0.6)}
                 text={item?.name}
+                // borderRadius={moderateScale(30,0.4)}s
                 fontSize={moderateScale(14, 0.3)}
                 textTransform={'uppercase'}
                 isGradient={true}
                 isBold
                 marginTop={moderateScale(20, 0.3)}
-                
               />
-              )}}
-              ListHeaderComponent={()=>{
-                return(<>
-                  <View style={{
-                    paddingTop : moderateScale(50,0.3),
+            );
+          }}
+          ListHeaderComponent={() => {
+            return (
+              <>
+                <View
+                  style={{
+                    paddingTop: moderateScale(50, 0.3),
                   }}>
-                    {Object.keys(image).length > 0 ? (
-                      <CustomImage source={{uri: image?.uri}} style={styles.image} />
-                    ) : (
-                      <CustomImage
-                        style={styles.image}
-                        source={require('../Assets/Images/user.png')}
-                      />
-                    )}
-                   
-                  </View>
-                    <CustomText isBold style={{
-                      fontSize : moderateScale(14,0.3),
-                      color : Color.white,
-                      textAlign : 'center',
-                      marginTop : moderateScale(5,0.4)
-
-                    }}>
-                    Austin Spencer
-                   </CustomText>
-                   <CustomText  style={{
-                      fontSize : moderateScale(13,0.3),
-                      color : Color.white,
-                      textAlign : 'center',
-
-                    }}>
-                    Barber
-                   </CustomText>
-                        </>
-                )
-              }}
-              />
-          </LinearGradient>
-          <ImagePickerModal
-          show={showModal}
-          setShow={setShowModal}
-          setFileObject={setImage}
+                  {Object.keys(image).length > 0 ? (
+                    <CustomImage
+                      source={{uri: image?.uri}}
+                      style={styles.image}
+                    />
+                  ) : (
+                    <CustomImage
+                      style={styles.image}
+                      source={{uri: UserData?.photo}}
+                    />
+                  )}
+                </View>
+                <CustomText
+                  isBold
+                  style={{
+                    fontSize: moderateScale(14, 0.3),
+                    color: Color.white,
+                    textAlign: 'center',
+                    marginTop: moderateScale(5, 0.4),
+                  }}>
+                  {UserData.first_name}
+                </CustomText>
+                <CustomText
+                  style={{
+                    fontSize: moderateScale(13, 0.3),
+                    color: Color.white,
+                    textAlign: 'center',
+                  }}>
+                  {UserData.role}
+                </CustomText>
+              </>
+            );
+          }}
         />
-          </ScreenBoiler>
-  )
-}
+      </LinearGradient>
+      <ImagePickerModal
+        show={showModal}
+        setShow={setShowModal}
+        setFileObject={setImage}
+      />
+    </ScreenBoiler>
+  );
+};
 
-export default Settings
+export default Settings;
 
 const styles = ScaledSheet.create({
   container: {

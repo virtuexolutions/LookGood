@@ -7,28 +7,159 @@ import {
   TouchableOpacity,
   Platform,
   ToastAndroid,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../Components/CustomButton';
-import moment from 'moment/moment';
-import CustomTextWithMask from '../Components/CustomTextWithMask';
 import {Icon} from 'native-base';
-import numeral from 'numeral';
 import navigationService from '../navigationService';
 import CustomImage from '../Components/CustomImage';
-import { useDispatch } from 'react-redux';
-import { setWholeCart } from '../Store/slices/common';
+import Modal from 'react-native-modal';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  setUserData,
+  setUserWallet,
+  setVoucherData,
+  setWholeCart,
+} from '../Store/slices/common';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import BookingDateModal from '../Components/BookingDateModal';
+// import { CardField } from '@stripe/stripe-react-native';
+import {CardField, createToken} from '@stripe/stripe-react-native';
+import TextInputWithTitle from '../Components/TextInputWithTitle';
+import {useIsFocused} from '@react-navigation/core';
+import {useNavigation} from '@react-navigation/native';
 
-const PaymentScreen = (props) => {
+const PaymentScreen = props => {
+  const navigation = useNavigation();
+  const [modalIsVisible, setModalIsVisible] = useState(false);
+  const fromStore = props?.route?.params?.fromStore;
+  const finalData = props?.route?.params?.finalData;
+  console.log(
+    '🚀 ~ PaymentScreen ~ finalData =====>:',
+    JSON.stringify(finalData, null, 2),
+  );
+  const userWallet = useSelector(state => state.commonReducer.userWallet);
+  console.log('🚀 ~ WalletScreen ~ userWallet:', userWallet);
+
   const dispatch = useDispatch();
-  const fromStore = props?.route?.params?.fromStore
-  console.log("🚀 ~ file: PaymentScreen.js:28 ~ PaymentScreen ~ fromStore", fromStore)
+  const token = useSelector(state => state.authReducer.token);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('wallet');
+  console.log(
+    '🚀 ~ PaymentScreen ~ ========>selectedPaymentMethod:',
+    selectedPaymentMethod == 'wallet' && finalData?.total > userWallet?.amount
+      ? 'meerab'
+      : 'naneeta',
+    // selectedPaymentMethod,
+    // finalData?.services,
+  );
+  const [isVisible, setIsVisible] = useState(false);
+  console.log('🚀 ~ PaymentScreen ~ isVisible:', isVisible);
+  const [loading, setLoading] = useState(false);
+  const [stripeToken, setStripeToken] = useState(null);
+  const [totalPrice, settotalPrice] = useState(0);
+  console.log(
+    '🚀 ~ PaymentScreen ~====================> totalPrice:',
+    userWallet?.amount,
+    finalData?.total,
+  );
+
+  const Booking = async () => {
+    const selectedServiceIds = finalData?.services.map(service => service.id);
+    const formData = new FormData();
+
+    const body = {
+      barber_id: finalData?.time?.barber_id,
+      booking_date: finalData?.date,
+      booking_time: finalData?.time?.time,
+      service_time_id: finalData?.time?.id,
+      image: finalData?.image && finalData?.image[0],
+      custom_location: finalData?.location?.name,
+      price: finalData?.total,
+      payment_method: selectedPaymentMethod,
+      stripeToken: stripeToken,
+      // dis_price:!isNaN(finalData?.discount) ? finalData?.discount : 0 ,
+    };
+    console.log(
+      '🚀 ~ Booking ~ body============>:',
+      JSON.stringify(body, null, 2),
+    );
+    if (!isNaN(finalData?.discount)) {
+      formData.append('dis_price', finalData?.discount);
+    }
+
+    for (let key in body) {
+      formData.append(key, body[key]);
+    }
+    selectedServiceIds?.map((item, index) =>
+      formData.append(`service_id[${index}]`, item),
+    );
+
+    // return console.log('🚀 ~ file: PaymentScreen.js:50 ~ Booking ~ body:', body);
+    const url = 'auth/booking';
+    setIsLoading(true);
+    const response = await Post(url, formData, apiHeader(token));
+    setIsLoading(false);
+
+    if (response != undefined) {
+   
+      Platform.OS === 'android'
+        ? ToastAndroid.show('Booking successful', ToastAndroid.SHORT)
+        : Alert.alert('Booking successful');
+      dispatch(setUserWallet(response?.data?.user_info?.wallet));
+      dispatch(setVoucherData({}));
+      Alert.alert(
+        'Insufficient credits',
+        'Are You Sure to book this barber? ',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => {
+              navigationService.navigate('TabNavigation');
+              // fromStore && dispatch(setWholeCart([]));
+            },
+          },
+          {
+            text: 'OK',
+            onPress: () => {
+              setModalIsVisible(true);
+            },
+          },
+        ],
+      );
+      // navigation.navigate('HomeScreen')
+    }
+  };
+  const strpieToken = async () => {
+    setLoading(true);
+    const responsetoken = await createToken({
+      type: 'Card',
+    });
+
+    if (responsetoken != undefined) {
+      setStripeToken(responsetoken?.token?.id);
+      //  console.log('here   ==================>',responsetoken?.token?.id)
+      setLoading(false);
+      setIsVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedPaymentMethod == 'stripe' && stripeToken == null) {
+      setIsVisible(true);
+    }
+  }, [selectedPaymentMethod]);
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -80,7 +211,7 @@ const PaymentScreen = (props) => {
                   width: windowWidth * 0.4,
                   color: Color.black,
                 }}>
-                Home Address :
+                Home Address:
               </CustomText>
               <CustomText
                 style={{
@@ -88,43 +219,46 @@ const PaymentScreen = (props) => {
                   width: windowWidth * 0.4,
                   color: Color.themeLightGray,
                 }}>
-                2301 Maxwell Farm Road, California
+                {finalData?.location?.name}
               </CustomText>
             </View>
           </View>
-          {fromStore &&
-          <>
-          <CustomText
-            isBold
-            style={[styles.subHeading, {width: windowWidth * 0.9}]}>
-            Courier
-          </CustomText>
-          <View style={[styles.container1, {height: windowHeight * 0.06}]}>
-            <CustomText
-              isBold
-              style={[
-                styles.subHeading,
-                {color: Color.black, marginTop: moderateScale(0, 0.3)},
-              ]}>
-              Regular
-            </CustomText>
-            <CustomText
-              style={[
-                styles.subHeading,
-                {color: Color.themeLightGray, marginTop: moderateScale(0, 0.3)},
-              ]}>
-              3-6 days
-            </CustomText>
-            <CustomText
-              style={[
-                styles.subHeading,
-                {color: Color.black, marginTop: moderateScale(0, 0.3)},
-              ]}>
-              $2.05
-            </CustomText>
-          </View>
-          </>
-}
+          {fromStore && (
+            <>
+              <CustomText
+                isBold
+                style={[styles.subHeading, {width: windowWidth * 0.9}]}>
+                Courier
+              </CustomText>
+              <View style={[styles.container1, {height: windowHeight * 0.06}]}>
+                <CustomText
+                  isBold
+                  style={[
+                    styles.subHeading,
+                    {color: Color.black, marginTop: moderateScale(0, 0.3)},
+                  ]}>
+                  Regular
+                </CustomText>
+                <CustomText
+                  style={[
+                    styles.subHeading,
+                    {
+                      color: Color.themeLightGray,
+                      marginTop: moderateScale(0, 0.3),
+                    },
+                  ]}>
+                  3-6 days
+                </CustomText>
+                <CustomText
+                  style={[
+                    styles.subHeading,
+                    {color: Color.black, marginTop: moderateScale(0, 0.3)},
+                  ]}>
+                  $2.05
+                </CustomText>
+              </View>
+            </>
+          )}
           <CustomText
             isBold
             style={[styles.subHeading, {width: windowWidth * 0.9}]}>
@@ -151,7 +285,7 @@ const PaymentScreen = (props) => {
                   styles.subHeading,
                   {color: Color.black, marginTop: moderateScale(0, 0.3)},
                 ]}>
-                Mastercard
+                Wallet
               </CustomText>
 
               <CustomText
@@ -162,42 +296,195 @@ const PaymentScreen = (props) => {
                     marginTop: moderateScale(0, 0.3),
                   },
                 ]}>
-                ****** 44102
+                My wallet
               </CustomText>
             </View>
             <View style={styles.addCardContainer}>
               <Icon
                 name="keyboard-arrow-down"
                 as={MaterialIcons}
-              size={moderateScale(20, 0.3)}
+                size={moderateScale(20, 0.3)}
                 color={Color.black}
               />
             </View>
           </View>
+          <View style={styles.userTypeContainer}>
+            <View style={styles.innerContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedPaymentMethod('wallet');
+                }}
+                activeOpacity={0.9}
+                style={[
+                  styles.circle,
+                  selectedPaymentMethod == 'wallet' && {
+                    backgroundColor: Color.themeColor1,
+                    borderColor: Color.themeColor1,
+                  },
+                ]}></TouchableOpacity>
+              <CustomText
+                isBold
+                style={styles.txt2}
+                onPress={() => {
+                  // if (finalData?.total > userWallet?.amount) {
+                  //   Platform.OS == 'android'
+                  //     ? ToastAndroid.show(
+                  //         'insufficient amount',
+                  //         ToastAndroid.SHORT,
+                  //       )
+                  //     : alert('insufficient amount');
+                  //   // navigation.navigate('Purchase')
+                  // } else {
+                    setSelectedPaymentMethod('wallet');
+                  // }
+                }}>
+                from wallet
+              </CustomText>
+            </View>
+            <View style={styles.innerContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedPaymentMethod('stripe');
+                }}
+                activeOpacity={0.9}
+                style={[
+                  styles.circle,
+                  selectedPaymentMethod == 'stripe' && {
+                    backgroundColor: Color.themeColor1,
+                    borderColor: Color.themeColor1,
+                  },
+                ]}></TouchableOpacity>
+              <CustomText
+                isBold
+                onPress={() => {
+                  setSelectedPaymentMethod('stripe');
+                }}
+                style={styles.txt2}>
+                pay through stripe
+              </CustomText>
+            </View>
+          </View>
         </ScrollView>
         <CustomButton
-          // borderColor={'white'}
-          // borderWidth={1}
           textColor={Color.black}
           onPress={() => {
-            Platform.OS == 'android'
-              ? ToastAndroid.show('Booked', ToastAndroid.SHORT)
-              : alert('Booked');
-
-            navigationService.navigate('TabNavigation');
-            fromStore && dispatch(setWholeCart([]))
+            if (finalData?.total > userWallet?.amount && selectedPaymentMethod == 'wallet' ) {
+              Platform.OS == 'android'
+                ? ToastAndroid.show('insufficient amount', ToastAndroid.SHORT)
+                : alert('insufficient amount');
+              // navigation.navigate('Purchase')
+            } else {
+              Booking();
+            }
           }}
           width={windowWidth * 0.9}
           height={windowHeight * 0.06}
-          text={'Pay now'}
+          text={
+            isLoading ? (
+              <ActivityIndicator color={Color.black} size={'small'} />
+            ) : (
+              'Pay now'
+            )
+          }
           fontSize={moderateScale(14, 0.3)}
-          // borderRadius={moderateScale(30, 0.3)}
+          borderRadius={moderateScale(30, 0.4)}
           textTransform={'uppercase'}
           isGradient={true}
           isBold
           marginBottom={moderateScale(130, 0.3)}
+          // disabled={finalData?.total > userWallet?.amount}
         />
       </LinearGradient>
+      <Modal
+        isVisible={isVisible}
+        onBackdropPress={() => {
+          setIsVisible(false);
+          if (stripeToken == null) {
+            setSelectedPaymentMethod('wallet');
+          }
+        }}>
+        <View style={styles.modal}>
+          <View style={styles.header}>
+            <CustomText
+              isBold
+              style={{
+                color: Color.white,
+                fontSize: moderateScale(15, 0.6),
+              }}>
+              Add Card Details
+            </CustomText>
+          </View>
+          {/* <TextInputWithTitle/> */}
+
+          {/* <TextInputWithTitle
+            titleText={'Enter Your amount'}
+            placeholder={'Enter Your amount'}
+            setText={setAmount}
+            value={amount}
+            viewHeight={0.06}
+            viewWidth={0.74}
+            inputWidth={0.74}
+            backgroundColor={'#FFFFFF'}
+            marginTop={moderateScale(20, 0.3)}
+            marginBottom={moderateScale(20, 0.7)}
+            color={Color.themeColor}
+            placeholderColor={Color.themeLightGray}
+            borderRadius={moderateScale(30, 0.4)}
+          /> */}
+
+          <CardField
+            postalCodeEnabled={false}
+            placeholders={{
+              number: '4242 4242 4242 4242',
+            }}
+            cardStyle={{
+              backgroundColor: Color.white,
+              borderRadius: moderateScale(15, 0.6),
+              width: windowWidth * 0.4,
+              borderRadius: moderateScale(35, 0.6),
+            }}
+            style={{
+              width: '85%',
+              height: windowHeight * 0.07,
+              marginVertical: moderateScale(10, 0.3),
+            }}
+            onCardChange={cardDetails => {
+              // console.log('cardDetails', cardDetails);
+            }}
+            onFocus={focusedField => {
+              // console.log('focusField', focusedField);
+            }}
+          />
+          {/* </View> */}
+          <CustomButton
+            textColor={Color.black}
+            text={
+              loading ? (
+                <ActivityIndicator color={'black'} size={'small'} />
+              ) : (
+                'add'
+              )
+            }
+            onPress={() => {
+              strpieToken();
+            }}
+            width={windowWidth * 0.35}
+            height={windowHeight * 0.05}
+            borderRadius={moderateScale(25, 0.6)}
+            fontSize={moderateScale(14, 0.3)}
+            textTransform={'uppercase'}
+            isGradient={true}
+            isBold
+            disabled={isLoading}
+          />
+        </View>
+      </Modal>
+      <BookingDateModal
+        modalIsVisible={modalIsVisible}
+        setModalIsVisible={setModalIsVisible}
+        bookingDate={finalData?.date}
+        bookingStartTime={finalData?.time?.time}
+      />
     </ScreenBoiler>
   );
 };
@@ -207,25 +494,20 @@ export default PaymentScreen;
 const styles = ScaledSheet.create({
   container: {
     paddingTop: windowHeight * 0.03,
-    // justifyContent: "center",
     height: windowHeight * 0.9,
     width: windowWidth,
     alignItems: 'center',
-    // paddingLeft: moderateScale(20, 0.3),
-    // backgroundColor : Color.themeColor
   },
   text1: {
     textTransform: 'uppercase',
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(20, 0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   container1: {
     backgroundColor: Color.white,
+    borderRadius: moderateScale(18, 0.6),
     width: windowWidth * 0.9,
-
     marginTop: moderateScale(10, 0.3),
     paddingHorizontal: moderateScale(10, 0.3),
     paddingVertical: moderateScale(5, 0.3),
@@ -247,5 +529,56 @@ const styles = ScaledSheet.create({
     right: moderateScale(10, 0.3),
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  userTypeContainer: {
+    width: windowWidth * 0.7,
+    padding: moderateScale(10, 0.3),
+    marginTop: moderateScale(10, 0.3),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  innerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  txt2: {
+    fontSize: moderateScale(12, 0.3),
+    color: Color.themeColor,
+  },
+  circle: {
+    height: moderateScale(13, 0.3),
+    width: moderateScale(13, 0.3),
+    borderRadius: moderateScale(6.5, 0.3),
+    borderWidth: 1,
+    backgroundColor: Color.white,
+    borderColor: Color.themeColor,
+    marginRight: moderateScale(5, 0.3),
+  },
+  header: {
+    width: '100%',
+    height: windowHeight * 0.07,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: moderateScale(10, 0.6),
+  },
+  modal: {
+    backgroundColor: Color.black,
+    backgroundColor: 'rgba(109, 106, 108, 0.72)',
+    // backgroundColor: 'rgba(76, 73, 75, 0.79)',
+    // backgroundColor: 'rgba(36, 35, 36, 0.53)',
+    backgroundColor: 'rgba(58, 56, 56, 0.63)',
+
+    borderRadius: moderateScale(14, 0.4),
+    borderWidth: 2,
+    borderColor: Color.themeColor,
+    width: windowWidth * 0.9,
+    // height: windowHeight * 0.3,
+    paddingBottom: moderateScale(20, 0.6),
+    flexDirection: 'column',
+    alignItems: 'center',
+    // paddingTop: windowHeight * 0.03,
+    gap: 12,
+    overflow: 'hidden',
   },
 });

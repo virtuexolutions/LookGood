@@ -3,7 +3,7 @@ import {ImageBackground, View, ScrollView, FlatList} from 'react-native';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,13 +13,35 @@ import navigationService from '../navigationService';
 import moment from 'moment/moment';
 import CustomTextWithMask from '../Components/CustomTextWithMask';
 import BarberCard from '../Components/BarberCard';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import {useIsFocused} from '@react-navigation/native';
+import {ActivityIndicator} from 'react-native';
+import NoData from '../Components/NoData';
 
 const Wishlist = () => {
-  const [selected , setSelected] = useState('barber');
-  const [data ,setData] = useState([])
+  const isFocused = useIsFocused();
+  const [selected, setSelected] = useState('barber');
+  const token = useSelector(state => state.authReducer.token);
+  const userData = useSelector(state => state.commonReducer.userData);
+  // console.log('🚀 ~ file: Wishlist.js:27 ~ Wishlist ~ userData:', userData);
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [wishListData, setWishListData] = useState([]);
 
- 
-  
+  // console.log('🚀 ~ Wishlist ~ wishListData:', wishListData);
+
+  const getWishList = async () => {
+    const url = `auth/wishlist?type=${selected}`;
+    setIsLoading(true);
+    const response = await Get(url, token);
+    setIsLoading(false);
+    if (response != undefined) {
+      console.log(JSON.stringify(response?.data?.Wishlist_list, null, 2));
+      setWishListData(response?.data?.Wishlist_list);
+    }
+  };
+
   const cardArray = [
     {
       image: require('../Assets/Images/barbarDummy1.png'),
@@ -50,6 +72,7 @@ const Wishlist = () => {
       name: 'Daniel M. Bell',
     },
   ];
+
   const storeArray = [
     {
       id: 1,
@@ -80,9 +103,11 @@ const Wishlist = () => {
       quantity: 1,
     },
   ];
+
   useEffect(() => {
-    selected == 'barber' ? setData(cardArray) : setData(storeArray)
-  }, [selected])
+    getWishList();
+  }, [isFocused, selected]);
+
   return (
     <ScreenBoiler
       showHeader={true}
@@ -98,85 +123,111 @@ const Wishlist = () => {
         <CustomText isBold style={styles.text1}>
           Wishlist
         </CustomText>
-        <View style={{
-          flexDirection :  'row',
-          marginTop : moderateScale(10,0.3),
-          justifyContent : 'space-between',
-          alignSelf : 'center',
-          width :  windowWidth * 0.48, 
-        }}>
-  <CustomButton
-          // borderColor={'white'}
-          // borderWidth={1}
-          textColor={Color.black}
-          onPress={() => {
-          setSelected('barber')
-          }}
-          width={windowWidth * 0.22}
-          height={windowHeight * 0.05}
-          text={'barber'}
-          fontSize={moderateScale(14, 0.3)}
-          // borderRadius={moderateScale(30, 0.3)}
-          textTransform={'uppercase'}
-          isGradient={true}
-          isBold
-          marginBottom={moderateScale(30, 0.3)}
-        />
+        {/* <View
+          style={{
+            flexDirection: 'row',
+            marginTop: moderateScale(10, 0.3),
+            justifyContent: 'space-evenly',
+            // backgroundColor:'red',
+            alignItems: 'center',
+            // alignSelf: 'center',
+            width: windowWidth * 0.48,
+          }}>
+          {userData?.role != 'barber' && (
+            <CustomButton
+              textColor={Color.black}
+              onPress={() => {
+                setSelected('barber');
+              }}
+              width={windowWidth * 0.22}
+              height={windowHeight * 0.05}
+              borderRadius={moderateScale(25, 0.6)}
+              text={'barber'}
+              fontSize={moderateScale(14, 0.3)}
+              textTransform={'uppercase'}
+              isGradient={true}
+              isBold
+              marginBottom={moderateScale(30, 0.3)}
+            />
+          )}
           <CustomButton
-          // borderColor={'white'}
-          // borderWidth={1}
-          textColor={Color.black}
-          onPress={() => {
-         setSelected('Product')
-          }}
-          width={windowWidth * 0.22}
-          height={windowHeight * 0.05}
-          text={'Product'}
-          fontSize={moderateScale(14, 0.3)}
-          // borderRadius={moderateScale(30, 0.3)}
-          textTransform={'uppercase'}
-          isGradient={true}
-          isBold
-          marginBottom={moderateScale(30, 0.3)}
-        />
-
-        </View>
+            textColor={Color.black}
+            onPress={() => {
+              setSelected('product');
+            }}
+            width={windowWidth * 0.22}
+            height={windowHeight * 0.05}
+            borderRadius={moderateScale(25, 0.6)}
+            text={'Product'}
+            fontSize={moderateScale(14, 0.3)}
+            textTransform={'uppercase'}
+            isGradient={true}
+            isBold
+            marginBottom={moderateScale(30, 0.3)}
+          />
+        </View> */}
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: windowHeight * 0.15,
-            // paddingTop : moderateScale(20,0.3),
             alignItems: 'center',
           }}
           style={{
             width: windowWidth,
           }}>
-          <View
-            style={{
-              paddingTop: moderateScale(10, 0.3),
-              width: windowWidth * 0.85,
-              //   backgroundColor : 'red',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              //   paddingHorizontal : moderateScale()
-            }}>
-            {
-            
-            data.map((x, index) => {
-              return (
-                <BarberCard
-                  item={x}
-                  onPress={() => {
-                    navigationService.navigate('BarberServicesScreen', {
-                      detail: x,
-                    });
-                  }}
-                  addedInWishlist={true}
-                />
-              );
-            })}
-          </View>
+          {isLoading ? (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: windowHeight * 0.6,
+              }}>
+              <ActivityIndicator color={Color.themeColor} size={'large'} />
+            </View>
+          ) : (
+            <FlatList
+              decelerationRate={'fast'}
+              numColumns={2}
+              ListEmptyComponent={() => {
+                return (
+                  <NoData
+                    style={{
+                      height: windowHeight * 0.25,
+                      width: windowWidth * 0.6,
+                      alignItems: 'center',
+                    }}
+                    text={'No Upcoming Orders'}
+                  />
+                );
+              }}
+              style={{
+                marginTop: moderateScale(10, 0.3),
+              }}
+              contentContainerStyle={{
+                width: windowWidth,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+              data={wishListData.reverse()}
+              renderItem={({item, index}) => {
+                return (
+                   <BarberCard
+                    item={item?.barber_info}
+                    onPress={() => {
+                      navigationService.navigate('BarberServicesScreen', {
+                        detail: item?.barber_info,
+                      });
+                    }}
+                    addedInWishlist={true}
+                    data={wishListData}
+                    setData={setWishListData}
+                    fromWishList={true}
+
+                  />
+                );
+              }}
+            />
+          )}
         </ScrollView>
       </LinearGradient>
     </ScreenBoiler>
@@ -187,29 +238,21 @@ export default Wishlist;
 const styles = ScaledSheet.create({
   container: {
     paddingTop: windowHeight * 0.03,
-    // justifyContent: "center",
     height: windowHeight * 0.9,
     width: windowWidth,
     alignItems: 'center',
-    // backgroundColor : Color.green
   },
   text1: {
     textTransform: 'uppercase',
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(20, 0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   text1Absolute: {
     textTransform: 'uppercase',
     color: Color.white,
     textAlign: 'center',
     fontSize: moderateScale(16, 0.3),
-    // position : 'absolute',
-    // bottom : moderateScale(10,0.3),
-    // marginTop : moderateScale(10,0.3),
-    // lineHeight: moderateScale(32, 0.3),
   },
   bannerView: {
     width: windowWidth * 0.85,
