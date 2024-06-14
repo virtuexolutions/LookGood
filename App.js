@@ -75,7 +75,7 @@ const MainContainer =()=>{
     return <SplashScreen />;
   }
   // return <Purchase/>
-  return <AppNavigator />;
+  return <AppNavigator/>;
 
 }
 
