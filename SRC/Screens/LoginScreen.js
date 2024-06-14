@@ -19,6 +19,7 @@ import {ToastAndroid} from 'react-native';
 import {Alert} from 'native-base';
 import {ActivityIndicator} from 'react-native';
 import {setUserData, setUserWallet} from '../Store/slices/common';
+import DropDownSingleSelect from '../Components/DropDownSingleSelect';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ const LoginScreen = () => {
 
   const login = async () => {
     const url = 'login';
-    const body = {email: email, password: password};
+    const body = {email: email, password: password };
 
     for (let key in body) {
       if (body[key] == '') {
@@ -43,12 +44,14 @@ const LoginScreen = () => {
     const response = await Post(url, body, apiHeader(token));
     setLoading(false);
     if (response != undefined) {
-    console.log("🚀 ~ file: LoginScreen.js:46 ~ login ~ response:", response?.data)
-    
+      console.log(
+        '🚀 ~ file: LoginScreen.js:46 ~ login ~ response:',
+        response?.data,
+      );
+
       dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
       dispatch(setUserWallet(response?.data?.user_info?.wallet));
-
     }
   };
 
@@ -64,7 +67,7 @@ const LoginScreen = () => {
         end={{x: 0.5, y: 1.0}}
         colors={Color.themeGradient}
         style={styles.container}>
-          <ScrollView
+        <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             // paddingBottom: windowHeight * 0.15,
@@ -73,103 +76,102 @@ const LoginScreen = () => {
           }}
           style={{
             width: windowWidth,
-            zIndex : 1,
-          }}>
-        <CustomText isBold style={styles.text1}>
-          Sign in
-        </CustomText>
-        <TextInputWithTitle
-          titleText={'Your Email'}
-          placeholder={'Enter Your Email'}
-          setText={setEmail}
-          value={email}  
-          viewHeight={0.06}
-          viewWidth={0.75}
-          inputWidth={0.74}
-          // border={1}
-          // borderColor={'#1B5CFB45'}
-          backgroundColor={'#FFFFFF'}
-          marginTop={moderateScale(12, 0.3)}
-          color={Color.themeColor}
-          placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(30, 0.4)}
-        />
-        <TextInputWithTitle
-          secureText
-          titleText={'Your Password'}
-          placeholder={'Enter Your Password'}
-          setText={setPassword}
-          value={password}
-          viewHeight={0.06}
-          viewWidth={0.75}
-          inputWidth={0.74}
-          // border={1}
-          // borderColor={'#1B5CFB45'}
-          backgroundColor={'#FFFFFF'}
-          marginTop={moderateScale(12, 0.3)}
-          color={Color.themeColor}
-          placeholderColor={Color.themeLightGray}
-          borderRadius={moderateScale(30, 0.4)}
-
-        />
-        <CustomButton
-          bgColor={Color.themePink}
-          borderColor={'white'}
-          borderWidth={1}
-          textColor={Color.black}
-          onPress={() => {
-            login();
-
-            // dispatch(setUserToken({token: 'skjfhkjhfdjjsdfjlkjlkfj;kdf;l'}));
-          }}
-          width={windowWidth * 0.75}
-          height={windowHeight * 0.06}
-          borderRadius={moderateScale(25, 0.6)}
-          text={
-            loading ? (
-              <ActivityIndicator size={'small'} color={'black'} />
-            ) : (
-              'Sign In'
-            )
-          }
-          fontSize={moderateScale(14, 0.3)}
-          textTransform={'uppercase'}
-          isGradient={true}
-          isBold
-          marginTop={moderateScale(30, 0.3)}
-        />
-
-        <CustomText
-          isBold
-          onPress={() => {
-            // console.log('fdfds');
-            navigationService.navigate('Signup');
-          }}
-          style={{
-            color: 'rgb(227,196,136)',
-            fontSize: moderateScale(13, 0.3),
-            textTransform: 'uppercase',
-            marginTop: moderateScale(10, 0.3),
             zIndex: 1,
           }}>
-          Sign Up
-        </CustomText>
-        <CustomText
-          onPress={() => {
-            console.log('fdfds');
-            navigationService.navigate('EnterPhone');
-          }}
-          isBold
-          style={{
-            zIndex: 1,
-            color: 'rgb(227,196,136)',
-            fontSize: moderateScale(10, 0.3),
-            textTransform: 'uppercase',
-            marginTop: moderateScale(5, 0.3),
-          }}>
-          forgot password?
-        </CustomText>
+          <CustomText isBold style={styles.text1}>
+            Sign in
+          </CustomText>
+          <TextInputWithTitle
+            titleText={'Your Email'}
+            placeholder={'Enter Your Email'}
+            setText={setEmail}
+            value={email}
+            viewHeight={0.06}
+            viewWidth={0.75}
+            inputWidth={0.74}
+            // border={1}
+            // borderColor={'#1B5CFB45'}
+            backgroundColor={'#FFFFFF'}
+            marginTop={moderateScale(12, 0.3)}
+            color={Color.themeColor}
+            placeholderColor={Color.themeLightGray}
+            borderRadius={moderateScale(30, 0.4)}
+          />
+          <TextInputWithTitle
+            secureText
+            titleText={'Your Password'}
+            placeholder={'Enter Your Password'}
+            setText={setPassword}
+            value={password}
+            viewHeight={0.06}
+            viewWidth={0.75}
+            inputWidth={0.74}
+            // border={1}
+            // borderColor={'#1B5CFB45'}
+            backgroundColor={'#FFFFFF'}
+            marginTop={moderateScale(12, 0.3)}
+            color={Color.themeColor}
+            placeholderColor={Color.themeLightGray}
+            borderRadius={moderateScale(30, 0.4)}
+          />
+      
+          <CustomButton
+            bgColor={Color.themePink}
+            borderColor={'white'}
+            borderWidth={1}
+            textColor={Color.black}
+            onPress={() => {
+              login();
 
+              // dispatch(setUserToken({token: 'skjfhkjhfdjjsdfjlkjlkfj;kdf;l'}));
+            }}
+            width={windowWidth * 0.75}
+            height={windowHeight * 0.06}
+            borderRadius={moderateScale(25, 0.6)}
+            text={
+              loading ? (
+                <ActivityIndicator size={'small'} color={'black'} />
+              ) : (
+                'Sign In'
+              )
+            }
+            fontSize={moderateScale(14, 0.3)}
+            textTransform={'uppercase'}
+            isGradient={true}
+            isBold
+            marginTop={moderateScale(30, 0.3)}
+          />
+
+          <CustomText
+            isBold
+            onPress={() => {
+              // console.log('fdfds');
+              navigationService.navigate('Signup');
+            }}
+            style={{
+              color: 'rgb(227,196,136)',
+              fontSize: moderateScale(13, 0.3),
+              textTransform: 'uppercase',
+              marginTop: moderateScale(10, 0.3),
+              zIndex: 1,
+            }}>
+            Sign Up
+          </CustomText>
+          <CustomText
+            onPress={() => {
+              console.log('fdfds');
+              navigationService.navigate('EnterPhone');
+            }}
+            isBold
+            style={{
+              zIndex: 1,
+              color: 'rgb(227,196,136)',
+              fontSize: moderateScale(10, 0.3),
+              textTransform: 'uppercase',
+              marginTop: moderateScale(5, 0.3),
+            }}>
+            forgot password?
+          </CustomText>
         </ScrollView>
         <View
           style={{

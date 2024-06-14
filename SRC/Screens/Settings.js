@@ -52,21 +52,21 @@ const Settings = () => {
           {
             name: 'Add Service',
             onPress: () => {
-              navigationService.navigate('AddService' ,{fromSettings :true});
+              navigationService.navigate('AddService', {fromSettings: true});
             },
           },
         ]
       : []),
-...(UserData?.role == 'customer' ?
-
-[{
-name: 'compare barber',
-        onPress: () => {
-          navigationService.navigate('CompareBaberScreen');
-        },
-      },]:[]
-
-),
+    ...(UserData?.role == 'customer'
+      ? [
+          {
+            name: 'compare barber',
+            onPress: () => {
+              navigationService.navigate('CompareBaberScreen');
+            },
+          },
+        ]
+      : []),
     // {
     //   name: 'Payment Method',
     //   onPress: () => {
@@ -165,7 +165,11 @@ name: 'compare barber',
           }}
           ListHeaderComponent={() => {
             return (
-              <>
+              <View style={{
+               width : windowWidth,
+              //  backgroundColor :'red',
+               alignItems: 'center'
+              }}>
                 <View
                   style={{
                     paddingTop: moderateScale(50, 0.3),
@@ -192,15 +196,36 @@ name: 'compare barber',
                   }}>
                   {UserData.first_name}
                 </CustomText>
-                <CustomText
-                  style={{
-                    fontSize: moderateScale(13, 0.3),
-                    color: Color.white,
-                    textAlign: 'center',
-                  }}>
-                  {UserData.role}
-                </CustomText>
-              </>
+                <View style={{
+                  flexDirection :'row',
+                  width :windowWidth*0.4,
+                  // backgroundColor:'blue',
+                  justifyContent:'space-between',
+                  alignItems :'center',
+                  paddingHorizontal :moderateScale(10,.6) 
+                }}>
+                  <CustomText
+                    style={{
+                      fontSize: moderateScale(13, 0.3),
+                      color: Color.white,
+                      textAlign: 'center',
+                      width :windowWidth*0.2
+                    }}>
+                    {UserData.role}
+                  </CustomText>
+                  <CustomText
+                  // numberOfLines={1}
+                    style={{
+                      fontSize: moderateScale(13, 0.3),
+                      color: Color.white,
+                      // textAlign: 'center',
+                      // backgroundColor :'green',
+                      width :windowWidth*0.3
+                    }}>
+                      ({UserData.designation})
+                  </CustomText>
+                </View>
+              </View>
             );
           }}
         />
