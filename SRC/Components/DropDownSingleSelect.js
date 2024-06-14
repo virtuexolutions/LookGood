@@ -9,11 +9,13 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {windowWidth} from '../Utillity/utils';
+import { color } from 'react-native-reanimated';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const DropDownSingleSelect = ({
+  Color,
   array,
   item,
   setItem,
@@ -30,6 +32,7 @@ const DropDownSingleSelect = ({
   myJobs,
   Colors,
   dropdownStyle,
+  fontSize,
   borderWidth,
   borderColor
 }) => {
@@ -88,7 +91,7 @@ const DropDownSingleSelect = ({
             borderRadius: 10,
           }),
           ...(backgroundColor && {
-            backgroundColor: `${Color.themeColor}`,
+            backgroundColor: backgroundColor ? backgroundColor :`${Color.themeColor}`,
           }),
           ...(!iconName && {
             width: width,
@@ -97,9 +100,9 @@ const DropDownSingleSelect = ({
         buttonTextStyle={{
           ...styles.dropDownBtnText,
           ...(item !== '' && {color: Colors ? Colors : Color.themeBlack}),
-          ...(backgroundColor && {
-            color: `${Color.white}`,
-            fontSize: moderateScale(18, 0.3),
+          ...(Color && {
+            color:Color ? Color : `${Color.white}`,
+            fontSize:fontSize ? fontSize :moderateScale(18, 0.3),
           }),
         }}
         dropdownStyle={{

@@ -39,7 +39,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import Video from 'react-native-video';
 import {launchCamera} from 'react-native-image-picker';
-import { err } from 'react-native-svg/lib/typescript/xml';
+import {err} from 'react-native-svg/lib/typescript/xml';
 
 const BarberServicesScreen = props => {
   const userData = useSelector(state => state.commonReducer.userData);
@@ -182,47 +182,38 @@ const BarberServicesScreen = props => {
     launchCamera(options, response => {
       // console.log('Response from camera =====>', response);
       // // console.log('URI: ', response.uri);
-      try{
-
-      
-  
-          if (Platform.OS == 'ios') {
-            setShow(false);
-          } else if (response?.assets && response?.assets[0]?.duration > 15) {
-            alert('Video is too long you can post  maximum video of 15 seconds');
-          }
-          // if (response.didCancel) {
-          // } else if (response.error) {
-          // }
-          // else if (response.customButton) {
-          //   Alert.alert(response.customButton);
-          // }
-          else {
+      try {
+        if (Platform.OS == 'ios') {
+          setShow(false);
+        } else if (response?.assets && response?.assets[0]?.duration > 15) {
+          alert('Video is too long you can post  maximum video of 15 seconds');
+        }
+        // if (response.didCancel) {
+        // } else if (response.error) {
+        // }
+        // else if (response.customButton) {
+        //   Alert.alert(response.customButton);
+        // }
+        else {
+          if (response == undefined) {
+            console.log('repose undefined');
+          } else {
             if (response == undefined) {
-              console.log('repose undefined');
+              console.log('response is undefiend');
             } else {
-              if (response == undefined) {
-                console.log('response is undefiend');
-              } else {
-                consultancyVideo({
-                  uri: response?.assets[0]?.uri,
-                  type: response?.assets[0]?.type,
-                  name: response?.assets[0]?.fileName,
-                });
-              }
+              consultancyVideo({
+                uri: response?.assets[0]?.uri,
+                type: response?.assets[0]?.type,
+                name: response?.assets[0]?.fileName,
+              });
             }
           }
-        
-      }catch (error){
-        console.log('response is undefined=================>' ,error)
-
+        }
+      } catch (error) {
+        console.log('response is undefined=================>', error);
       }
     });
   };
-
-
-
-
 
   // const consultancyVideo = async (videoObject) => {
   //   const formData = new FormData();
@@ -303,6 +294,7 @@ const BarberServicesScreen = props => {
                 textTransform: 'uppercase',
               }}
             />
+
             <TouchableOpacity
               onPress={() => {
                 setModal(true);
@@ -332,15 +324,39 @@ const BarberServicesScreen = props => {
               }}>
               {barberDetails?.review?.length} Review
             </CustomText>
+           
           </View>
         </View>
         <View
           style={{
-            // backgroundColor : 'red',
             width: windowWidth,
-            // marginTop :moderateScale(10,.6),
             marginHorizontal: moderateScale(10, 0.6),
           }}>
+             <View style={{
+              width: windowWidth*0.9,
+              paddingVertical :moderateScale(10,.6),
+              justifyContent :'space-between',
+            }}>
+            
+              <CustomText
+              isBold
+                style={{
+                  color: Color.themeColor,
+                  fontSize: moderateScale(15, 0.3),
+                }}>
+              designation
+              </CustomText>
+              <CustomText
+                style={{
+                  color: Color.white,
+                  fontSize: moderateScale(15, 0.3),
+                  // paddingHorizontal :moderateScale(10,.6)
+                }}>
+                  nails
+              {/* designation */}
+                {detail?.designation}
+              </CustomText>
+            </View>
           <CustomText
             isBold
             // size={moderateScale(30, 0.3)}
